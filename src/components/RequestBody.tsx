@@ -1,6 +1,10 @@
 import { TextField } from "@mui/material"
+import { HttpRequestResponseProps } from "./types"
 
-function RequestBody() {
+interface RequestBodyProps extends HttpRequestResponseProps{
+}
+
+function RequestBody({request}: RequestBodyProps) {
     return <div className="row">
         <TextField
           fullWidth
@@ -8,7 +12,7 @@ function RequestBody() {
           label="Body"
           multiline
           rows={4}
-          defaultValue="{}"
+          value={request?.body}
           variant="filled"
         />
     </div>

@@ -1,22 +1,36 @@
 import {TextField, Button, Select, MenuItem}  from "@mui/material";
-import { invoke } from "@tauri-apps/api/core";
+import { HttpRequest, HttpRequestResponseProps } from "./types";
 
-function RequestUrlBar() {
+interface RequestUrlBarProps extends HttpRequestResponseProps{
+    sendRequest: (request?: HttpRequest) => void
+}
 
-    async function sendRequest(url: string) {
-        const response = await invoke("send_http_request", { url })
-        console.log(response)
-    }
-
+function RequestUrlBar({request, setRequest, sendRequest}: RequestUrlBarProps) {
     return <div className="row">
-        <Select name="httpMethod" id="httpMethod" defaultValue={"GET"}>
+        <Select 
+            name="httpMethod" 
+            value={request?.method}
+            onChange={(e) => {
+                if(request && setRequest) {
+                    setRequest({...request, method: e.target.value })    
+                }
+                }}
+        >
             <MenuItem value="GET">GET</MenuItem>
             <MenuItem value="POST">POST</MenuItem>
         </Select>
 
-        <TextField id="req-url" fullWidth value={"https://api.chucknorris.io/jokes/random"}/>
+        <TextField 
+            fullWidth 
+            value={request?.url}
+            onChange={(e) => {
+                if(request && setRequest) {
+                    setRequest({...request, url: e.currentTarget.value})
+                }
+            }}
+        />
 
-        <Button variant="contained" onClick={() => sendRequest("foo")}>Send</Button>
+        <Button variant="contained" onClick={() => {sendRequest(request)}}>Send</Button>
     </div>
 }
 
