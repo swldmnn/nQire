@@ -93,6 +93,7 @@ button {
 
 #greet-input {
   margin-right: 5px;
+  margin-left: 5px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -106,7 +107,8 @@ button {
   }
 
   input,
-  button {
+  button,
+  select {
     color: #ffffff;
     background-color: #0f0f0f98;
   }
