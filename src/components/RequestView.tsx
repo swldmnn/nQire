@@ -4,6 +4,7 @@ import RequestUrlBar from "./RequestUrlBar";
 import ResponseBody from "./ResponseBody";
 import { HttpRequest, HttpResponse } from "./types";
 import { invoke } from "@tauri-apps/api/core";
+import { THttpRequest, THttpResponse } from "./types_transfer";
 
 
 function RequestView() {
@@ -14,11 +15,9 @@ function RequestView() {
         if(!request) {
             return
         }
-        const  {url: reqUrl, method} = request
-        const url = `[${method}] ${reqUrl}`
 
-        const response = await invoke("send_http_request", { url })
-        setResponse({status: 200, body: `${response}`})
+        const response = await invoke("send_http_request", { request: request as THttpRequest }) as THttpResponse
+        setResponse(response as HttpResponse)
     }
 
     return <div>

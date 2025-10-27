@@ -1,10 +1,7 @@
+mod commands;
+ 
 #[cfg(debug_assertions)]
 use tauri::Manager;
-
-#[tauri::command]
-fn send_http_request(url: &str) -> String {
-    format!("response from {}", url)
-}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -15,7 +12,7 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![send_http_request])
+        .invoke_handler(tauri::generate_handler![commands::send_http_request])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

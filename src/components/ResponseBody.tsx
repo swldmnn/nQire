@@ -9,7 +9,7 @@ function ResponseBody({response}: ResponseBodyProps) {
         <TextField
           fullWidth
           id="res-body"
-          label="Response"
+          label={response && response.status > 0 ? `Response [${response.status}]` : 'Response'}
           multiline
           rows={4}
           value={response?.body}
