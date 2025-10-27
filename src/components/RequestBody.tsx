@@ -8,7 +8,7 @@ function RequestBody() {
           label="Body"
           multiline
           rows={4}
-          defaultValue="Default Value"
+          defaultValue="{}"
           variant="filled"
         />
     </div>

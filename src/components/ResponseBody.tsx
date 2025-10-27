@@ -8,7 +8,7 @@ function ResponseBody() {
           label="Response"
           multiline
           rows={4}
-          defaultValue="Default Value"
+          defaultValue="<send request to get a response>"
           variant="filled"
         />
     </div>
