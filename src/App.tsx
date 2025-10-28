@@ -1,3 +1,4 @@
+import { blue, lime } from "@mui/material/colors";
 import "./App.css";
 import Logo from "./components/Logo";
 import RequestView from "./components/RequestView";
@@ -7,6 +8,8 @@ function App() {
   const darkTheme = createTheme({
     palette: {
       mode: 'dark',
+      primary: lime,
+      secondary: blue,
     },
   });
 
