@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use http::{Request};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,10 +18,14 @@ pub struct THttpResponse {
 
 #[tauri::command]
 pub fn send_http_request(request: THttpRequest) -> THttpResponse {
-    let resp = reqwest::blocking::get(request.url).expect("Testing response");
-
-    return THttpResponse {
-        status: resp.status().as_u16(),
-        body: resp.text().expect("Testing text"),
+    let req = Request::builder()
+    .method(request.method.as_str())
+    .uri(request.url)
+    .body(request.body)
+    .unwrap();
+    
+    match super::http_handler::send_http_request(req) {
+        Ok(r) => return THttpResponse { status: r.status().as_u16(), body: r.body().to_owned() },
+        Err(e) => return THttpResponse { status: 0, body: e },
     };
 }

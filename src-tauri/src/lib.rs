@@ -1,5 +1,6 @@
 mod commands;
- 
+mod http_handler;
+
 #[cfg(debug_assertions)]
 use tauri::Manager;
 
