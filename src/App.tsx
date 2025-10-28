@@ -2,7 +2,12 @@ import { blue, lime } from "@mui/material/colors";
 import "./App.css";
 import Logo from "./components/Logo";
 import RequestView from "./components/RequestView";
-import { ThemeProvider, createTheme } from "@mui/material";
+import { 
+  AppBar, 
+  ThemeProvider, 
+  Toolbar, 
+  createTheme, 
+} from "@mui/material";
 
 function App() {
   const darkTheme = createTheme({
@@ -16,10 +21,13 @@ function App() {
   return (
     <ThemeProvider theme={darkTheme}>
       <main className="container">
-        <div style={{width:"70%", alignSelf:"center"}}>
-          <div className="row">
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+          <Toolbar>
             <Logo /><h1 style={{paddingLeft: "1rem"}}>Welcome to <span style={{color: "lime"}}>nQire</span></h1>
-          </div>
+          </Toolbar>
+        </AppBar>
+
+        <div style={{width:"70%", alignSelf:"center"}}>
           <RequestView />
         </div>
       </main>
