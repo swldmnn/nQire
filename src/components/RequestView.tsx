@@ -1,40 +1,40 @@
-import { useState } from "react";
 import RequestBody from "./RequestBody";
 import RequestUrlBar from "./RequestUrlBar";
 import ResponseBody from "./ResponseBody";
-import { HttpRequest, HttpResponse } from "./types";
+import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "./types";
 import { invoke } from "@tauri-apps/api/core";
 import { THttpRequest, THttpResponse } from "./types_transfer";
 
+interface RequestViewProps extends HttpRequestResponseProps {
+}
 
-function RequestView() {
-    const [request, setRequest] = useState({method: "GET", url: "https://api.chucknorris.io/jokes/random", body: "{reqBody}"} as HttpRequest)
-    const [response, setResponse] = useState({status: 0, body: "{resBody}"} as HttpResponse)
 
+function RequestView({ request, setRequest, response, setResponse }: RequestViewProps) {
     async function sendRequest(request?: HttpRequest) {
-        if(!request) {
+        if (!request || !setResponse) {
             return
         }
 
-        const response = await invoke("send_http_request", { request: request as THttpRequest }) as THttpResponse
+        const req = { ...request, body: request.body ?? '' }
+        const response = await invoke("send_http_request", { request: req as THttpRequest }) as THttpResponse
         setResponse(response as HttpResponse)
     }
 
     return <div>
-            <RequestUrlBar 
-                request={request} 
-                setRequest={setRequest} 
-                sendRequest={sendRequest} 
-            />
-            <RequestBody 
-                request={request} 
-                setRequest={setRequest} 
-            />
-            <br /><br />
-            <ResponseBody 
-                response={response} 
-                setResponse={setResponse}
-            />
+        <RequestUrlBar
+            request={request}
+            setRequest={setRequest}
+            sendRequest={sendRequest}
+        />
+        <RequestBody
+            request={request}
+            setRequest={setRequest}
+        />
+        <br /><br />
+        <ResponseBody
+            response={response}
+            setResponse={setResponse}
+        />
     </div>
 }
 

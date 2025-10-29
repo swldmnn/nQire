@@ -6,7 +6,7 @@
 export interface THttpRequest {
     method: string
     url: string
-    body: string
+    body?: string
 }
 
 export interface THttpResponse {

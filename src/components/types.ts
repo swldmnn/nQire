@@ -7,12 +7,13 @@ export interface HttpRequestResponseProps {
 }
 
 export interface HttpRequest {
+    label: string
     method: string
     url: string
-    body: string
+    body?: string
 }
 
 export interface HttpResponse {
     status: number
-    body: string
+    body?: string
 }
