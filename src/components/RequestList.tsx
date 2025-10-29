@@ -1,12 +1,21 @@
 import { List, ListItem, ListItemButton, ListItemText, ListItemIcon, Box } from "@mui/material"
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import { HttpRequest, HttpRequestResponseProps } from "./types";
+import { HttpRequest } from "./types";
+import { useContext } from "react";
+import { AppContext } from "../AppContext";
 
-interface RequestListProps extends HttpRequestResponseProps {
+interface RequestListProps {
     requests: HttpRequest[]
 }
 
-function RequestList({ requests, setRequest: setSelectedRequest }: RequestListProps) {
+function RequestList({ requests }: RequestListProps) {
+    const appContext = useContext(AppContext)
+
+    const openItem = (index: number) => {
+        appContext.appState.openItems.push(requests[index])
+        appContext.updateAppState(appContext.appState)
+    }
+
     return (
         <Box sx={{
             borderRadius: 1,
@@ -15,7 +24,7 @@ function RequestList({ requests, setRequest: setSelectedRequest }: RequestListPr
             <List>
                 {requests.map((request, index) =>
                     <ListItem key={'RequestListItem' + index}>
-                        <ListItemButton onClick={() => { if (setSelectedRequest) setSelectedRequest(requests[index]) }}>
+                        <ListItemButton onDoubleClick={() => openItem(index)}>
                             <ListItemIcon>
                                 <PlayCircleIcon />
                             </ListItemIcon>

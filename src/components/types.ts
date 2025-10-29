@@ -7,6 +7,8 @@ export interface HttpRequestResponseProps {
 }
 
 export interface HttpRequest {
+    typename: 'HttpRequest'
+    id: number
     label: string
     method: string
     url: string
@@ -14,6 +16,7 @@ export interface HttpRequest {
 }
 
 export interface HttpResponse {
+    typename: 'HttpResponse'
     status: number
     body?: string
 }

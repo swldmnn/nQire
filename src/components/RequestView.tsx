@@ -4,12 +4,18 @@ import ResponseBody from "./ResponseBody";
 import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "./types";
 import { invoke } from "@tauri-apps/api/core";
 import { THttpRequest, THttpResponse } from "./types_transfer";
+import { TabContentProps } from "./TabContainer";
+import { useState } from "react";
 
-interface RequestViewProps extends HttpRequestResponseProps {
+interface RequestViewProps extends HttpRequestResponseProps, TabContentProps {
 }
 
 
-function RequestView({ request, setRequest, response, setResponse }: RequestViewProps) {
+function RequestView({ request: inputRequest }: RequestViewProps) {
+
+    const [request, setRequest] = useState(inputRequest)
+    const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
+
     async function sendRequest(request?: HttpRequest) {
         if (!request || !setResponse) {
             return
