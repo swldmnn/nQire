@@ -61,6 +61,10 @@ h1 {
   font-weight: 500;
 }
 
+html, body {
+  margin: 0;
+}
+
 input,
 button {
   border-radius: 8px;

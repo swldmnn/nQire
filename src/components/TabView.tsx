@@ -11,7 +11,7 @@ function TabView() {
         appContext.updateAppState(appContext.appState)
     }
 
-    return (<TabContainer onClose={onClose}>
+    return (appContext.appState.openItems.length > 0 && <TabContainer onClose={onClose}>
         {
             appContext.appState.openItems.map((item, index) => item.typename === 'HttpRequest'
                 ? <RequestView

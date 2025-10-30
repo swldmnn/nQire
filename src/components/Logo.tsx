@@ -1,12 +1,12 @@
 import { SvgIcon } from "@mui/material"
 
 function Logo() {
-    return <SvgIcon style={{height: "3.5rem", width: "2.5rem", verticalAlign: "bottom"}}>
-            <svg xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 900 900">
+    return <SvgIcon sx={{ color: 'primary.main', height: "2rem", width: "2rem", verticalAlign: "bottom" }}>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 900 900">
             <path id="outline_60"
-                    fill="lime" stroke="none" strokeWidth="1"
-                    d="M 424.00,26.00
+                fill="currentColor" stroke="none" strokeWidth="1"
+                d="M 424.00,26.00
                     C 424.00,26.00 872.00,485.00 872.00,485.00
                         872.00,485.00 172.00,486.00 172.00,486.00
                         172.00,486.00 420.00,733.00 420.00,733.00
@@ -23,8 +23,8 @@ function Logo() {
                         264.00,320.00 264.00,259.00 264.00,259.00
                         264.00,259.00 422.00,259.00 422.00,259.00
                         422.00,259.00 424.00,26.00 424.00,26.00 Z" />
-            </svg>
-        </SvgIcon>
+        </svg>
+    </SvgIcon>
 }
 
 export default Logo

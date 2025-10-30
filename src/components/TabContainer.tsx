@@ -47,7 +47,7 @@ function TabContainer({ children, onClose }: TabContainerProps) {
     }
 
     return (children &&
-        <Box>
+        <Box width={'100%'}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs
                     scrollButtons="auto"

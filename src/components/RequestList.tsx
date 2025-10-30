@@ -1,8 +1,20 @@
-import { List, ListItem, ListItemButton, ListItemText, ListItemIcon, Box } from "@mui/material"
+import {
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemText,
+    ListItemIcon,
+    Box,
+    Accordion,
+    AccordionSummary,
+    Typography,
+    AccordionDetails
+} from "@mui/material"
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import { HttpRequest } from "./types";
 import { useContext } from "react";
 import { AppContext } from "../AppContext";
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 interface RequestListProps {
     requests: HttpRequest[]
@@ -17,22 +29,30 @@ function RequestList({ requests }: RequestListProps) {
     }
 
     return (
-        <Box sx={{
-            borderRadius: 1,
-            bgcolor: 'grey.900',
-        }}>
-            <List>
-                {requests.map((request, index) =>
-                    <ListItem key={'RequestListItem' + index}>
-                        <ListItemButton onDoubleClick={() => openItem(index)}>
-                            <ListItemIcon>
-                                <PlayCircleIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={request.label} />
-                        </ListItemButton>
-                    </ListItem>
-                )}
-            </List>
+        <Box>
+            <Accordion defaultExpanded>
+                <AccordionSummary
+                    expandIcon={<ArrowDownwardIcon />}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                >
+                    <Typography component="span">Sample requests</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <List>
+                        {requests.map((request, index) =>
+                            <ListItem key={'RequestListItem' + index}>
+                                <ListItemButton onDoubleClick={() => openItem(index)}>
+                                    <ListItemIcon>
+                                        <PlayCircleIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={request.label} />
+                                </ListItemButton>
+                            </ListItem>
+                        )}
+                    </List>
+                </AccordionDetails>
+            </Accordion>
         </Box>)
 }
 
