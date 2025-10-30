@@ -2,6 +2,7 @@ import { Box, Tab, Tabs } from "@mui/material"
 import React, { useState } from "react";
 
 interface TabContainerProps {
+    onClose?: (index: number) => void
     children?: React.ReactNode;
 }
 
@@ -31,7 +32,7 @@ function CustomTabPanel(props: TabPanelProps) {
     );
 }
 
-function TabContainer({ children }: TabContainerProps) {
+function TabContainer({ children, onClose }: TabContainerProps) {
     const [selectedTabIndex, setSelectedTabIndex] = useState(0)
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -40,6 +41,10 @@ function TabContainer({ children }: TabContainerProps) {
 
     const tabItems = React.Children.toArray(children)
         .filter(child => React.isValidElement(child) && isTabContentProps(child.props))
+
+    if (selectedTabIndex > 0 && selectedTabIndex >= tabItems.length) {
+        setSelectedTabIndex(Math.max(0, tabItems.length - 1))
+    }
 
     return (children &&
         <Box>
@@ -54,7 +59,7 @@ function TabContainer({ children }: TabContainerProps) {
                         tabItems.map((child, index) => {
                             return (React.isValidElement(child) && isTabContentProps(child.props))
                                 ? <Tab
-                                    label={child.props.label}
+                                    label={<div>{child.props.label}<span onClick={() => onClose?.(index)}> [x]</span></div>}
                                     key={`tab_${index}_${child.props.label}`}
                                 ></Tab>
                                 : null

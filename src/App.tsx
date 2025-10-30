@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import RequestList from './components/RequestList';
 import { HttpRequest } from './components/types';
-import MainEditor from './components/MainEditor';
+import TabView from './components/TabView';
 import AppContextProvider from './AppContextProvider';
 
 const requests: HttpRequest[] = [
@@ -89,7 +89,7 @@ function App() {
             </Grid>
 
             <Grid size={8}>
-              <MainEditor />
+              <TabView />
             </Grid>
           </Grid>
         </main>

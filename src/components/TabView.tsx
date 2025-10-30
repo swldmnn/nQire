@@ -3,10 +3,15 @@ import RequestView from "./RequestView"
 import TabContainer from "./TabContainer"
 import { AppContext } from "../AppContext"
 
-function MainEditor() {
+function TabView() {
     const appContext = useContext(AppContext)
 
-    return (<TabContainer>
+    const onClose = (index: number) => {
+        appContext.appState.openItems.splice(index, 1)
+        appContext.updateAppState(appContext.appState)
+    }
+
+    return (<TabContainer onClose={onClose}>
         {
             appContext.appState.openItems.map((item, index) => item.typename === 'HttpRequest'
                 ? <RequestView
@@ -19,4 +24,4 @@ function MainEditor() {
     </TabContainer>)
 }
 
-export default MainEditor
+export default TabView
