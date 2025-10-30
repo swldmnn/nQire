@@ -10,7 +10,7 @@ import {
     Typography,
     AccordionDetails
 } from "@mui/material"
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import NearMeIcon from '@mui/icons-material/NearMe';
 import { HttpRequest } from "./types";
 import { useContext } from "react";
 import { AppContext } from "../AppContext";
@@ -44,7 +44,7 @@ function RequestList({ requests }: RequestListProps) {
                             <ListItem key={'RequestListItem' + index}>
                                 <ListItemButton onDoubleClick={() => openItem(index)}>
                                     <ListItemIcon>
-                                        <PlayCircleIcon />
+                                        <NearMeIcon />
                                     </ListItemIcon>
                                     <ListItemText primary={request.label} />
                                 </ListItemButton>
