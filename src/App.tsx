@@ -1,4 +1,4 @@
-import { blue, lime } from '@mui/material/colors';
+import { lime, pink } from '@mui/material/colors';
 import './App.css';
 import {
   ThemeProvider,
@@ -12,7 +12,7 @@ function App() {
     palette: {
       mode: 'dark',
       primary: lime,
-      secondary: blue,
+      secondary: pink,
     },
   });
 

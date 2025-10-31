@@ -1,5 +1,6 @@
 import { Box, Tab, Tabs } from "@mui/material"
 import React, { useState } from "react";
+import CloseIcon from '@mui/icons-material/Close';
 
 interface TabContainerProps {
     onClose?: (index: number) => void
@@ -59,7 +60,10 @@ function TabContainer({ children, onClose }: TabContainerProps) {
                         tabItems.map((child, index) => {
                             return (React.isValidElement(child) && isTabContentProps(child.props))
                                 ? <Tab
-                                    label={<div>{child.props.label}<span onClick={() => onClose?.(index)}> [x]</span></div>}
+                                    label={<div>
+                                        {child.props.label}
+                                        <CloseIcon onClick={() => onClose?.(index)} sx={{ height: '1rem', verticalAlign: 'bottom', color: 'secondary.main' }} />
+                                    </div>}
                                     key={`tab_${index}_${child.props.label}`}
                                 ></Tab>
                                 : null
