@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material"
+import { Box } from "@mui/material"
 import { HttpRequestResponseProps } from "./types"
 import JSONPretty from "react-json-pretty";
 
@@ -17,18 +17,8 @@ function ResponseBody({ response }: ResponseBodyProps) {
     borderRadius: 1,
     boxSizing: 'border-box',
   }}>
-    <Box sx={{
-      padding: '.5rem',
-      display: 'flex',
-      bgcolor: 'grey.800',
-      borderBottom: '1px solid grey',
-    }}>
-      <Typography sx={{ color: 'grey.400' }}>Response </Typography>
-      {(response?.status! > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: '.5rem' }}>[{response?.status}]</Typography>)}
-    </Box>
     {response?.status! > 0 &&
       <Box sx={{
-        bgcolor: 'grey.900',
         minWidth: 0,
         minHeight: 0,
         overflow: 'auto',

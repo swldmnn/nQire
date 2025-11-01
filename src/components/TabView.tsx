@@ -1,8 +1,9 @@
 import { useContext } from "react"
-import RequestView from "./RequestView"
 import TabContainer from "./TabContainer"
 import { AppContext } from "../AppContext"
 import { Box } from "@mui/material"
+import TabContentWrapper from "./TabContentWrapper"
+import RequestView from "./RequestView"
 
 function TabView() {
     const appContext = useContext(AppContext)
@@ -23,11 +24,10 @@ function TabView() {
             {appContext.appState.openItems.length > 0 && <TabContainer onClose={onClose}>
                 {
                     appContext.appState.openItems.map((item, index) => item.typename === 'HttpRequest'
-                        ? <RequestView
+                        ? <TabContentWrapper label={item.label} key={`RequestViewWrapper_${index}_${item.label}`}><RequestView
                             request={item}
-                            label={item.label}
                             key={`RequestView_${index}_${item.label}`}
-                        />
+                        /></TabContentWrapper>
                         : null)
                 }
             </TabContainer>}

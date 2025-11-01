@@ -14,7 +14,7 @@ import NearMeIcon from '@mui/icons-material/NearMe';
 import { HttpRequest } from "./types";
 import { useContext } from "react";
 import { AppContext } from "../AppContext";
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 interface RequestListProps {
     requests: HttpRequest[]
@@ -30,11 +30,13 @@ function RequestList({ requests }: RequestListProps) {
 
     return (
         <Box>
-            <Accordion defaultExpanded>
+            <Accordion defaultExpanded disableGutters>
                 <AccordionSummary
-                    expandIcon={<ArrowDownwardIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header"
+                    expandIcon={<KeyboardArrowDownIcon />}
+                    sx={{
+                        flexDirection: 'row-reverse',
+                        color: 'primary.main',
+                    }}
                 >
                     <Typography component="span">Sample requests</Typography>
                 </AccordionSummary>

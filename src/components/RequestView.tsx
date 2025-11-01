@@ -1,19 +1,17 @@
-import RequestBody from "./RequestBody";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "@mui/material"
 import RequestUrlBar from "./RequestUrlBar";
-import ResponseBody from "./ResponseBody";
 import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "./types";
-import { invoke } from "@tauri-apps/api/core";
-import { THttpRequest, THttpResponse } from "./types_transfer";
-import { TabContentProps } from "./TabContainer";
 import { useState } from "react";
-import { Box } from "@mui/material";
+import { THttpRequest, THttpResponse } from "./types_transfer";
+import { invoke } from "@tauri-apps/api/core";
+import RequestBody from "./RequestBody";
+import ResponseBody from "./ResponseBody";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-interface RequestViewProps extends HttpRequestResponseProps, TabContentProps {
+interface NewRequestViewProps extends HttpRequestResponseProps {
 }
 
-
-function RequestView({ request: inputRequest }: RequestViewProps) {
-
+function RequestView({ request: inputRequest }: NewRequestViewProps) {
     const [request, setRequest] = useState(inputRequest)
     const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
 
@@ -28,36 +26,78 @@ function RequestView({ request: inputRequest }: RequestViewProps) {
     }
 
     return <Box sx={{
-        width: '100%',
         height: '100%',
-        minWidth: 0,
+        width: '100%',
         minHeight: 0,
+        minWidth: 0,
         display: 'flex',
         flexDirection: 'column',
-        padding: '1rem',
-        boxSizing: 'border-box',
+        bgcolor: 'grey.850',
+        overflow: 'auto',
     }}>
         <RequestUrlBar
             request={request}
             setRequest={setRequest}
             sendRequest={sendRequest}
         />
-        <RequestBody
-            request={request}
-            setRequest={setRequest}
-        />
-        {response.status > 0 && <Box sx={{
-            paddingTop: '1rem',
-            flexGrow: 1,
-            minWidth: 0,
-            minHeight: 0,
-        }}>
-            <ResponseBody
-                response={response}
-                setResponse={setResponse}
-            />
-        </Box>}
 
+        <Accordion defaultExpanded disableGutters>
+            <AccordionSummary
+                expandIcon={<KeyboardArrowDownIcon />}
+                sx={{
+                    flexDirection: 'row-reverse',
+                    color: 'primary.dark',
+                }}
+            >
+                <Typography component="span">Body</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <RequestBody
+                    request={request}
+                    setRequest={setRequest}
+                />
+            </AccordionDetails>
+        </Accordion>
+
+        <Accordion defaultExpanded disableGutters>
+            <AccordionSummary
+                expandIcon={<KeyboardArrowDownIcon />}
+                sx={{
+                    flexDirection: 'row-reverse',
+                    color: 'primary.dark',
+                }}
+            >
+                <Typography component="span">Headers</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+
+            </AccordionDetails>
+        </Accordion>
+
+        <Accordion defaultExpanded disableGutters sx={{
+            minHeight: 0,
+            minWidth: 0,
+        }}>
+            <AccordionSummary
+                expandIcon={<KeyboardArrowDownIcon />}
+                sx={{
+                    flexDirection: 'row-reverse',
+                    color: 'primary.dark',
+                }}
+            >
+                <Typography component="span">Response</Typography>
+                {response.status > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: '.5rem' }}>{`[${response.status}]`}</Typography>}
+            </AccordionSummary>
+            <AccordionDetails sx={{
+                minHeight: 0,
+                minWidth: 0,
+            }}>
+                <ResponseBody
+                    response={response}
+                    setResponse={setResponse}
+                />
+            </AccordionDetails>
+        </Accordion>
     </Box>
 }
 

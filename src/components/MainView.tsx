@@ -1,4 +1,4 @@
-import { AppBar, Box, Grid, Toolbar, Typography } from "@mui/material"
+import { Box, Typography } from "@mui/material"
 import Logo from "./Logo"
 import RequestList from "./RequestList"
 import TabView from "./TabView"
@@ -63,7 +63,8 @@ function MainView() {
             flexDirection: 'column',
             width: '100%',
             height: '100vh',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            bgcolor: 'grey.900',
         }}>
             <Box id='mainView_header' sx={{
                 display: 'flex',
@@ -88,7 +89,8 @@ function MainView() {
             }}>
                 <Box id='mainView_navigation' sx={{
                     width: '20rem',
-                    bgcolor: 'grey.900'
+                    borderRight: '1px solid',
+                    borderColor: 'divider',
                 }}>
                     <RequestList requests={requests} />
                 </Box>

@@ -9,7 +9,6 @@ function RequestBody({ request, setRequest }: RequestBodyProps) {
         <TextField
             fullWidth
             id="req-body"
-            label="Body"
             multiline
             rows={4}
             value={request?.body ?? ''}
