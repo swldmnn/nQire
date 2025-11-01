@@ -57,46 +57,48 @@ const requests: HttpRequest[] = [
 
 function MainView() {
 
-    /*
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                <Toolbar>
-                    <Logo />
-                    <Typography variant='h5' sx={{ paddingLeft: '.5rem', paddingRight: '.5rem' }}>Welcome to</Typography>
-                    <Typography variant='h5' sx={{ color: 'primary.main' }}> nQire</Typography>
-                </Toolbar>
-            </AppBar>
-
-            <Grid container spacing={3}>
-                <Grid size={4}>
-                    <RequestList requests={requests}></RequestList>
-                </Grid>
-
-                <Grid size={8}>
-                    <TabView />
-                </Grid>
-            </Grid>
-
-             sx={{
-            borderRadius: 1,
-            bgcolor: 'grey.900',
-        }}      
-    */
-
     return (
-        <Box id='mainView_root' sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100vh', boxSizing: 'border-box' }}>
-            <Box id='mainView_header' sx={{ display: 'flex', padding: '.8rem', width: '100%', boxSizing: 'border-box', bgcolor: 'grey.800', boxShadow: '0 6px 6px rgba(0, 0, 0, 0.2)' }}>
+        <Box id='mainView_root' sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            height: '100vh',
+            boxSizing: 'border-box'
+        }}>
+            <Box id='mainView_header' sx={{
+                display: 'flex',
+                padding: '.8rem',
+                width: '100%',
+                boxSizing: 'border-box',
+                bgcolor: 'grey.800',
+                boxShadow: '0 6px 6px rgba(0, 0, 0, 0.2)'
+            }}>
                 <Logo />
                 <Typography variant='h5' sx={{ marginLeft: '.5rem' }}>n</Typography>
                 <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
                 <Typography variant='h5' >ire</Typography>
             </Box>
 
-            <Box id='mainView_content' sx={{ display: 'flex', width: '100%', flexGrow: 1, boxSizing: 'border-box' }}>
-                <Box id='mainView_navigation' sx={{ width: '20rem', bgcolor: 'grey.900' }}>
+            <Box id='mainView_content' sx={{
+                display: 'flex',
+                flexGrow: 1,
+                minWidth: 0,
+                minHeight: 0,
+                boxSizing: 'border-box',
+            }}>
+                <Box id='mainView_navigation' sx={{
+                    width: '20rem',
+                    bgcolor: 'grey.900'
+                }}>
                     <RequestList requests={requests} />
                 </Box>
 
-                <Box id='mainView_editor' sx={{ display: 'flex', flexGrow: 1 }}>
+                <Box id='mainView_editor' sx={{
+                    display: 'flex',
+                    minWidth: 0,
+                    minHeight: 0,
+                    flexGrow: 1,
+                }}>
                     <TabView />
                 </Box>
             </Box>

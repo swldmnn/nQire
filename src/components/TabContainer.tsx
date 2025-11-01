@@ -23,13 +23,20 @@ function CustomTabPanel(props: TabPanelProps) {
     const { children, isSelected, index, ...other } = props;
 
     return (
-        <div
+        <Box
             role="tabpanel"
             hidden={!isSelected}
             {...other}
+            sx={{
+                width: '100%',
+                height: '100%',
+                minWidth: 0,
+                minHeight: 0,
+                boxSizing: 'border-box',
+            }}
         >
-            {isSelected && <Box sx={{ p: 3 }}>{children}</Box>}
-        </div>
+            {isSelected && children}
+        </Box>
     );
 }
 
@@ -48,7 +55,15 @@ function TabContainer({ children, onClose }: TabContainerProps) {
     }
 
     return (children &&
-        <Box width={'100%'}>
+        <Box sx={{
+            width: '100%',
+            height: '100%',
+            minWidth: 0,
+            minHeight: 0,
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+        }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs
                     scrollButtons="auto"
@@ -71,18 +86,24 @@ function TabContainer({ children, onClose }: TabContainerProps) {
                     }
                 </Tabs>
             </Box>
-            {
-                tabItems.map((child, index) => {
-                    return (React.isValidElement(child) && isTabContentProps(child.props))
-                        ? <CustomTabPanel
-                            index={index}
-                            isSelected={index === selectedTabIndex}
-                            key={`tabPanel_${index}_${child.props.label}`}>
-                            {child}
-                        </CustomTabPanel>
-                        : null
-                })
-            }
+            <Box sx={{
+                flexGrow: 1,
+                minWidth: 0,
+                minHeight: 0,
+            }}>
+                {
+                    tabItems.map((child, index) => {
+                        return (React.isValidElement(child) && isTabContentProps(child.props))
+                            ? <CustomTabPanel
+                                index={index}
+                                isSelected={index === selectedTabIndex}
+                                key={`tabPanel_${index}_${child.props.label}`}>
+                                {child}
+                            </CustomTabPanel>
+                            : null
+                    })
+                }
+            </Box>
         </Box>
     )
 }
