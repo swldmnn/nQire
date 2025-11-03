@@ -17,14 +17,13 @@ function ResponseBody({ response }: ResponseBodyProps) {
     borderRadius: 1,
     boxSizing: 'border-box',
   }}>
-    {response?.status! > 0 &&
-      <Box sx={{
-        minWidth: 0,
-        minHeight: 0,
-        overflow: 'auto',
-      }}>
-        <JSONPretty id="json-pretty" data={response?.body ?? ''}></JSONPretty>
-      </Box>}
+    <Box sx={{
+      minWidth: 0,
+      minHeight: 0,
+      overflow: 'auto',
+    }}>
+      <JSONPretty id="json-pretty" data={response?.body ?? ''}></JSONPretty>
+    </Box>
   </Box>
 }
 

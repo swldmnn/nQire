@@ -12,6 +12,7 @@ export interface HttpRequest {
     label: string
     method: string
     url: string
+    headers: HttpHeader[]
     body?: string
 }
 
@@ -19,4 +20,9 @@ export interface HttpResponse {
     typename: 'HttpResponse'
     status: number
     body?: string
+}
+
+export interface HttpHeader {
+    key: string
+    value: string
 }

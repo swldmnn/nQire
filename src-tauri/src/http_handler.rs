@@ -1,33 +1,29 @@
 use http::{Request, Response};
+use reqwest::blocking::Client;
 
 pub fn send_http_request(request: Request<String>) -> Result<Response<String>, String> {
     match request.method().as_str() {
-        "GET" => return get(request),
-        "POST" => return post(request),
+        "GET" => return send(request),
+        "POST" => return send(request),
         _ => return Err("Unsupported http method".to_owned()),
     }
 }
 
-fn get(request: Request<String>) -> Result<Response<String>, String> {
-    let response = match reqwest::blocking::get(request.uri().to_string()) {
-        Ok(r) => r,
-        Err(e) => return Err(e.to_string()),
-    };
+fn send(request: Request<String>) -> Result<Response<String>, String> {
+    let (parts, body) = request.into_parts();
+    let client = Client::new();
 
-    let status = response.status().as_u16();
-    let body = response.text().unwrap_or_default();
+    let mut reqwest_builder = client.request(parts.method.clone(), parts.uri.to_string());
 
-    Ok(Response::builder().status(status).body(body).unwrap())
-}
+    for (name, value) in parts.headers.iter() {
+        reqwest_builder = reqwest_builder.header(name, value);
+    }
 
-fn post(request: Request<String>) -> Result<Response<String>, String> {
-    let client = reqwest::blocking::Client::new();
-    let response = match client
-        .post(request.uri().to_string())
-        .header("Content-Type", "application/json")
-        .body(request.body().to_string())
-        .send()
-    {
+    if !body.is_empty() {
+        reqwest_builder = reqwest_builder.body(body);
+    }
+
+    let response = match reqwest_builder.send() {
         Ok(r) => r,
         Err(e) => return Err(e.to_string()),
     };

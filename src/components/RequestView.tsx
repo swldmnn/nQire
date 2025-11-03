@@ -7,6 +7,7 @@ import { invoke } from "@tauri-apps/api/core";
 import RequestBody from "./RequestBody";
 import ResponseBody from "./ResponseBody";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import RequestHeaders from "./RequestHeaders";
 
 interface NewRequestViewProps extends HttpRequestResponseProps {
 }
@@ -70,7 +71,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
                 <Typography component="span">Headers</Typography>
             </AccordionSummary>
             <AccordionDetails>
-
+                <RequestHeaders request={request} setRequest={setRequest} />
             </AccordionDetails>
         </Accordion>
 

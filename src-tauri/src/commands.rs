@@ -1,11 +1,19 @@
 use serde::{Deserialize, Serialize};
-use http::{Request};
+use http::{Request, HeaderName, HeaderValue};
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct THttpHeader {
+    pub key: String,
+    pub value: String,
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct THttpRequest {
     pub method: String,
     pub url: String,
+    pub headers: Vec<THttpHeader>,
     pub body: String,
 }
 
@@ -18,9 +26,23 @@ pub struct THttpResponse {
 
 #[tauri::command]
 pub fn send_http_request(request: THttpRequest) -> THttpResponse {
-    let req = Request::builder()
+    let mut req_builder = Request::builder()
     .method(request.method.as_str())
-    .uri(request.url)
+    .uri(request.url);
+   
+    {
+        let headers_mut = req_builder.headers_mut().unwrap();
+        for header in request.headers {
+            let name = HeaderName::from_bytes(header.key.as_bytes())
+                .expect("Invalid header name");
+            let value = HeaderValue::from_str(&header.value)
+                .expect("Invalid header value");
+
+            headers_mut.insert(name, value);
+        }
+    }
+   
+    let req = req_builder
     .body(request.body)
     .unwrap();
     

@@ -10,6 +10,10 @@ const requests: HttpRequest[] = [
         id: 1,
         label: 'JsonPlaceholder',
         method: 'POST',
+        headers: [
+            { key: 'Content-Type', value: 'application/json' },
+            { key: 'Accept', value: '*/*' },
+        ],
         url: 'https://jsonplaceholder.typicode.com/posts',
         body: '{"foo":"bar"}',
     },
@@ -18,6 +22,9 @@ const requests: HttpRequest[] = [
         id: 2,
         label: 'IP API',
         method: 'GET',
+        headers: [
+            { key: 'Accept', value: '*/*' },
+        ],
         url: 'https://ipapi.co/json',
         body: undefined,
     },
@@ -26,6 +33,9 @@ const requests: HttpRequest[] = [
         id: 3,
         label: 'Countries',
         method: 'GET',
+        headers: [
+            { key: 'Accept', value: '*/*' },
+        ],
         url: 'https://restcountries.com/v3.1/all?fields=name,flags',
         body: undefined,
     },
@@ -34,6 +44,9 @@ const requests: HttpRequest[] = [
         id: 4,
         label: 'ChuckNorrisJoke',
         method: 'GET',
+        headers: [
+            { key: 'Accept', value: '*/*' },
+        ],
         url: 'https://api.chucknorris.io/jokes/random',
         body: undefined,
     },
@@ -42,6 +55,9 @@ const requests: HttpRequest[] = [
         id: 5,
         label: 'PokeAPI',
         method: 'GET',
+        headers: [
+            { key: 'Accept', value: '*/*' },
+        ],
         url: 'https://pokeapi.co/api/v2/pokemon/ditto',
         body: undefined,
     },
@@ -50,6 +66,10 @@ const requests: HttpRequest[] = [
         id: 6,
         label: 'RestAPI',
         method: 'POST',
+        headers: [
+            { key: 'Content-Type', value: 'application/json' },
+            { key: 'Accept', value: '*/*' },
+        ],
         url: 'https://api.restful-api.dev/objects',
         body: '{"name": "Apple MacBook Pro 16","data": {"year": 2019,"price": 1849.99,"CPU model": "Intel Core i9","Hard disk size": "1 TB"}}'
     }
@@ -87,22 +107,22 @@ function MainView() {
                 minHeight: 0,
                 boxSizing: 'border-box',
             }}>
-                <Box id='mainView_navigation' sx={{
-                    width: '20rem',
-                    borderRight: '1px solid',
-                    borderColor: 'divider',
-                }}>
-                    <RequestList requests={requests} />
-                </Box>
+                        <Box id='mainView_navigation' sx={{
+                            width: '20rem',
+                            borderRight: '1px solid',
+                            borderColor: 'divider',
+                        }}>
+                            <RequestList requests={requests} />
+                        </Box>
 
-                <Box id='mainView_editor' sx={{
-                    display: 'flex',
-                    minWidth: 0,
-                    minHeight: 0,
-                    flexGrow: 1,
-                }}>
-                    <TabView />
-                </Box>
+                        <Box id='mainView_editor' sx={{
+                            display: 'flex',
+                            minWidth: 0,
+                            minHeight: 0,
+                            flexGrow: 1,
+                        }}>
+                            <TabView />
+                        </Box>
             </Box>
         </Box>
     )
