@@ -35,7 +35,7 @@ function CustomTabPanel(props: TabPanelProps) {
                 boxSizing: 'border-box',
             }}
         >
-            {isSelected && children}
+            {children}
         </Box>
     );
 }

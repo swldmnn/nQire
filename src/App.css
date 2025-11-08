@@ -104,6 +104,7 @@ button {
   color: rgba(248, 248, 242, 1);
   overflow: auto;
   padding-left: .5rem;
+  font-size: .8rem;
 }
 
 .__json-key__ {

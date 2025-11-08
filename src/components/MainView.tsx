@@ -1,8 +1,10 @@
-import { Box, Typography } from "@mui/material"
+import { Box, Button, IconButton, Typography, useColorScheme } from "@mui/material"
 import Logo from "./Logo"
 import RequestList from "./RequestList"
 import TabView from "./TabView"
 import { HttpRequest } from "./types"
+import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
+import BrightnessLowIcon from '@mui/icons-material/BrightnessLow';
 
 const requests: HttpRequest[] = [
     {
@@ -77,6 +79,8 @@ const requests: HttpRequest[] = [
 
 function MainView() {
 
+    const { mode, setMode } = useColorScheme();
+
     return (
         <Box id='mainView_root' sx={{
             display: 'flex',
@@ -84,7 +88,7 @@ function MainView() {
             width: '100%',
             height: '100vh',
             boxSizing: 'border-box',
-            bgcolor: 'grey.900',
+            bgcolor: 'background.default',
         }}>
             <Box id='mainView_header' sx={{
                 display: 'flex',
@@ -98,6 +102,9 @@ function MainView() {
                 <Typography variant='h5' sx={{ marginLeft: '.5rem' }}>n</Typography>
                 <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
                 <Typography variant='h5' >ire</Typography>
+                <Button sx={{marginLeft: 'auto'}} onClick={() => {setMode(mode==='dark' ? 'light' : 'dark')}}>
+                    {mode==='light' ? <BrightnessHighIcon /> : <BrightnessLowIcon/>}
+                </Button>
             </Box>
 
             <Box id='mainView_content' sx={{

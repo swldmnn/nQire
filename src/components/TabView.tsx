@@ -24,10 +24,12 @@ function TabView() {
             {appContext.appState.openItems.length > 0 && <TabContainer onClose={onClose}>
                 {
                     appContext.appState.openItems.map((item, index) => item.typename === 'HttpRequest'
-                        ? <TabContentWrapper label={item.label} key={`RequestViewWrapper_${index}_${item.label}`}><RequestView
-                            request={item}
-                            key={`RequestView_${index}_${item.label}`}
-                        /></TabContentWrapper>
+                        ? <TabContentWrapper label={item.label} key={`RequestViewWrapper_${index}_${item.label}`}>
+                            <RequestView
+                                request={item}
+                                key={`RequestView_${index}_${item.label}`}
+                            />
+                        </TabContentWrapper>
                         : null)
                 }
             </TabContainer>}

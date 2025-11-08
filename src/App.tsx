@@ -1,4 +1,4 @@
-import { lime, pink } from '@mui/material/colors';
+import { green, lightGreen, lime, pink } from '@mui/material/colors';
 import './App.css';
 import {
   ThemeProvider,
@@ -7,18 +7,45 @@ import {
 import AppContextProvider from './AppContextProvider';
 import MainView from './components/MainView';
 
+const theme = createTheme({
+  cssVariables: {
+    colorSchemeSelector: 'class'
+  },
+  colorSchemes: {
+    light: {
+      palette: {
+        primary: lightGreen,
+        secondary: pink,
+      },
+    },
+    dark: {
+      palette: {
+        primary: lime,
+        secondary: pink,
+      },
+    },
+  },
+});
+
 function App() {
-  const darkTheme = createTheme({
+  /*
+  const theme = createTheme({
+    colorSchemes: {
+      dark: true,
+    },
     palette: {
-      mode: 'dark',
       primary: lime,
       secondary: pink,
     },
+    typography: {
+      fontFamily: 'Arial, Helvetica, sans-serif !important',
+      fontSize: 12,
+    },
   });
-
+*/
   return (
     <AppContextProvider>
-      <ThemeProvider theme={darkTheme}>
+      <ThemeProvider theme={theme}>
         <main>
           <MainView />
         </main>
