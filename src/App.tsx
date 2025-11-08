@@ -25,24 +25,13 @@ const theme = createTheme({
       },
     },
   },
-});
-
-function App() {
-  /*
-  const theme = createTheme({
-    colorSchemes: {
-      dark: true,
-    },
-    palette: {
-      primary: lime,
-      secondary: pink,
-    },
-    typography: {
+  typography: {
       fontFamily: 'Arial, Helvetica, sans-serif !important',
       fontSize: 12,
     },
-  });
-*/
+});
+
+function App() {
   return (
     <AppContextProvider>
       <ThemeProvider theme={theme}>
