@@ -2,7 +2,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "
 import RequestUrlBar from "./RequestUrlBar";
 import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "./types";
 import { useState } from "react";
-import { THttpRequest, THttpResponse } from "./types_transfer";
+import { HttpRequestTransfer, HttpResponseTransfer } from "./types_transfer";
 import { invoke } from "@tauri-apps/api/core";
 import RequestBody from "./RequestBody";
 import ResponseBody from "./ResponseBody";
@@ -22,7 +22,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
         }
 
         const req = { ...request, body: request.body ?? '' }
-        const response = await invoke("send_http_request", { request: req as THttpRequest }) as THttpResponse
+        const response = await invoke("send_http_request", { request: req as HttpRequestTransfer }) as HttpResponseTransfer
         setResponse(response as HttpResponse)
     }
 

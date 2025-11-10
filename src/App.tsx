@@ -1,4 +1,4 @@
-import { green, lightGreen, lime, pink } from '@mui/material/colors';
+import { lightGreen, lime, pink } from '@mui/material/colors';
 import './App.css';
 import {
   ThemeProvider,
@@ -26,9 +26,9 @@ const theme = createTheme({
     },
   },
   typography: {
-      fontFamily: 'Arial, Helvetica, sans-serif !important',
-      fontSize: 12,
-    },
+    fontFamily: 'Arial, Helvetica, sans-serif !important',
+    fontSize: 12,
+  },
 });
 
 function App() {

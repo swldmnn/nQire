@@ -1,53 +1,186 @@
+use http::{HeaderName, HeaderValue, Request};
 use serde::{Deserialize, Serialize};
-use http::{Request, HeaderName, HeaderValue};
+
+use crate::AppState;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct THttpHeader {
-    pub key: String,
-    pub value: String,
+pub struct HttpRequestSetTransfer {
+    pub name: String,
+    pub requests: Vec<HttpRequestTransfer>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct THttpRequest {
+pub struct HttpRequestTransfer {
+    pub label: String,
     pub method: String,
     pub url: String,
-    pub headers: Vec<THttpHeader>,
+    pub headers: Vec<HttpHeaderTransfer>,
     pub body: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct THttpResponse {
+pub struct HttpResponseTransfer {
     pub status: u16,
     pub body: String,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HttpHeaderTransfer {
+    pub key: String,
+    pub value: String,
+}
+
 #[tauri::command]
-pub fn send_http_request(request: THttpRequest) -> THttpResponse {
+pub fn send_http_request(request: HttpRequestTransfer) -> HttpResponseTransfer {
     let mut req_builder = Request::builder()
-    .method(request.method.as_str())
-    .uri(request.url);
-   
+        .method(request.method.as_str())
+        .uri(request.url);
+
     {
         let headers_mut = req_builder.headers_mut().unwrap();
         for header in request.headers {
-            let name = HeaderName::from_bytes(header.key.as_bytes())
-                .expect("Invalid header name");
-            let value = HeaderValue::from_str(&header.value)
-                .expect("Invalid header value");
+            let name = HeaderName::from_bytes(header.key.as_bytes()).expect("Invalid header name");
+            let value = HeaderValue::from_str(&header.value).expect("Invalid header value");
 
             headers_mut.insert(name, value);
         }
     }
-   
-    let req = req_builder
-    .body(request.body)
-    .unwrap();
-    
+
+    let req = req_builder.body(request.body).unwrap();
+
     match super::http_handler::send_http_request(req) {
-        Ok(r) => return THttpResponse { status: r.status().as_u16(), body: r.body().to_owned() },
-        Err(e) => return THttpResponse { status: 0, body: e },
+        Ok(r) => {
+            return HttpResponseTransfer {
+                status: r.status().as_u16(),
+                body: r.body().to_owned(),
+            }
+        }
+        Err(e) => return HttpResponseTransfer { status: 0, body: e },
     };
+}
+
+#[tauri::command]
+pub async fn find_all_requests(
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<HttpRequestSetTransfer>, String> {
+    /*
+    let requests = super::persistence::find_all_requests(state).await.unwrap();
+
+    let request_transfers = requests.iter()
+    .map(|request| map_request_to_request_transfer(request.to_owned()))
+    .collect();
+    */
+
+    Ok(build_sample_requests())
+}
+
+fn map_request_to_request_transfer(request: Request<String>) -> HttpRequestTransfer {
+    let request_transfer = HttpRequestTransfer {
+        label: "".to_owned(),
+        method: request.method().to_string(),
+        url: request.uri().to_string(),
+        body: request.body().to_owned(),
+        headers: vec![],
+    };
+
+    request_transfer
+}
+
+fn build_sample_requests() -> Vec<HttpRequestSetTransfer> {
+    let sample_requests = vec![
+        HttpRequestTransfer {
+            label: "JsonPlaceholder".to_owned(),
+            method: "POST".to_owned(),
+            url: "https://jsonplaceholder.typicode.com/posts".to_owned(),
+            body: "{\"foo\":\"bar\"}".to_owned(),
+            headers: vec![
+                HttpHeaderTransfer {
+                    key: "Content-Type".to_owned(),
+                    value: "application/json".to_owned(),
+                },
+                HttpHeaderTransfer {
+                    key: "Accept".to_owned(),
+                    value: "*/*".to_owned(),
+                },
+            ],
+        },
+        HttpRequestTransfer {
+            label: "IP API".to_owned(),
+            method: "GET".to_owned(),
+            url: "https://ipapi.co/json".to_owned(),
+            body: "".to_owned(),
+            headers: vec![HttpHeaderTransfer {
+                key: "Accept".to_owned(),
+                value: "*/*".to_owned(),
+            }],
+        },
+        HttpRequestTransfer {
+            label: "Countries".to_owned(),
+            method: "GET".to_owned(),
+            url: "https://restcountries.com/v3.1/all?fields=name,flags".to_owned(),
+            body: "".to_owned(),
+            headers: vec![HttpHeaderTransfer {
+                key: "Accept".to_owned(),
+                value: "*/*".to_owned(),
+            }],
+        },
+        HttpRequestTransfer {
+            label: "ChuckNorrisJoke".to_owned(),
+            method: "GET".to_owned(),
+            url: "https://api.chucknorris.io/jokes/random".to_owned(),
+            body: "".to_owned(),
+            headers: vec![HttpHeaderTransfer {
+                key: "Accept".to_owned(),
+                value: "*/*".to_owned(),
+            }],
+        },
+    ];
+
+    let sample_requests_2 = vec![
+        HttpRequestTransfer{
+            label: "PokeAPI".to_owned(),
+            method: "GET".to_owned(),
+            url: "https://pokeapi.co/api/v2/pokemon/ditto".to_owned(),
+            body: "".to_owned(),
+            headers: vec![
+                HttpHeaderTransfer {
+                    key: "Accept".to_owned(),
+                    value: "*/*".to_owned(),
+                }
+            ],
+        },
+        HttpRequestTransfer{
+            label: "RestAPI".to_owned(),
+            method: "POST".to_owned(),
+            url: "https://api.restful-api.dev/objects".to_owned(),
+            body: "{\"name\": \"Apple MacBook Pro 16\",\"data\": {\"year\": 2019,\"price\": 1849.99,\"CPU model\": \"Intel Core i9\",\"Hard disk size\": \"1 TB\"}}".to_owned(),
+            headers: vec![
+                HttpHeaderTransfer{
+                    key: "Content-Type".to_owned(),
+                    value: "application/json".to_owned(),
+                },
+                HttpHeaderTransfer {
+                    key: "Accept".to_owned(),
+                    value: "*/*".to_owned(),
+                }
+            ],
+        }
+    ];
+
+    let request_sets = vec![
+        HttpRequestSetTransfer {
+            name: "Sample requests".to_owned(),
+            requests: sample_requests,
+        },
+        HttpRequestSetTransfer {
+            name: "Sample requests 2".to_owned(),
+            requests: sample_requests_2,
+        },
+    ];
+
+    request_sets
 }

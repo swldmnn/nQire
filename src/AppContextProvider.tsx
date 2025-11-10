@@ -11,7 +11,10 @@ function AppContextProvider(props: AppContextProviderProps) {
     }
 
     const initialContext = {
-        appState: { openItems: [] },
+        appState: {
+            openItems: [],
+            requestSets: [],
+        },
         updateAppState
     } as AppCtx
 

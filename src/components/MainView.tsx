@@ -1,85 +1,41 @@
-import { Box, Button, IconButton, Typography, useColorScheme } from "@mui/material"
+import { Box, Button, Typography, useColorScheme } from "@mui/material"
 import Logo from "./Logo"
 import RequestList from "./RequestList"
 import TabView from "./TabView"
-import { HttpRequest } from "./types"
+import { HttpRequest, HttpRequestSet } from "./types"
 import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
 import BrightnessLowIcon from '@mui/icons-material/BrightnessLow';
-
-const requests: HttpRequest[] = [
-    {
-        typename: 'HttpRequest',
-        id: 1,
-        label: 'JsonPlaceholder',
-        method: 'POST',
-        headers: [
-            { key: 'Content-Type', value: 'application/json' },
-            { key: 'Accept', value: '*/*' },
-        ],
-        url: 'https://jsonplaceholder.typicode.com/posts',
-        body: '{"foo":"bar"}',
-    },
-    {
-        typename: 'HttpRequest',
-        id: 2,
-        label: 'IP API',
-        method: 'GET',
-        headers: [
-            { key: 'Accept', value: '*/*' },
-        ],
-        url: 'https://ipapi.co/json',
-        body: undefined,
-    },
-    {
-        typename: 'HttpRequest',
-        id: 3,
-        label: 'Countries',
-        method: 'GET',
-        headers: [
-            { key: 'Accept', value: '*/*' },
-        ],
-        url: 'https://restcountries.com/v3.1/all?fields=name,flags',
-        body: undefined,
-    },
-    {
-        typename: 'HttpRequest',
-        id: 4,
-        label: 'ChuckNorrisJoke',
-        method: 'GET',
-        headers: [
-            { key: 'Accept', value: '*/*' },
-        ],
-        url: 'https://api.chucknorris.io/jokes/random',
-        body: undefined,
-    },
-    {
-        typename: 'HttpRequest',
-        id: 5,
-        label: 'PokeAPI',
-        method: 'GET',
-        headers: [
-            { key: 'Accept', value: '*/*' },
-        ],
-        url: 'https://pokeapi.co/api/v2/pokemon/ditto',
-        body: undefined,
-    },
-    {
-        typename: 'HttpRequest',
-        id: 6,
-        label: 'RestAPI',
-        method: 'POST',
-        headers: [
-            { key: 'Content-Type', value: 'application/json' },
-            { key: 'Accept', value: '*/*' },
-        ],
-        url: 'https://api.restful-api.dev/objects',
-        body: '{"name": "Apple MacBook Pro 16","data": {"year": 2019,"price": 1849.99,"CPU model": "Intel Core i9","Hard disk size": "1 TB"}}'
-    }
-]
+import { invoke } from "@tauri-apps/api/core"
+import { useContext, useEffect } from "react"
+import { AppContext } from "../AppContext"
+import { HttpRequestSetTransfer } from "./types_transfer"
 
 function MainView() {
 
     const { mode, setMode } = useColorScheme();
+    const appContext = useContext(AppContext)
+
+    useEffect(() => {
+        async function getRequestSets() {
+            const loadedRequestTransfers = await invoke('find_all_requests', {}) as HttpRequestSetTransfer[];
+
+            const loadedRequests = loadedRequestTransfers.map(requestSetTransfer => {
+                return {
+                    name: requestSetTransfer.name,
+                    requests: requestSetTransfer.requests.map(requestTransfer => {
+                        return { ...requestTransfer, typename: 'HttpRequest' } as HttpRequest
+                    })
+                } as HttpRequestSet
+            })
+
+            appContext.appState.requestSets = loadedRequests
+            appContext.updateAppState(appContext.appState)
+        };
+
+        if (!appContext.appState.requestSets.length) {  //TODO how to handle empty sets
+            getRequestSets();
+        }
+    }, []);
 
     return (
         <Box id='mainView_root' sx={{
@@ -102,8 +58,8 @@ function MainView() {
                 <Typography variant='h5' sx={{ marginLeft: '.5rem' }}>n</Typography>
                 <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
                 <Typography variant='h5' >ire</Typography>
-                <Button sx={{marginLeft: 'auto'}} onClick={() => {setMode(mode==='dark' ? 'light' : 'dark')}}>
-                    {mode==='light' ? <BrightnessHighIcon /> : <BrightnessLowIcon/>}
+                <Button sx={{ marginLeft: 'auto' }} onClick={() => { setMode(mode === 'dark' ? 'light' : 'dark') }}>
+                    {mode === 'light' ? <BrightnessHighIcon /> : <BrightnessLowIcon />}
                 </Button>
             </Box>
 
@@ -114,22 +70,22 @@ function MainView() {
                 minHeight: 0,
                 boxSizing: 'border-box',
             }}>
-                        <Box id='mainView_navigation' sx={{
-                            width: '20rem',
-                            borderRight: '1px solid',
-                            borderColor: 'divider',
-                        }}>
-                            <RequestList requests={requests} />
-                        </Box>
+                <Box id='mainView_navigation' sx={{
+                    width: '20rem',
+                    borderRight: '1px solid',
+                    borderColor: 'divider',
+                }}>
+                    <RequestList />
+                </Box>
 
-                        <Box id='mainView_editor' sx={{
-                            display: 'flex',
-                            minWidth: 0,
-                            minHeight: 0,
-                            flexGrow: 1,
-                        }}>
-                            <TabView />
-                        </Box>
+                <Box id='mainView_editor' sx={{
+                    display: 'flex',
+                    minWidth: 0,
+                    minHeight: 0,
+                    flexGrow: 1,
+                }}>
+                    <TabView />
+                </Box>
             </Box>
         </Box>
     )

@@ -11,50 +11,51 @@ import {
     AccordionDetails
 } from "@mui/material"
 import NearMeIcon from '@mui/icons-material/NearMe';
-import { HttpRequest } from "./types";
 import { useContext } from "react";
 import { AppContext } from "../AppContext";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 interface RequestListProps {
-    requests: HttpRequest[]
 }
 
-function RequestList({ requests }: RequestListProps) {
+function RequestList({}: RequestListProps) {
     const appContext = useContext(AppContext)
 
-    const openItem = (index: number) => {
-        appContext.appState.openItems.push(requests[index])
+    const openItem = (requestSetIndex: number, requestIndex: number) => {
+        appContext.appState.openItems.push(appContext.appState.requestSets[requestSetIndex].requests[requestIndex])
         appContext.updateAppState(appContext.appState)
     }
 
     return (
         <Box>
-            <Accordion defaultExpanded disableGutters>
-                <AccordionSummary
-                    expandIcon={<KeyboardArrowDownIcon />}
-                    sx={{
-                        flexDirection: 'row-reverse',
-                        color: 'primary.main',
-                    }}
-                >
-                    <Typography component="span">Sample requests</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <List>
-                        {requests.map((request, index) =>
-                            <ListItem key={'RequestListItem' + index}>
-                                <ListItemButton onDoubleClick={() => openItem(index)}>
-                                    <ListItemIcon>
-                                        <NearMeIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary={request.label} />
-                                </ListItemButton>
-                            </ListItem>
-                        )}
-                    </List>
-                </AccordionDetails>
-            </Accordion>
+            {
+                appContext.appState.requestSets.map((requestSet, requestSetIndex) =>
+                    <Accordion defaultExpanded disableGutters key={`RequestSet_${requestSetIndex}`}>
+                        <AccordionSummary
+                            expandIcon={<KeyboardArrowDownIcon />}
+                            sx={{
+                                flexDirection: 'row-reverse',
+                                color: 'primary.main',
+                            }}
+                        >
+                            <Typography component="span">{requestSet.name}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <List>
+                                {requestSet.requests.map((request, requestIndex) =>
+                                    <ListItem key={'RequestListItem' + requestIndex}>
+                                        <ListItemButton onDoubleClick={() => openItem(requestSetIndex, requestIndex)}>
+                                            <ListItemIcon>
+                                                <NearMeIcon />
+                                            </ListItemIcon>
+                                            <ListItemText primary={request.label} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                )}
+                            </List>
+                        </AccordionDetails>
+                    </Accordion>
+                )}
         </Box>)
 }
 

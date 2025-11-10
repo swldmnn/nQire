@@ -6,6 +6,11 @@ export interface HttpRequestResponseProps {
     setResponse?: (response: HttpResponse) => void
 }
 
+export interface HttpRequestSet {
+    name: string
+    requests: HttpRequest[]
+}
+
 export interface HttpRequest {
     typename: 'HttpRequest'
     id: number
