@@ -18,18 +18,10 @@ function MainView() {
 
     useEffect(() => {
         async function getRequestSets() {
-            const loadedRequestTransfers = await invoke('find_all_requests', {}) as HttpRequestSetTransfer[];
+            const loadedRequestSetTransfers: HttpRequestSetTransfer[] = await invoke('find_all_request_sets', {});
+            const loadedRequestSets: HttpRequestSet[] = loadedRequestSetTransfers
 
-            const loadedRequests = loadedRequestTransfers.map(requestSetTransfer => {
-                return {
-                    name: requestSetTransfer.name,
-                    requests: requestSetTransfer.requests.map(requestTransfer => {
-                        return { ...requestTransfer, typename: 'HttpRequest' } as HttpRequest
-                    })
-                } as HttpRequestSet
-            })
-
-            appContext.appState.requestSets = loadedRequests
+            appContext.appState.requestSets = loadedRequestSets
             appContext.updateAppState(appContext.appState)
         };
 

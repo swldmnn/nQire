@@ -3,12 +3,16 @@
  * Keep in sync with the corresponding backend types to avoid Serialization Errors.
  */
 
+import { HttpRequestSet } from "./types"
+
 export interface HttpRequestSetTransfer {
     name: string
     requests: HttpRequestTransfer[]
 }
 
 export interface HttpRequestTransfer {
+    typename: 'HttpRequest'
+    id: number
     label: string
     method: string
     url: string
@@ -24,4 +28,9 @@ export interface HttpResponseTransfer {
 export interface HttpHeaderTransfer {
     key: string
     value: string
+}
+
+export const mapRequestSetTransfers = (requestSetTransfers: HttpRequestSetTransfer[]) => {
+    const mappedSequestSets: HttpRequestSet[] = requestSetTransfers
+    return mappedSequestSets
 }

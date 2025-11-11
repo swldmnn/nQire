@@ -1,4 +1,10 @@
 
+interface TabItem {
+    typename: string
+    id: number
+    label: string
+}
+
 export interface HttpRequestResponseProps {
     request?: HttpRequest
     response?: HttpResponse
@@ -11,10 +17,8 @@ export interface HttpRequestSet {
     requests: HttpRequest[]
 }
 
-export interface HttpRequest {
+export interface HttpRequest extends TabItem {
     typename: 'HttpRequest'
-    id: number
-    label: string
     method: string
     url: string
     headers: HttpHeader[]
@@ -22,7 +26,6 @@ export interface HttpRequest {
 }
 
 export interface HttpResponse {
-    typename: 'HttpResponse'
     status: number
     body?: string
 }

@@ -25,6 +25,7 @@ async fn setup_db(app: &App) -> Db {
     };
 
     path.push("db.sqlite");
+    println!("Path is: {:?}", path);
 
     Sqlite::create_database(
         format!(
@@ -41,7 +42,7 @@ async fn setup_db(app: &App) -> Db {
         .await
         .unwrap();
 
-    //sqlx::migrate!("./migrations").run(&db).await.unwrap();
+    sqlx::migrate!("./migrations").run(&db).await.unwrap();
 
     db
 }
@@ -64,7 +65,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             commands::send_http_request,
-            commands::find_all_requests,
+            commands::find_all_request_sets,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
