@@ -1,4 +1,4 @@
-import { Box, Button, Typography, useColorScheme } from "@mui/material"
+import { Box, Button, styled, Typography, useColorScheme } from "@mui/material"
 import Logo from "./Logo"
 import RequestList from "./RequestList"
 import TabView from "./TabView"
@@ -9,6 +9,7 @@ import { invoke } from "@tauri-apps/api/core"
 import { useContext, useEffect } from "react"
 import { AppContext } from "../AppContext"
 import { HttpRequestSetTransfer } from "./types_transfer"
+import WelcomeView from "./WelcomeView"
 
 function MainView() {
 
@@ -54,7 +55,7 @@ function MainView() {
                 bgcolor: 'grey.800',
                 boxShadow: '0 6px 6px rgba(0, 0, 0, 0.2)'
             }}>
-                <Logo />
+                <Logo sx={{ color: 'primary.main', height: "2rem", width: "2rem", verticalAlign: "bottom" }} />
                 <Typography variant='h5' sx={{ marginLeft: '.5rem' }}>n</Typography>
                 <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
                 <Typography variant='h5' >ire</Typography>
@@ -84,7 +85,7 @@ function MainView() {
                     minHeight: 0,
                     flexGrow: 1,
                 }}>
-                    <TabView />
+                    {appContext.appState.openItems.length ? <TabView /> : <WelcomeView />}
                 </Box>
             </Box>
         </Box>

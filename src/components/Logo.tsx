@@ -1,7 +1,11 @@
-import { SvgIcon } from "@mui/material"
+import { SvgIcon, SxProps, Theme } from "@mui/material"
 
-function Logo() {
-    return <SvgIcon sx={{ color: 'primary.main', height: "2rem", width: "2rem", verticalAlign: "bottom" }}>
+interface LogoProps {
+    sx?: SxProps<Theme>;
+}
+
+function Logo({ sx }: LogoProps) {
+    return <SvgIcon sx={[...(Array.isArray(sx) ? sx : [sx])]}>
         <svg xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 900 900">
             <path id="outline_60"

@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
+import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
 import { HttpRequestResponseProps } from "./types"
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
@@ -39,7 +39,7 @@ function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
     const onHeaderAdd = () => {
         if (setRequest) {
             const headers = request.headers.map(h => { return { ...h } })
-            headers.push({key: '', value: ''})
+            headers.push({ key: '', value: '' })
             setRequest({ ...request, headers })
         }
     }
