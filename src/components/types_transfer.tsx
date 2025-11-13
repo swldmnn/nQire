@@ -6,7 +6,9 @@
 import { HttpRequestSet } from "./types"
 
 export interface HttpRequestSetTransfer {
-    name: string
+    typename: 'HttpRequestSet'
+    id: number
+    label: string
     requests: HttpRequestTransfer[]
 }
 

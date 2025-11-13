@@ -1,5 +1,5 @@
 
-interface TabItem {
+interface DisplayItem {
     typename: string
     id: number
     label: string
@@ -12,12 +12,12 @@ export interface HttpRequestResponseProps {
     setResponse?: (response: HttpResponse) => void
 }
 
-export interface HttpRequestSet {
-    name: string
+export interface HttpRequestSet extends DisplayItem{
+    typename: 'HttpRequestSet'
     requests: HttpRequest[]
 }
 
-export interface HttpRequest extends TabItem {
+export interface HttpRequest extends DisplayItem {
     typename: 'HttpRequest'
     method: string
     url: string

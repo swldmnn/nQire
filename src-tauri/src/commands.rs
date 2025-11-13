@@ -6,7 +6,9 @@ use crate::{persistence::RequestMetaData, AppState};
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HttpRequestSetTransfer {
-    pub name: String,
+    pub typename: String,
+    pub id: u16,
+    pub label: String,
     pub requests: Vec<HttpRequestTransfer>,
 }
 
@@ -69,7 +71,7 @@ pub fn send_http_request(request: HttpRequestTransfer) -> HttpResponseTransfer {
 pub async fn find_all_request_sets(
     state: tauri::State<'_, AppState>,
 ) -> Result<Vec<HttpRequestSetTransfer>, String> {
-    let requests = super::persistence::find_all_requests(state)
+    let requests = super::persistence::fetch_all_requests(state)
         .await
         .map_err(|e| e)?;
 
@@ -79,7 +81,9 @@ pub async fn find_all_request_sets(
         .collect::<Vec<HttpRequestTransfer>>();
 
     let request_sets = vec![HttpRequestSetTransfer {
-        name: "all requests".to_owned(),
+        typename: "HttpRequestSet".to_owned(),
+        id: 1,
+        label: "All requests".to_owned(),
         requests: request_transfers,
     }];
 
@@ -203,11 +207,15 @@ fn build_sample_requests() -> Vec<HttpRequestSetTransfer> {
 
     let request_sets = vec![
         HttpRequestSetTransfer {
-            name: "Sample requests".to_owned(),
+            typename: "HttpRequestSet".to_owned(),
+            id: 1,
+            label: "Sample requests".to_owned(),
             requests: sample_requests,
         },
         HttpRequestSetTransfer {
-            name: "Sample requests 2".to_owned(),
+            typename: "HttpRequestSet".to_owned(),
+            id: 2,
+            label: "Sample requests 2".to_owned(),
             requests: sample_requests_2,
         },
     ];

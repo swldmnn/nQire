@@ -38,7 +38,7 @@ function RequestList({}: RequestListProps) {
                                 color: 'primary.main',
                             }}
                         >
-                            <Typography component="span">{requestSet.name}</Typography>
+                            <Typography component="span">{requestSet.label}</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                             <List>
