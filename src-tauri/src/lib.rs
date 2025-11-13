@@ -1,6 +1,7 @@
-mod commands;
-mod http_handler;
+mod api;
 mod persistence;
+mod domain;
+mod services;
 
 use sqlx::{migrate::MigrateDatabase, sqlite::SqlitePoolOptions, Pool, Sqlite};
 use tauri::App;
@@ -64,8 +65,8 @@ pub fn run() {
         })
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            commands::send_http_request,
-            commands::find_all_request_sets,
+            api::send_http_request,
+            api::find_all_request_sets,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

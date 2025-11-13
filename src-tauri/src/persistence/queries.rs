@@ -1,35 +1,15 @@
-use crate::{AppState, commands::HttpRequestSetTransfer};
 use futures::TryStreamExt;
 use http::Request;
-use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
-struct RequestEntity {
-    id: u16,
-    label: String,
-    method: String,
-    url: String,
-    body: String,
-}
-
-#[derive(Clone)]
-pub struct RequestMetaData {
-    pub id: u16,
-    pub label: String,
-}
-
-pub async fn fetch_all_request_sets (state: tauri::State<'_, AppState>,) -> Vec<HttpRequestSet> {
-
-}
+use crate::{AppState, domain::RequestMetaData, persistence::RequestRecord};
 
 pub async fn fetch_all_requests(
     state: tauri::State<'_, AppState>,
 ) -> Result<Vec<Request<String>>, String> {
     let db = &state.db;
 
-    let request_entities: Vec<RequestEntity> =
-        sqlx::query_as::<_, RequestEntity>("SELECT * FROM requests")
+    let request_entities: Vec<RequestRecord> =
+        sqlx::query_as::<_, RequestRecord>("SELECT * FROM requests")
             .fetch(db)
             .try_collect()
             .await
@@ -43,7 +23,7 @@ pub async fn fetch_all_requests(
     Ok(requests)
 }
 
-fn map_request_entity_to_request(request_entity: &RequestEntity) -> Request<String> {
+fn map_request_entity_to_request(request_entity: &RequestRecord) -> Request<String> {
     let mapped = Request::builder()
         .method(request_entity.method.as_str())
         .uri(request_entity.url.to_owned())
@@ -56,7 +36,6 @@ fn map_request_entity_to_request(request_entity: &RequestEntity) -> Request<Stri
 
     mapped
 }
-
 
 /*
 async fn fetch_request_sets(pool: &PgPool) -> Result<Vec<RequestSet>, sqlx::Error> {

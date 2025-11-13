@@ -1,42 +1,6 @@
 use http::{HeaderName, HeaderValue, Request};
-use serde::{Deserialize, Serialize};
 
-use crate::{persistence::RequestMetaData, AppState};
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct HttpRequestSetTransfer {
-    pub typename: String,
-    pub id: u16,
-    pub label: String,
-    pub requests: Vec<HttpRequestTransfer>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct HttpRequestTransfer {
-    pub typename: String,
-    pub id: u16,
-    pub label: String,
-    pub method: String,
-    pub url: String,
-    pub headers: Vec<HttpHeaderTransfer>,
-    pub body: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct HttpResponseTransfer {
-    pub status: u16,
-    pub body: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct HttpHeaderTransfer {
-    pub key: String,
-    pub value: String,
-}
+use crate::{AppState, api::{HttpRequestSetTransfer, HttpRequestTransfer, HttpResponseTransfer}, domain::RequestMetaData};
 
 #[tauri::command]
 pub fn send_http_request(request: HttpRequestTransfer) -> HttpResponseTransfer {
@@ -56,7 +20,7 @@ pub fn send_http_request(request: HttpRequestTransfer) -> HttpResponseTransfer {
 
     let req = req_builder.body(request.body).unwrap();
 
-    match super::http_handler::send_http_request(req) {
+    match crate::services::send_http_request(req) {
         Ok(r) => {
             return HttpResponseTransfer {
                 status: r.status().as_u16(),
@@ -71,7 +35,7 @@ pub fn send_http_request(request: HttpRequestTransfer) -> HttpResponseTransfer {
 pub async fn find_all_request_sets(
     state: tauri::State<'_, AppState>,
 ) -> Result<Vec<HttpRequestSetTransfer>, String> {
-    let requests = super::persistence::fetch_all_requests(state)
+    let requests = crate::persistence::fetch_all_requests(state)
         .await
         .map_err(|e| e)?;
 
@@ -112,6 +76,7 @@ fn map_request_to_request_transfer(request: &Request<String>) -> HttpRequestTran
     request_transfer
 }
 
+/*
 fn build_sample_requests() -> Vec<HttpRequestSetTransfer> {
     let sample_requests = vec![
         HttpRequestTransfer {
@@ -126,10 +91,6 @@ fn build_sample_requests() -> Vec<HttpRequestSetTransfer> {
                     key: "Content-Type".to_owned(),
                     value: "application/json".to_owned(),
                 },
-                HttpHeaderTransfer {
-                    key: "Accept".to_owned(),
-                    value: "*/*".to_owned(),
-                },
             ],
         },
         HttpRequestTransfer {
@@ -139,10 +100,7 @@ fn build_sample_requests() -> Vec<HttpRequestSetTransfer> {
             method: "GET".to_owned(),
             url: "https://ipapi.co/json".to_owned(),
             body: "".to_owned(),
-            headers: vec![HttpHeaderTransfer {
-                key: "Accept".to_owned(),
-                value: "*/*".to_owned(),
-            }],
+            headers: vec![],
         },
         HttpRequestTransfer {
             typename: "HttpRequest".to_owned(),
@@ -151,10 +109,7 @@ fn build_sample_requests() -> Vec<HttpRequestSetTransfer> {
             method: "GET".to_owned(),
             url: "https://restcountries.com/v3.1/all?fields=name,flags".to_owned(),
             body: "".to_owned(),
-            headers: vec![HttpHeaderTransfer {
-                key: "Accept".to_owned(),
-                value: "*/*".to_owned(),
-            }],
+            headers: vec![],
         },
         HttpRequestTransfer {
             typename: "HttpRequest".to_owned(),
@@ -163,10 +118,7 @@ fn build_sample_requests() -> Vec<HttpRequestSetTransfer> {
             method: "GET".to_owned(),
             url: "https://api.chucknorris.io/jokes/random".to_owned(),
             body: "".to_owned(),
-            headers: vec![HttpHeaderTransfer {
-                key: "Accept".to_owned(),
-                value: "*/*".to_owned(),
-            }],
+            headers: vec![],
         },
     ];
 
@@ -178,12 +130,7 @@ fn build_sample_requests() -> Vec<HttpRequestSetTransfer> {
             method: "GET".to_owned(),
             url: "https://pokeapi.co/api/v2/pokemon/ditto".to_owned(),
             body: "".to_owned(),
-            headers: vec![
-                HttpHeaderTransfer {
-                    key: "Accept".to_owned(),
-                    value: "*/*".to_owned(),
-                }
-            ],
+            headers: vec![],
         },
         HttpRequestTransfer{
             typename: "HttpRequest".to_owned(),
@@ -197,10 +144,6 @@ fn build_sample_requests() -> Vec<HttpRequestSetTransfer> {
                     key: "Content-Type".to_owned(),
                     value: "application/json".to_owned(),
                 },
-                HttpHeaderTransfer {
-                    key: "Accept".to_owned(),
-                    value: "*/*".to_owned(),
-                }
             ],
         }
     ];
@@ -222,3 +165,4 @@ fn build_sample_requests() -> Vec<HttpRequestSetTransfer> {
 
     request_sets
 }
+ */
