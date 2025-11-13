@@ -1,40 +1,20 @@
 use futures::TryStreamExt;
-use http::Request;
 
-use crate::{AppState, domain::RequestMetaData, persistence::RequestRecord};
+use crate::{AppState, persistence::RequestRecord};
 
 pub async fn fetch_all_requests(
     state: tauri::State<'_, AppState>,
-) -> Result<Vec<Request<String>>, String> {
+) -> Result<Vec<RequestRecord>, String> {
     let db = &state.db;
 
-    let request_entities: Vec<RequestRecord> =
+    let request_records: Vec<RequestRecord> =
         sqlx::query_as::<_, RequestRecord>("SELECT * FROM requests")
             .fetch(db)
             .try_collect()
             .await
             .map_err(|e| format!("Failed to get requests {}", e))?;
 
-    let requests = request_entities
-        .iter()
-        .map(|request_entity| map_request_entity_to_request(request_entity))
-        .collect::<Vec<Request<String>>>();
-
-    Ok(requests)
-}
-
-fn map_request_entity_to_request(request_entity: &RequestRecord) -> Request<String> {
-    let mapped = Request::builder()
-        .method(request_entity.method.as_str())
-        .uri(request_entity.url.to_owned())
-        .extension(RequestMetaData {
-            id: request_entity.id,
-            label: request_entity.label.to_owned(),
-        })
-        .body(request_entity.body.to_owned())
-        .unwrap();
-
-    mapped
+    Ok(request_records)
 }
 
 /*
