@@ -2,7 +2,7 @@ import { Box, Button, Divider, Tab, Tabs } from "@mui/material";
 import RequestList from "./RequestList";
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import { useState } from "react";
 import EnvironmentList from "./EnvironmentList";
@@ -45,7 +45,7 @@ function MainNavigation() {
                     orientation="vertical"
                     sx={{ width: '100%' }}
                 >
-                    <Tab icon={<SwapHorizIcon />} />
+                    <Tab icon={<PlayArrowIcon />} />
                     <Tab icon={<AdjustIcon />} />
                 </Tabs>
 

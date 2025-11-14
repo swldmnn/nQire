@@ -10,7 +10,7 @@ import {
     Typography,
     AccordionDetails
 } from "@mui/material"
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useContext } from "react";
 import { AppContext } from "../AppContext";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -46,7 +46,7 @@ function RequestList({}: RequestListProps) {
                                     <ListItem key={'RequestListItem' + requestIndex}>
                                         <ListItemButton onDoubleClick={() => openItem(requestSetIndex, requestIndex)}>
                                             <ListItemIcon>
-                                                <SwapHorizIcon />
+                                                <PlayArrowIcon />
                                             </ListItemIcon>
                                             <ListItemText primary={request.label} />
                                         </ListItemButton>
