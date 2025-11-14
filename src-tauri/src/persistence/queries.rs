@@ -1,118 +1,116 @@
+use std::collections::HashMap;
+
 use futures::TryStreamExt;
+use http::{HeaderName, HeaderValue, Request};
 
-use crate::{AppState, persistence::RequestRecord};
+use crate::{
+    domain::{HttpRequestSet, RequestHeader, RequestMetaData},
+    persistence::{RequestHeaderRecord, RequestRecord, RequestSetRecord},
+    AppState,
+};
 
-pub async fn fetch_all_requests(
-    state: tauri::State<'_, AppState>,
-) -> Result<Vec<RequestRecord>, String> {
+pub async fn fetch_all_request_sets(
+    state: &tauri::State<'_, AppState>,
+) -> Result<Vec<HttpRequestSet>, String> {
     let db = &state.db;
 
-    let request_records: Vec<RequestRecord> =
+    let all_requests = fetch_all_requests(state)
+        .await
+        .map_err(|e| format!("Failed to fetch request sets {}", e))?;
+
+    let mut requests_by_request_set_id: HashMap<u32, Vec<Request<String>>> = HashMap::new();
+    for request in all_requests {
+        if let Some(request_meta_data) = request.extensions().get::<RequestMetaData>() {
+            requests_by_request_set_id
+                .entry(request_meta_data.request_set_id)
+                .or_default()
+                .push(request);
+        }
+    }
+
+    let request_set_records: Vec<RequestSetRecord> =
+        sqlx::query_as::<_, RequestSetRecord>("SELECT * FROM request_sets")
+            .fetch(db)
+            .try_collect()
+            .await
+            .map_err(|e| format!("Failed to fetch request sets {}", e))?;
+
+    let mut request_sets = request_set_records
+        .into_iter()
+        .map(HttpRequestSet::from)
+        .collect::<Vec<HttpRequestSet>>();
+
+    for request_set in &mut request_sets {
+        if let Some(requests) = requests_by_request_set_id.remove(&request_set.id) {
+            request_set.requests = requests;
+        }
+    }
+
+    Ok(request_sets)
+}
+
+pub async fn fetch_all_requests(
+    state: &tauri::State<'_, AppState>,
+) -> Result<Vec<Request<String>>, String> {
+    let db = &state.db;
+
+    let all_request_headers = fetch_all_request_headers(state)
+        .await
+        .map_err(|e| format!("Failed to fetch requests {}", e))?;
+
+    let mut headers_by_request_id: HashMap<u32, Vec<RequestHeader>> = HashMap::new();
+    for header in all_request_headers {
+        headers_by_request_id
+            .entry(header.request_id)
+            .or_default()
+            .push(header);
+    }
+
+    let all_request_records: Vec<RequestRecord> =
         sqlx::query_as::<_, RequestRecord>("SELECT * FROM requests")
             .fetch(db)
             .try_collect()
             .await
-            .map_err(|e| format!("Failed to get requests {}", e))?;
+            .map_err(|e| format!("Failed to fetch requests {}", e))?;
 
-    Ok(request_records)
-}
-
-/*
-async fn fetch_request_sets(pool: &PgPool) -> Result<Vec<RequestSet>, sqlx::Error> {
-    // ---- Fetch sets ----
-    let sets_rows = sqlx::query!(
-        r#"
-        SELECT id, name
-        FROM request_sets
-        "#
-    )
-    .fetch_all(pool)
-    .await?;
-
-    let mut sets: Vec<RequestSet> = sets_rows
+    let mut requests: Vec<Request<String>> = all_request_records
         .into_iter()
-        .map(|r| RequestSet {
-            id: r.id,
-            name: r.name,
-            requests: Vec::new(),
-        })
+        .map(Request::<String>::from)
         .collect();
 
-    // ---- Fetch requests ----
-    let requests_rows = sqlx::query!(
-        r#"
-        SELECT id, request_set_id, url
-        FROM requests
-        "#
-    )
-    .fetch_all(pool)
-    .await?;
+    for request in &mut requests {
+        if let Some(request_meta_data) = request.extensions().get::<RequestMetaData>() {
+            if let Some(request_headers) = headers_by_request_id.remove(&request_meta_data.id) {
+                let header_map = request.headers_mut();
+                for request_header in request_headers {
+                    let name = HeaderName::from_bytes(request_header.key.as_bytes())
+                        .map_err(|e| format!("Failed to fetch requests {}", e))?;
+                    let value = HeaderValue::from_str(&request_header.value)
+                        .map_err(|e| format!("Failed to fetch requests {}", e))?;
 
-    let mut requests: Vec<Request> = requests_rows
-        .into_iter()
-        .map(|r| Request {
-            id: r.id,
-            request_set_id: r.request_set_id,
-            url: r.url,
-            headers: Vec::new(),
-        })
-        .collect();
-
-    // ---- Fetch headers ----
-    let headers_rows = sqlx::query!(
-        r#"
-        SELECT id, request_id, header_name, header_value
-        FROM request_headers
-        "#
-    )
-    .fetch_all(pool)
-    .await?;
-
-    let headers: Vec<RequestHeader> = headers_rows
-        .into_iter()
-        .map(|h| RequestHeader {
-            id: h.id,
-            request_id: h.request_id,
-            header_name: h.header_name,
-            header_value: h.header_value,
-        })
-        .collect();
-
-    // ---- Assemble the hierarchy ----
-    Ok(assemble_nested(sets, requests, headers))
-}
-
-
-    fn assemble_nested(
-    mut sets: Vec<RequestSet>,
-    mut requests: Vec<Request>,
-    headers: Vec<RequestHeader>,
-) -> Vec<RequestSet> {
-    let mut headers_by_req: HashMap<i32, Vec<RequestHeader>> = HashMap::new();
-    for header in headers {
-        headers_by_req.entry(header.request_id).or_default().push(header);
-    }
-
-    for req in &mut requests {
-        if let Some(hs) = headers_by_req.remove(&req.id) {
-            req.headers = hs;
+                    header_map.insert(name, value);
+                }
+            }
         }
     }
 
-    let mut reqs_by_set: HashMap<i32, Vec<Request>> = HashMap::new();
-    for req in requests {
-        reqs_by_set.entry(req.request_set_id).or_default().push(req);
-    }
-
-    for set in &mut sets {
-        if let Some(rs) = reqs_by_set.remove(&set.id) {
-            set.requests = rs;
-        }
-    }
-
-    sets
-}
+    Ok(requests)
 }
 
+pub async fn fetch_all_request_headers(
+    state: &tauri::State<'_, AppState>,
+) -> Result<Vec<RequestHeader>, String> {
+    let db = &state.db;
 
-*/
+    let request_header_records: Vec<RequestHeaderRecord> =
+        sqlx::query_as::<_, RequestHeaderRecord>("SELECT * FROM request_headers")
+            .fetch(db)
+            .try_collect()
+            .await
+            .map_err(|e| format!("Failed to fetch request headers {}", e))?;
+
+    Ok(request_header_records
+        .into_iter()
+        .map(RequestHeader::from)
+        .collect())
+}

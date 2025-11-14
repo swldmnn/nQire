@@ -2,7 +2,6 @@ use http::{HeaderName, HeaderValue, Request};
 
 use crate::{
     api::{HttpRequestSetTransfer, HttpRequestTransfer, HttpResponseTransfer},
-    domain::RequestMetaData,
     AppState,
 };
 
@@ -45,8 +44,8 @@ pub async fn find_all_request_sets(
 
     let request_set_transfers = request_sets
         .into_iter()
-        .map(HttpRequestSetTransfer::from)
-        .collect();
+        .map(HttpRequestSetTransfer::try_from)
+        .collect::<Result<Vec<_>, _>>()?;
 
     Ok(request_set_transfers)
 }
