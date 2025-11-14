@@ -1,7 +1,7 @@
 use http::{HeaderName, HeaderValue, Request};
 
 use crate::{
-    api::{HttpRequestSetTransfer, HttpRequestTransfer, HttpResponseTransfer},
+    api::{EnvironmentTransfer, HttpRequestSetTransfer, HttpRequestTransfer, HttpResponseTransfer},
     AppState,
 };
 
@@ -48,4 +48,20 @@ pub async fn find_all_request_sets(
         .collect::<Result<Vec<_>, _>>()?;
 
     Ok(request_set_transfers)
+}
+
+#[tauri::command]
+pub async fn find_all_environments(
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<EnvironmentTransfer>, String> {
+    let environments = crate::services::find_all_environments(state)
+        .await
+        .map_err(|e| e)?;
+
+    let environment_transfers = environments
+        .into_iter()
+        .map(EnvironmentTransfer::from)
+        .collect();
+
+    Ok(environment_transfers)
 }

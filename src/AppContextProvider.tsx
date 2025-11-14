@@ -14,6 +14,7 @@ function AppContextProvider(props: AppContextProviderProps) {
         appState: {
             openItems: [],
             requestSets: [],
+            environments: [],
         },
         updateAppState
     } as AppCtx

@@ -1,11 +1,14 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, env};
 
 use futures::TryStreamExt;
 use http::{HeaderName, HeaderValue, Request};
 
 use crate::{
-    domain::{HttpRequestSet, RequestHeader, RequestMetaData},
-    persistence::{RequestHeaderRecord, RequestRecord, RequestSetRecord},
+    domain::{Environment, EnvironmentValue, HttpRequestSet, RequestHeader, RequestMetaData},
+    persistence::{
+        EnvironmentRecord, EnvironmentValueRecord, RequestHeaderRecord, RequestRecord,
+        RequestSetRecord,
+    },
     AppState,
 };
 
@@ -112,5 +115,61 @@ pub async fn fetch_all_request_headers(
     Ok(request_header_records
         .into_iter()
         .map(RequestHeader::from)
+        .collect())
+}
+
+pub async fn fetch_all_environments(
+    state: &tauri::State<'_, AppState>,
+) -> Result<Vec<Environment>, String> {
+    let db = &state.db;
+
+    let all_environment_values = fetch_all_environment_values(state)
+        .await
+        .map_err(|e| format!("Failed to fetch requests {}", e))?;
+
+    let mut values_by_environment_id: HashMap<u32, Vec<EnvironmentValue>> = HashMap::new();
+    for environment_value in all_environment_values {
+        values_by_environment_id
+            .entry(environment_value.environment_id)
+            .or_default()
+            .push(environment_value);
+    }
+
+    let all_environment_records: Vec<EnvironmentRecord> =
+        sqlx::query_as::<_, EnvironmentRecord>("SELECT * FROM environments")
+            .fetch(db)
+            .try_collect()
+            .await
+            .map_err(|e| format!("Failed to fetch environments {}", e))?;
+
+    let mut environments: Vec<Environment> = all_environment_records
+        .into_iter()
+        .map(Environment::from)
+        .collect();
+
+    for environment in &mut environments {
+        if let Some(environment_values) = values_by_environment_id.remove(&environment.id) {
+            environment.values = environment_values
+        }
+    }
+
+    Ok(environments)
+}
+
+pub async fn fetch_all_environment_values(
+    state: &tauri::State<'_, AppState>,
+) -> Result<Vec<EnvironmentValue>, String> {
+    let db = &state.db;
+
+    let all_environment_value_records: Vec<EnvironmentValueRecord> =
+        sqlx::query_as::<_, EnvironmentValueRecord>("SELECT * FROM environment_values")
+            .fetch(db)
+            .try_collect()
+            .await
+            .map_err(|e| format!("Failed to fetch environment values {}", e))?;
+
+    Ok(all_environment_value_records
+        .into_iter()
+        .map(EnvironmentValue::from)
         .collect())
 }

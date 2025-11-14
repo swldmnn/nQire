@@ -1,13 +1,13 @@
 import { Box, Button, Typography, useColorScheme } from "@mui/material"
 import Logo from "./Logo"
 import TabView from "./TabView"
-import { HttpRequestSet } from "./types"
+import { Environment, HttpRequestSet } from "./types"
 import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
 import BrightnessLowIcon from '@mui/icons-material/BrightnessLow';
 import { invoke } from "@tauri-apps/api/core"
 import { useContext, useEffect } from "react"
 import { AppContext } from "../AppContext"
-import { HttpRequestSetTransfer } from "./types_transfer"
+import { EnvironmentTransfer, HttpRequestSetTransfer } from "./types_transfer"
 import WelcomeView from "./WelcomeView"
 import MainNavigation from "./MainNavigation"
 
@@ -25,8 +25,17 @@ function MainView() {
             appContext.updateAppState(appContext.appState)
         };
 
+        async function getEnvironments() {
+            const loadedEnvironmentTransfers: EnvironmentTransfer[] = await invoke('find_all_environments', {});
+            const loadedEnvironments: Environment[] = loadedEnvironmentTransfers
+
+            appContext.appState.environments = loadedEnvironments
+            appContext.updateAppState(appContext.appState)
+        };
+
         if (!appContext.appState.requestSets.length) {  //TODO how to handle empty sets
-            getRequestSets();
+            getRequestSets()
+            getEnvironments()
         }
     }, []);
 

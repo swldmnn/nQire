@@ -4,6 +4,7 @@ import { AppContext } from "../AppContext"
 import { Box } from "@mui/material"
 import TabContentWrapper from "./TabContentWrapper"
 import RequestView from "./RequestView"
+import EnvironmentView from "./EnvironmentView"
 
 function TabView() {
     const appContext = useContext(AppContext)
@@ -23,14 +24,24 @@ function TabView() {
         }}>
             {appContext.appState.openItems.length > 0 && <TabContainer onClose={onClose}>
                 {
-                    appContext.appState.openItems.map((item, index) => item.typename === 'HttpRequest'
-                        ? <TabContentWrapper label={item.label} key={`RequestViewWrapper_${index}_${item.label}`}>
-                            <RequestView
-                                request={item}
-                                key={`RequestView_${index}_${item.label}`}
-                            />
-                        </TabContentWrapper>
-                        : null)
+                    appContext.appState.openItems.map((item, index) => {
+                        if (item.typename === 'HttpRequest') {
+                            return <TabContentWrapper label={item.label} key={`RequestViewWrapper_${index}_${item.label}`}>
+                                <RequestView
+                                    request={item}
+                                    key={`RequestView_${index}_${item.label}`}
+                                />
+                            </TabContentWrapper>
+                        }
+
+                        if (item.typename === 'Environment') {
+                            return <TabContentWrapper label={item.label} key={`EnvironmentViewWrapper_${index}_${item.label}`}>
+                                <EnvironmentView environment={item} />
+                            </TabContentWrapper>
+                        }
+
+                        return null
+                    })
                 }
             </TabContainer>}
         </Box>)

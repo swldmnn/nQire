@@ -1,7 +1,7 @@
 use http::Request;
 use serde::{Deserialize, Serialize};
 
-use crate::domain::{HttpRequestSet, RequestMetaData};
+use crate::domain::{Environment, EnvironmentValue, HttpRequestSet, RequestMetaData};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -34,6 +34,22 @@ pub struct HttpResponseTransfer {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HttpHeaderTransfer {
+    pub key: String,
+    pub value: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct EnvironmentTransfer {
+    pub typename: String,
+    pub id: u32,
+    pub label: String,
+    pub values: Vec<EnvironmentValueTransfer>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct EnvironmentValueTransfer {
     pub key: String,
     pub value: String,
 }
@@ -74,7 +90,7 @@ impl TryFrom<Request<String>> for HttpRequestTransfer {
 
 impl TryFrom<HttpRequestSet> for HttpRequestSetTransfer {
     type Error = String;
-    
+
     fn try_from(request_set: HttpRequestSet) -> Result<Self, Self::Error> {
         Ok(HttpRequestSetTransfer {
             typename: "HttpRequestSet".to_owned(),
@@ -86,5 +102,29 @@ impl TryFrom<HttpRequestSet> for HttpRequestSetTransfer {
                 .map(HttpRequestTransfer::try_from)
                 .collect::<Result<Vec<_>, _>>()?,
         })
+    }
+}
+
+impl From<Environment> for EnvironmentTransfer {
+    fn from(environment: Environment) -> EnvironmentTransfer {
+        EnvironmentTransfer {
+            typename: "Environment".to_owned(),
+            id: environment.id,
+            label: environment.label,
+            values: environment
+                .values
+                .into_iter()
+                .map(EnvironmentValueTransfer::from)
+                .collect(),
+        }
+    }
+}
+
+impl From<EnvironmentValue> for EnvironmentValueTransfer {
+    fn from(environment_value: EnvironmentValue) -> EnvironmentValueTransfer {
+        EnvironmentValueTransfer {
+            key: environment_value.key,
+            value: environment_value.value,
+        }
     }
 }

@@ -12,7 +12,7 @@ export interface HttpRequestResponseProps {
     setResponse?: (response: HttpResponse) => void
 }
 
-export interface HttpRequestSet extends DisplayItem{
+export interface HttpRequestSet extends DisplayItem {
     typename: 'HttpRequestSet'
     requests: HttpRequest[]
 }
@@ -31,6 +31,16 @@ export interface HttpResponse {
 }
 
 export interface HttpHeader {
+    key: string
+    value: string
+}
+
+export interface Environment extends DisplayItem {
+    typename: 'Environment'
+    values: EnvironmentValue[]
+}
+
+export interface EnvironmentValue {
     key: string
     value: string
 }

@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { HttpRequestSet } from './components/types';
+import { Environment, HttpRequestSet } from './components/types';
 
 export interface AppCtx {
     updateAppState: (appState: AppState) => void
@@ -9,12 +9,14 @@ export interface AppCtx {
 export interface AppState {
     openItems: any[]
     requestSets: HttpRequestSet[]
+    environments: Environment[]
 }
 
 export const AppContext = createContext({
     appState: {
         openItems: [],
-        requestSets: []
+        requestSets: [],
+        environments: [],
     },
     updateAppState: () => { }
 } as AppCtx);

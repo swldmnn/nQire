@@ -67,6 +67,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             api::send_http_request,
             api::find_all_request_sets,
+            api::find_all_environments
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

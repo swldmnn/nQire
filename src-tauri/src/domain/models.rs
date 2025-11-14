@@ -18,3 +18,16 @@ pub struct HttpRequestSet {
     pub label: String,
     pub requests: Vec<Request<String>>,
 }
+
+pub struct Environment {
+    pub id: u32,
+    pub label: String,
+    pub values: Vec<EnvironmentValue>,
+}
+
+pub struct EnvironmentValue {
+    pub id: u32,
+    pub environment_id: u32,
+    pub key: String,
+    pub value: String,
+}

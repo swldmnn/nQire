@@ -32,6 +32,18 @@ export interface HttpHeaderTransfer {
     value: string
 }
 
+export interface EnvironmentTransfer {
+    typename: 'Environment'
+    id: number
+    label: string
+    values: EnvironmentValueTransfer[]
+}
+
+export interface EnvironmentValueTransfer {
+    key: string
+    value: string
+}
+
 export const mapRequestSetTransfers = (requestSetTransfers: HttpRequestSetTransfer[]) => {
     const mappedSequestSets: HttpRequestSet[] = requestSetTransfers
     return mappedSequestSets
