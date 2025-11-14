@@ -1,8 +1,7 @@
-import { Box, Button, styled, Typography, useColorScheme } from "@mui/material"
+import { Box, Button, Typography, useColorScheme } from "@mui/material"
 import Logo from "./Logo"
-import RequestList from "./RequestList"
 import TabView from "./TabView"
-import { HttpRequest, HttpRequestSet } from "./types"
+import { HttpRequestSet } from "./types"
 import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
 import BrightnessLowIcon from '@mui/icons-material/BrightnessLow';
 import { invoke } from "@tauri-apps/api/core"
@@ -10,6 +9,7 @@ import { useContext, useEffect } from "react"
 import { AppContext } from "../AppContext"
 import { HttpRequestSetTransfer } from "./types_transfer"
 import WelcomeView from "./WelcomeView"
+import MainNavigation from "./MainNavigation"
 
 function MainView() {
 
@@ -63,14 +63,7 @@ function MainView() {
                 minHeight: 0,
                 boxSizing: 'border-box',
             }}>
-                <Box id='mainView_navigation' sx={{
-                    width: '20rem',
-                    borderRight: '1px solid',
-                    borderColor: 'divider',
-                }}>
-                    <RequestList />
-                </Box>
-
+                <MainNavigation />
                 <Box id='mainView_editor' sx={{
                     display: 'flex',
                     minWidth: 0,
