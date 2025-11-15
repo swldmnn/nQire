@@ -8,6 +8,7 @@ export interface AppCtx {
 
 export interface AppState {
     openItems: any[]
+    selectedTabIndex: number
     requestSets: HttpRequestSet[]
     environments: Environment[]
 }
@@ -15,6 +16,7 @@ export interface AppState {
 export const AppContext = createContext({
     appState: {
         openItems: [],
+        selectedTabIndex: 0,
         requestSets: [],
         environments: [],
     },

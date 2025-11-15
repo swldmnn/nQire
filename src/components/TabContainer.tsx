@@ -1,6 +1,7 @@
 import { Box, Tab, Tabs } from "@mui/material"
-import React, { useState } from "react";
+import React, { useContext, useEffect } from "react";
 import CloseIcon from '@mui/icons-material/Close';
+import { AppContext } from "../AppContext";
 
 interface TabContainerProps {
     onClose?: (index: number) => void
@@ -41,18 +42,27 @@ function CustomTabPanel(props: TabPanelProps) {
 }
 
 function TabContainer({ children, onClose }: TabContainerProps) {
-    const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+
+    const appContext = useContext(AppContext)
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
-        setSelectedTabIndex(newValue);
+        appContext.updateAppState({
+            ...appContext.appState,
+            selectedTabIndex: newValue
+        })
     };
 
     const tabItems = React.Children.toArray(children)
         .filter(child => React.isValidElement(child) && isTabContentProps(child.props))
 
-    if (selectedTabIndex > 0 && selectedTabIndex >= tabItems.length) {
-        setSelectedTabIndex(Math.max(0, tabItems.length - 1))
-    }
+    const effectiveSelectedIndex = appContext.appState.selectedTabIndex > 0 && appContext.appState.selectedTabIndex >= tabItems.length
+        ? Math.max(0, tabItems.length - 1) : appContext.appState.selectedTabIndex
+
+    useEffect(() => {
+        if (appContext.appState.selectedTabIndex !== effectiveSelectedIndex) {
+            appContext.updateAppState({ ...appContext.appState, selectedTabIndex: effectiveSelectedIndex })
+        }
+    })
 
     return (children &&
         <Box sx={{
@@ -68,7 +78,7 @@ function TabContainer({ children, onClose }: TabContainerProps) {
                 <Tabs
                     scrollButtons="auto"
                     variant="scrollable"
-                    value={selectedTabIndex}
+                    value={effectiveSelectedIndex}
                     onChange={handleChange}
                 >
                     {
@@ -77,7 +87,7 @@ function TabContainer({ children, onClose }: TabContainerProps) {
                                 ? <Tab
                                     label={<div>
                                         {child.props.label}
-                                        <CloseIcon onClick={() => onClose?.(index)} sx={{ height: '1rem', verticalAlign: 'bottom', color: 'secondary.main' }} />
+                                        <CloseIcon onClick={(e) => { e.stopPropagation(); onClose?.(index) }} sx={{ height: '1rem', verticalAlign: 'bottom', color: 'secondary.main' }} />
                                     </div>}
                                     key={`tab_${index}_${child.props.label}`}
                                 ></Tab>
@@ -96,7 +106,7 @@ function TabContainer({ children, onClose }: TabContainerProps) {
                         return (React.isValidElement(child) && isTabContentProps(child.props))
                             ? <CustomTabPanel
                                 index={index}
-                                isSelected={index === selectedTabIndex}
+                                isSelected={index === effectiveSelectedIndex}
                                 key={`tabPanel_${index}_${child.props.label}`}>
                                 {child}
                             </CustomTabPanel>

@@ -9,6 +9,7 @@ function EnvironmentList() {
 
     const openItem = (environmentIndex: number) => {
         appContext.appState.openItems.push(appContext.appState.environments[environmentIndex])
+        appContext.appState.selectedTabIndex = appContext.appState.openItems.length - 1
         appContext.updateAppState(appContext.appState)
     }
 

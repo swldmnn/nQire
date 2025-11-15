@@ -13,6 +13,7 @@ function AppContextProvider(props: AppContextProviderProps) {
     const initialContext = {
         appState: {
             openItems: [],
+            selectedTabIndex: 0,
             requestSets: [],
             environments: [],
         },

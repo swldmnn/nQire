@@ -11,6 +11,9 @@ function TabView() {
 
     const onClose = (index: number) => {
         appContext.appState.openItems.splice(index, 1)
+        if (index <= appContext.appState.selectedTabIndex) {
+            appContext.appState.selectedTabIndex -= 1
+        }
         appContext.updateAppState(appContext.appState)
     }
 

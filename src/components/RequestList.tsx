@@ -18,11 +18,12 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 interface RequestListProps {
 }
 
-function RequestList({}: RequestListProps) {
+function RequestList({ }: RequestListProps) {
     const appContext = useContext(AppContext)
 
     const openItem = (requestSetIndex: number, requestIndex: number) => {
         appContext.appState.openItems.push(appContext.appState.requestSets[requestSetIndex].requests[requestIndex])
+        appContext.appState.selectedTabIndex = appContext.appState.openItems.length - 1
         appContext.updateAppState(appContext.appState)
     }
 
