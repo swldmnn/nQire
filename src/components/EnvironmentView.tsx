@@ -2,30 +2,42 @@ import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, Ta
 import { Environment } from "./types"
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
+import { useState } from "react";
 
 interface EnvironmentViewProps {
     environment: Environment
 }
 
-function EnvironmentView({ environment }: EnvironmentViewProps) {
+function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps) {
+
+    const [environment, setEnvironment] = useState(inputEnvironment)
+
     if (!environment) {
         return null
     }
 
     const onKeyChange = (index: number, newValue: string) => {
-        // TODO
+        const values = environment.values.map(h => { return { ...h } })
+        values[index].key = newValue
+        setEnvironment({ ...environment, values })
     }
 
     const onValueChange = (index: number, newValue: string) => {
-        // TODO
+        const values = environment.values.map(h => { return { ...h } })
+        values[index].value = newValue
+        setEnvironment({ ...environment, values })
     }
 
     const onValueDelete = (index: number) => {
-        // TODO
+        const values = environment.values.map(h => { return { ...h } })
+        values.splice(index, 1)
+        setEnvironment({ ...environment, values })
     }
 
     const onValueAdd = () => {
-        // TODO
+        const values = environment.values.map(h => { return { ...h } })
+        values.push({key: '', value: ''})
+        setEnvironment({ ...environment, values })
     }
 
     return <Box>
