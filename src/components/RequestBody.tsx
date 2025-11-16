@@ -5,6 +5,14 @@ interface RequestBodyProps extends HttpRequestResponseProps {
 }
 
 function RequestBody({ request, setRequest }: RequestBodyProps) {
+    if (!request || !setRequest) {
+        return null
+    }
+
+    const onBodyChange = (newValue: string) => {
+        setRequest({ ...request, body: newValue })
+    }
+
     return <div className="row">
         <TextField
             fullWidth
@@ -13,11 +21,7 @@ function RequestBody({ request, setRequest }: RequestBodyProps) {
             rows={4}
             value={request?.body ?? ''}
             variant="filled"
-            onChange={(e) => {
-                if (request && setRequest) {
-                    setRequest({ ...request, body: e.target.value })
-                }
-            }}
+            onChange={(e) => onBodyChange(e.currentTarget.value)}
         />
     </div>
 }

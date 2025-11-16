@@ -1,5 +1,5 @@
 
-interface DisplayItem {
+export interface DisplayItem {
     typename: string
     id: number
     label: string

@@ -8,13 +8,33 @@ import RequestBody from "./RequestBody";
 import ResponseBody from "./ResponseBody";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import RequestHeaders from "./RequestHeaders";
+import TitleBar from "./TitleBar";
 
 interface NewRequestViewProps extends HttpRequestResponseProps {
 }
 
 function RequestView({ request: inputRequest }: NewRequestViewProps) {
-    const [request, setRequest] = useState(inputRequest)
+    if (!inputRequest) {
+        return null
+    }
+
+    const [request, setRequest] = useState({ ...inputRequest })
     const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
+    const [isModified, setIsModified] = useState(false)
+
+    const modifyRequest = (request: HttpRequest) => {
+        setRequest(request)
+        setIsModified(true)
+    }
+
+    const onLabelChange = (newValue: string) => {
+        modifyRequest({ ...request, label: newValue })
+    }
+
+    const onSave = () => {
+        setIsModified(false)
+        return false
+    }
 
     async function sendRequest(request?: HttpRequest) {
         if (!request || !setResponse) {
@@ -36,9 +56,10 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
         bgcolor: 'grey.850',
         overflow: 'auto',
     }}>
+        <TitleBar item={request} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
         <RequestUrlBar
             request={request}
-            setRequest={setRequest}
+            setRequest={modifyRequest}
             sendRequest={sendRequest}
         />
 
@@ -55,7 +76,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
             <AccordionDetails>
                 <RequestBody
                     request={request}
-                    setRequest={setRequest}
+                    setRequest={modifyRequest}
                 />
             </AccordionDetails>
         </Accordion>
@@ -71,7 +92,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
                 <Typography component="span">Headers</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                <RequestHeaders request={request} setRequest={setRequest} />
+                <RequestHeaders request={request} setRequest={modifyRequest} />
             </AccordionDetails>
         </Accordion>
 

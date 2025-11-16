@@ -4,44 +4,35 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 
 interface RequestHeadersProps extends HttpRequestResponseProps {
-
 }
 
 function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
-    if (!request) {
+    if (!request || !setRequest) {
         return null
     }
 
     const onHeaderKeyChange = (index: number, newValue: string) => {
-        if (setRequest) {
-            const headers = request.headers.map(h => { return { ...h } })
-            headers[index].key = newValue
-            setRequest({ ...request, headers })
-        }
+        const headers = request.headers.map(h => { return { ...h } })
+        headers[index].key = newValue
+        setRequest({ ...request, headers })
     }
 
     const onHeaderValueChange = (index: number, newValue: string) => {
-        if (setRequest) {
-            const headers = request.headers.map(h => { return { ...h } })
-            headers[index].value = newValue
-            setRequest({ ...request, headers })
-        }
+        const headers = request.headers.map(h => { return { ...h } })
+        headers[index].value = newValue
+        setRequest({ ...request, headers })
     }
 
     const onHeaderDelete = (index: number) => {
-        if (setRequest) {
-            const headers = request.headers.map(h => { return { ...h } })
-            headers.splice(index, 1)
-            setRequest({ ...request, headers })
-        }
+        const headers = request.headers.map(h => { return { ...h } })
+        headers.splice(index, 1)
+        setRequest({ ...request, headers })
     }
 
     const onHeaderAdd = () => {
-        if (setRequest) {
-            const headers = request.headers.map(h => { return { ...h } })
-            headers.push({ key: '', value: '' })
-            setRequest({ ...request, headers })
-        }
+        const headers = request.headers.map(h => { return { ...h } })
+        headers.push({ key: '', value: '' })
+        setRequest({ ...request, headers })
     }
 
     return <Box>

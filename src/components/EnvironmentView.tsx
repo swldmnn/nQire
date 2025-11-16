@@ -3,6 +3,7 @@ import { Environment } from "./types"
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 import { useState } from "react";
+import TitleBar from "./TitleBar";
 
 interface EnvironmentViewProps {
     environment: Environment
@@ -10,37 +11,53 @@ interface EnvironmentViewProps {
 
 function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps) {
 
-    const [environment, setEnvironment] = useState(inputEnvironment)
+    const [environment, setEnvironment] = useState({ ...inputEnvironment })
+    const [isModified, setIsModified] = useState(false)
+
+    const modifyEnvironment = (environment: Environment) => {
+        setEnvironment(environment)
+        setIsModified(true)
+    }
 
     if (!environment) {
         return null
     }
 
+    const onLabelChange = (newValue: string) => {
+        modifyEnvironment({ ...environment, label: newValue })
+    }
+
     const onKeyChange = (index: number, newValue: string) => {
         const values = environment.values.map(h => { return { ...h } })
         values[index].key = newValue
-        setEnvironment({ ...environment, values })
+        modifyEnvironment({ ...environment, values })
     }
 
     const onValueChange = (index: number, newValue: string) => {
         const values = environment.values.map(h => { return { ...h } })
         values[index].value = newValue
-        setEnvironment({ ...environment, values })
+        modifyEnvironment({ ...environment, values })
     }
 
     const onValueDelete = (index: number) => {
         const values = environment.values.map(h => { return { ...h } })
         values.splice(index, 1)
-        setEnvironment({ ...environment, values })
+        modifyEnvironment({ ...environment, values })
     }
 
     const onValueAdd = () => {
         const values = environment.values.map(h => { return { ...h } })
-        values.push({key: '', value: ''})
-        setEnvironment({ ...environment, values })
+        values.push({ key: '', value: '' })
+        modifyEnvironment({ ...environment, values })
+    }
+
+    const onSave = () => {
+        setIsModified(false)
+        return false
     }
 
     return <Box>
+        <TitleBar item={environment} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} size="small">
                 <TableHead>
