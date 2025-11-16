@@ -1,15 +1,15 @@
 import { Box, Button, Divider, Tab, Tabs } from "@mui/material";
-import RequestList from "./RequestList";
+import RequestList from "../components/RequestList";
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import { useState } from "react";
-import EnvironmentList from "./EnvironmentList";
+import EnvironmentList from "../components/EnvironmentList";
 
 type SelectionIndex = number | false
 
-function MainNavigation() {
+function NavigationView() {
     const [selectedIndex, setSelectedIndex] = useState(false as SelectionIndex)
     const [lastSelectedIndex, setLastSelectedIndex] = useState(0)
 
@@ -99,4 +99,4 @@ function MainNavigation() {
     )
 }
 
-export default MainNavigation
+export default NavigationView

@@ -1,18 +1,20 @@
 import { useContext } from "react"
-import TabContainer from "./TabContainer"
+import TabContainer from "../components/TabContainer"
 import { AppContext } from "../AppContext"
 import { Box } from "@mui/material"
-import TabContentWrapper from "./TabContentWrapper"
+import TabContentWrapper from "../components/TabContentWrapper"
 import RequestView from "./RequestView"
-import EnvironmentView from "./EnvironmentView"
+import EnvironmentView from "../views/EnvironmentView"
 
 function TabView() {
     const appContext = useContext(AppContext)
 
     const onClose = (index: number) => {
         appContext.appState.openItems.splice(index, 1)
-        if (index <= appContext.appState.selectedTabIndex) {
-            appContext.appState.selectedTabIndex -= 1
+
+        const selectedTabIndex = appContext.appState.selectedTabIndex
+        if (index <= selectedTabIndex) {
+            appContext.appState.selectedTabIndex = Math.max(0, selectedTabIndex - 1)
         }
         appContext.updateAppState(appContext.appState)
     }

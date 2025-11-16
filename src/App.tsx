@@ -5,7 +5,7 @@ import {
   createTheme,
 } from '@mui/material';
 import AppContextProvider from './AppContextProvider';
-import MainView from './components/MainView';
+import MainView from './views/MainView';
 
 const theme = createTheme({
   cssVariables: {
@@ -40,7 +40,7 @@ function App() {
         </main>
       </ThemeProvider>
     </AppContextProvider>
-  );
+  )
 }
 
 export default App;

@@ -1,8 +1,7 @@
 import { Box } from "@mui/material"
 import Logo from "./Logo"
 
-function WelcomeView() {
-
+function Backplate() {
     return (
         <Box sx={{
             width: '100%',
@@ -14,9 +13,14 @@ function WelcomeView() {
             overflow: 'clip',
             opacity: '50%',
         }}>
-            <Logo sx={{ width: '40rem', height: '40rem', color: 'divider', margin: 'auto' }}></Logo>
+            <Logo sx={{
+                width: '40rem',
+                height: '40rem',
+                color: 'divider',
+                margin: 'auto'
+            }}></Logo>
         </Box>
     )
 }
 
-export default WelcomeView
+export default Backplate

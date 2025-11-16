@@ -1,5 +1,5 @@
 import { TextField } from "@mui/material"
-import { HttpRequestResponseProps } from "./types"
+import { HttpRequestResponseProps } from "../types/types"
 
 interface RequestBodyProps extends HttpRequestResponseProps {
 }

@@ -1,5 +1,5 @@
 import { TextField, Button, Select, MenuItem, Box, Card } from "@mui/material";
-import { HttpRequest, HttpRequestResponseProps } from "./types";
+import { HttpRequest, HttpRequestResponseProps } from "../types/types";
 
 interface RequestUrlBarProps extends HttpRequestResponseProps {
     sendRequest: (request?: HttpRequest) => void

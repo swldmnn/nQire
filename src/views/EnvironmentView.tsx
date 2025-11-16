@@ -1,9 +1,9 @@
 import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
-import { Environment } from "./types"
+import { Environment } from "../types/types"
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 import { useState } from "react";
-import TitleBar from "./TitleBar";
+import ItemTitleBar from "../components/ItemTitleBar";
 
 interface EnvironmentViewProps {
     environment: Environment
@@ -57,7 +57,7 @@ function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps
     }
 
     return <Box>
-        <TitleBar item={environment} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
+        <ItemTitleBar item={environment} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} size="small">
                 <TableHead>

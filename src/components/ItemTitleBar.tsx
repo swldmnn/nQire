@@ -1,5 +1,5 @@
 import { Box, Button, Card, TextField } from "@mui/material"
-import { DisplayItem } from "./types"
+import { DisplayItem } from "../types/types"
 import SaveIcon from '@mui/icons-material/Save';
 
 interface TitleBarProps {
@@ -9,7 +9,7 @@ interface TitleBarProps {
     onItemSave: () => void
 }
 
-function TitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarProps) {
+function ItemTitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarProps) {
     return (
         <Card>
             <Box sx={{
@@ -38,4 +38,4 @@ function TitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarProps
     )
 }
 
-export default TitleBar
+export default ItemTitleBar

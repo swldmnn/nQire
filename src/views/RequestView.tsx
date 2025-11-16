@@ -1,14 +1,14 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "@mui/material"
-import RequestUrlBar from "./RequestUrlBar";
-import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "./types";
+import RequestUrlBar from "../components/RequestUrlBar";
+import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "../types/types";
 import { useState } from "react";
-import { HttpRequestTransfer, HttpResponseTransfer } from "./types_transfer";
+import { HttpRequestTransfer, HttpResponseTransfer } from "../types/types_transfer";
 import { invoke } from "@tauri-apps/api/core";
-import RequestBody from "./RequestBody";
-import ResponseBody from "./ResponseBody";
+import RequestBody from "../components/RequestBody";
+import ResponseBody from "../components/ResponseBody";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import RequestHeaders from "./RequestHeaders";
-import TitleBar from "./TitleBar";
+import RequestHeaders from "../components/RequestHeaders";
+import ItemTitleBar from "../components/ItemTitleBar";
 
 interface NewRequestViewProps extends HttpRequestResponseProps {
 }
@@ -56,7 +56,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
         bgcolor: 'grey.850',
         overflow: 'auto',
     }}>
-        <TitleBar item={request} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
+        <ItemTitleBar item={request} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
         <RequestUrlBar
             request={request}
             setRequest={modifyRequest}

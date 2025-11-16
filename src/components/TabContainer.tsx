@@ -81,19 +81,20 @@ function TabContainer({ children, onClose }: TabContainerProps) {
                     value={effectiveSelectedIndex}
                     onChange={handleChange}
                 >
-                    {
-                        tabItems.map((child, index) => {
-                            return (React.isValidElement(child) && isTabContentProps(child.props))
-                                ? <Tab
-                                    label={<div>
-                                        {child.props.label}
-                                        <CloseIcon onClick={(e) => { e.stopPropagation(); onClose?.(index) }} sx={{ height: '1rem', verticalAlign: 'bottom', color: 'secondary.main' }} />
-                                    </div>}
-                                    key={`tab_${index}_${child.props.label}`}
-                                ></Tab>
-                                : null
-                        })
-                    }
+                    {tabItems.map((child, index) => {
+                        return (React.isValidElement(child) && isTabContentProps(child.props))
+                            ? <Tab
+                                label={<div>
+                                    {child.props.label}
+                                    <CloseIcon
+                                        onClick={(e) => { e.stopPropagation(); onClose?.(index) }}
+                                        sx={{ height: '1rem', verticalAlign: 'bottom', color: 'secondary.main' }}
+                                    />
+                                </div>}
+                                key={`tab_${index}_${child.props.label}`}
+                            ></Tab>
+                            : null
+                    })}
                 </Tabs>
             </Box>
             <Box sx={{
@@ -101,18 +102,16 @@ function TabContainer({ children, onClose }: TabContainerProps) {
                 minWidth: 0,
                 minHeight: 0,
             }}>
-                {
-                    tabItems.map((child, index) => {
-                        return (React.isValidElement(child) && isTabContentProps(child.props))
-                            ? <CustomTabPanel
-                                index={index}
-                                isSelected={index === effectiveSelectedIndex}
-                                key={`tabPanel_${index}_${child.props.label}`}>
-                                {child}
-                            </CustomTabPanel>
-                            : null
-                    })
-                }
+                {tabItems.map((child, index) => {
+                    return (React.isValidElement(child) && isTabContentProps(child.props))
+                        ? <CustomTabPanel
+                            index={index}
+                            isSelected={index === effectiveSelectedIndex}
+                            key={`tabPanel_${index}_${child.props.label}`}>
+                            {child}
+                        </CustomTabPanel>
+                        : null
+                })}
             </Box>
         </Box>
     )

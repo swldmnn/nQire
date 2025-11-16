@@ -1,5 +1,5 @@
 import { Box } from "@mui/material"
-import { HttpRequestResponseProps } from "./types"
+import { HttpRequestResponseProps } from "../types/types"
 import JSONPretty from "react-json-pretty";
 
 interface ResponseBodyProps extends HttpRequestResponseProps {

@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { Environment, HttpRequestSet } from './components/types';
+import { Environment, HttpRequestSet } from './types/types';
 
 export interface AppCtx {
     updateAppState: (appState: AppState) => void

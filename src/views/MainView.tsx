@@ -1,15 +1,15 @@
 import { Box, Button, Typography, useColorScheme } from "@mui/material"
-import Logo from "./Logo"
+import Logo from "../components/Logo"
 import TabView from "./TabView"
-import { Environment, HttpRequestSet } from "./types"
+import { Environment, HttpRequestSet } from "../types/types"
 import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
 import BrightnessLowIcon from '@mui/icons-material/BrightnessLow';
 import { invoke } from "@tauri-apps/api/core"
 import { useContext, useEffect } from "react"
 import { AppContext } from "../AppContext"
-import { EnvironmentTransfer, HttpRequestSetTransfer } from "./types_transfer"
-import WelcomeView from "./WelcomeView"
-import MainNavigation from "./MainNavigation"
+import { EnvironmentTransfer, HttpRequestSetTransfer } from "../types/types_transfer"
+import NavigationView from "./NavigationView"
+import Backplate from "../components/Backplate";
 
 function MainView() {
 
@@ -72,14 +72,14 @@ function MainView() {
                 minHeight: 0,
                 boxSizing: 'border-box',
             }}>
-                <MainNavigation />
+                <NavigationView />
                 <Box id='mainView_editor' sx={{
                     display: 'flex',
                     minWidth: 0,
                     minHeight: 0,
                     flexGrow: 1,
                 }}>
-                    {appContext.appState.openItems.length ? <TabView /> : <WelcomeView />}
+                    {appContext.appState.openItems.length ? <TabView /> : <Backplate />}
                 </Box>
             </Box>
         </Box>
