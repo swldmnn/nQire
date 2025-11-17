@@ -1,8 +1,9 @@
 import { createContext } from 'react';
-import { Environment, HttpRequestSet } from './types/types';
+import { DisplayItem, Environment, HttpRequestSet } from './types/types';
 
 export interface AppCtx {
     updateAppState: (appState: AppState) => void
+    openItem: (item: DisplayItem) => void
     appState: AppState
 }
 
@@ -20,5 +21,6 @@ export const AppContext = createContext({
         requestSets: [],
         environments: [],
     },
-    updateAppState: () => { }
+    updateAppState: () => { },
+    openItem: () => { }
 } as AppCtx);
