@@ -1,3 +1,5 @@
+use http::Request;
+
 use crate::{domain::HttpRequestSet, AppState};
 
 pub async fn find_all_request_sets(
@@ -8,4 +10,15 @@ pub async fn find_all_request_sets(
         .map_err(|e| e)?;
 
     Ok(all_request_sets)
+}
+
+pub async fn save_request(
+    state: tauri::State<'_, AppState>,
+    request: Request<String>,
+) -> Result<u64, String> {
+    let count_updated = crate::persistence::save_request(&state, request)
+        .await
+        .map_err(|e| e)?;
+
+    Ok(count_updated)
 }

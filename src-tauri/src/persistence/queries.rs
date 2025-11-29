@@ -173,3 +173,28 @@ pub async fn fetch_all_environment_values(
         .map(EnvironmentValue::from)
         .collect())
 }
+
+pub async fn save_request(
+    state: &tauri::State<'_, AppState>,
+    request: Request<String>,
+) -> Result<u64, String> {
+    let db = &state.db;
+
+    if let Some(meta_data) = request.extensions().get::<RequestMetaData>() {
+        let id = meta_data.id;
+        let label = &meta_data.label;
+
+        //TODO: update other properties
+        let query_result = sqlx::query("UPDATE requests SET label = $1, url = $2 WHERE id = $3")
+            .bind(label)
+            .bind(request.uri().to_string())
+            .bind(id)
+            .execute(db)
+            .await
+            .map_err(|e| format!("Failed update request: {}", e))?;
+
+        Ok(query_result.rows_affected())
+    } else {
+        Err("Cannot update request: request has no metadata".to_owned())
+    }
+}

@@ -1,4 +1,4 @@
-use http::{HeaderName, HeaderValue, Request};
+use http::Request;
 
 use crate::{
     api::{EnvironmentTransfer, HttpRequestSetTransfer, HttpRequestTransfer, HttpResponseTransfer},
@@ -7,21 +7,7 @@ use crate::{
 
 #[tauri::command]
 pub fn send_http_request(request: HttpRequestTransfer) -> HttpResponseTransfer {
-    let mut req_builder = Request::builder()
-        .method(request.method.as_str())
-        .uri(request.url);
-
-    {
-        let headers_mut = req_builder.headers_mut().unwrap();
-        for header in request.headers {
-            let name = HeaderName::from_bytes(header.key.as_bytes()).expect("Invalid header name");
-            let value = HeaderValue::from_str(&header.value).expect("Invalid header value");
-
-            headers_mut.insert(name, value);
-        }
-    }
-
-    let req = req_builder.body(request.body).unwrap();
+    let req = Request::<String>::try_from(request).expect("could not map request");
 
     match crate::services::send_http_request(req) {
         Ok(r) => {
@@ -64,4 +50,18 @@ pub async fn find_all_environments(
         .collect();
 
     Ok(environment_transfers)
+}
+
+#[tauri::command]
+pub async fn save_request(
+    state: tauri::State<'_, AppState>,
+    request: HttpRequestTransfer,
+) -> Result<u64, String> {
+    let req = Request::<String>::try_from(request).expect("Could not map request");
+
+    let result = crate::services::save_request(state, req)
+        .await
+        .map_err(|e| e)?;
+
+    Ok(result)
 }

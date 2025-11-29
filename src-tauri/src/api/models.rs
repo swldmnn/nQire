@@ -1,4 +1,4 @@
-use http::Request;
+use http::{HeaderName, HeaderValue, Request};
 use serde::{Deserialize, Serialize};
 
 use crate::domain::{Environment, EnvironmentValue, HttpRequestSet, RequestMetaData};
@@ -52,6 +52,30 @@ pub struct EnvironmentTransfer {
 pub struct EnvironmentValueTransfer {
     pub key: String,
     pub value: String,
+}
+
+impl TryFrom<HttpRequestTransfer> for Request<String> {
+    type Error = String;
+
+    fn try_from(request_transfer: HttpRequestTransfer) -> Result<Self, Self::Error> {
+        let mut req_builder = Request::builder()
+            .method(request_transfer.method.as_str())
+            .uri(request_transfer.url);
+
+        {
+            let headers_mut = req_builder.headers_mut().unwrap();
+            for header in request_transfer.headers {
+                let name =
+                    HeaderName::from_bytes(header.key.as_bytes()).expect("Invalid header name");
+                let value = HeaderValue::from_str(&header.value).expect("Invalid header value");
+
+                headers_mut.insert(name, value);
+            }
+        }
+
+        let request = req_builder.body(request_transfer.body).unwrap();
+        Ok(request)
+    }
 }
 
 impl TryFrom<Request<String>> for HttpRequestTransfer {
