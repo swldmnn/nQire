@@ -54,12 +54,24 @@ pub struct EnvironmentValueTransfer {
     pub value: String,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ErrorTransfer {
+    pub typename: String,
+    pub error_message: String,
+}
+
 impl TryFrom<HttpRequestTransfer> for Request<String> {
     type Error = String;
 
     fn try_from(request_transfer: HttpRequestTransfer) -> Result<Self, Self::Error> {
         let mut req_builder = Request::builder()
             .method(request_transfer.method.as_str())
+            .extension(RequestMetaData {
+                id: request_transfer.id,
+                request_set_id: 0,
+                label: request_transfer.label.to_owned(),
+            })
             .uri(request_transfer.url);
 
         {

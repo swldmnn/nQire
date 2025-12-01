@@ -4,12 +4,15 @@ import { DisplayItem, Environment, HttpRequestSet } from './types/types';
 export interface AppCtx {
     updateAppState: (appState: AppState) => void
     openItem: (item: DisplayItem) => void
+    saveItem: (item: DisplayItem) => Promise<boolean>
+    initialize: () => void
     appState: AppState
 }
 
 export interface AppState {
-    openItems: any[]
+    openItems: DisplayItem[]
     selectedTabIndex: number
+    initialized: boolean
     requestSets: HttpRequestSet[]
     environments: Environment[]
 }
@@ -18,9 +21,12 @@ export const AppContext = createContext({
     appState: {
         openItems: [],
         selectedTabIndex: 0,
+        initialized: false,
         requestSets: [],
         environments: [],
     },
     updateAppState: () => { },
-    openItem: () => { }
+    openItem: () => { },
+    saveItem: async () => false,
+    initialize: () => { }
 } as AppCtx);

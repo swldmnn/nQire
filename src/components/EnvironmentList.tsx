@@ -9,7 +9,7 @@ function EnvironmentList() {
 
     const openItem = (environmentIndex: number) => {
         const item = appContext.appState.environments[environmentIndex]
-        appContext.openItem(item)
+        appContext.openItem({ typename: item.typename, id: item.id, label: '' })
     }
 
     return (

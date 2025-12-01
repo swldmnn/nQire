@@ -12,6 +12,11 @@ export interface HttpRequestSetTransfer {
     requests: HttpRequestTransfer[]
 }
 
+export interface ErrorTransfer {
+    typename: 'Error'
+    errorMessage: string
+}
+
 export interface HttpRequestTransfer {
     typename: 'HttpRequest'
     id: number

@@ -31,18 +31,29 @@ function TabView() {
                 {
                     appContext.appState.openItems.map((item, index) => {
                         if (item.typename === 'HttpRequest') {
-                            return <TabContentWrapper label={item.label} key={`RequestViewWrapper_${index}_${item.label}`}>
-                                <RequestView
-                                    request={item}
-                                    key={`RequestView_${index}_${item.label}`}
-                                />
-                            </TabContentWrapper>
+                            const request = appContext.appState.requestSets
+                                .flatMap(set => set.requests)
+                                .find(request => request.id === item.id)
+
+                            if (request) {
+                                return <TabContentWrapper label={request.label} key={`RequestViewWrapper_${index}_${request.label}`}>
+                                    <RequestView
+                                        request={request}
+                                        key={`RequestView_${index}_${request.label}`}
+                                    />
+                                </TabContentWrapper>
+                            }
                         }
 
                         if (item.typename === 'Environment') {
-                            return <TabContentWrapper label={item.label} key={`EnvironmentViewWrapper_${index}_${item.label}`}>
-                                <EnvironmentView environment={item} />
-                            </TabContentWrapper>
+                            const environment = appContext.appState.environments
+                                .find(environment => environment.id === item.id)
+
+                            if (environment) {
+                                return <TabContentWrapper label={environment.label} key={`EnvironmentViewWrapper_${index}_${environment.label}`}>
+                                    <EnvironmentView environment={environment} />
+                                </TabContentWrapper>
+                            }
                         }
 
                         return null

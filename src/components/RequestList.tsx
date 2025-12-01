@@ -23,7 +23,7 @@ function RequestList({ }: RequestListProps) {
 
     const openItem = (requestSetIndex: number, requestIndex: number) => {
         const item = appContext.appState.requestSets[requestSetIndex].requests[requestIndex]
-        appContext.openItem(item)
+        appContext.openItem({ typename: item.typename, id: item.id, label: '' })
     }
 
     return (

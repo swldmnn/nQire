@@ -1,41 +1,20 @@
 import { Box, Button, Typography, useColorScheme } from "@mui/material"
 import Logo from "../components/Logo"
 import TabView from "./TabView"
-import { Environment, HttpRequestSet } from "../types/types"
 import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
 import BrightnessLowIcon from '@mui/icons-material/BrightnessLow';
-import { invoke } from "@tauri-apps/api/core"
 import { useContext, useEffect } from "react"
 import { AppContext } from "../AppContext"
-import { EnvironmentTransfer, HttpRequestSetTransfer } from "../types/types_transfer"
 import NavigationView from "./NavigationView"
 import Backplate from "../components/Backplate";
 
 function MainView() {
-
     const { mode, setMode } = useColorScheme();
     const appContext = useContext(AppContext)
 
     useEffect(() => {
-        async function getRequestSets() {
-            const loadedRequestSetTransfers: HttpRequestSetTransfer[] = await invoke('find_all_request_sets', {});
-            const loadedRequestSets: HttpRequestSet[] = loadedRequestSetTransfers
-
-            appContext.appState.requestSets = loadedRequestSets
-            appContext.updateAppState(appContext.appState)
-        };
-
-        async function getEnvironments() {
-            const loadedEnvironmentTransfers: EnvironmentTransfer[] = await invoke('find_all_environments', {});
-            const loadedEnvironments: Environment[] = loadedEnvironmentTransfers
-
-            appContext.appState.environments = loadedEnvironments
-            appContext.updateAppState(appContext.appState)
-        };
-
-        if (!appContext.appState.requestSets.length) {  //TODO how to handle empty sets
-            getRequestSets()
-            getEnvironments()
+        if (!appContext.appState.initialized) {
+            appContext.initialize()
         }
     }, []);
 

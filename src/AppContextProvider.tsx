@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { AppContext, AppCtx, AppState } from "./AppContext"
-import { DisplayItem } from "./types/types";
+import { DisplayItem, Environment, HttpRequestSet } from "./types/types";
+import { EnvironmentTransfer, ErrorTransfer, HttpRequestSetTransfer, HttpRequestTransfer } from "./types/types_transfer";
+import { invoke } from "@tauri-apps/api/core";
 
 interface AppContextProviderProps {
     children?: React.ReactNode;
@@ -9,6 +11,30 @@ interface AppContextProviderProps {
 function AppContextProvider(props: AppContextProviderProps) {
     const updateAppState = (appState: AppState) => {
         setAppContext({ ...appContext, appState })
+    }
+
+    const getRequestSets = async () => {
+        const loadedRequestSetTransfers: HttpRequestSetTransfer[] = await invoke('find_all_request_sets', {});
+        const loadedRequestSets: HttpRequestSet[] = loadedRequestSetTransfers
+
+        appContext.appState.requestSets = loadedRequestSets
+        appContext.updateAppState(appContext.appState)
+    };
+
+    const getEnvironments = async () => {
+        const loadedEnvironmentTransfers: EnvironmentTransfer[] = await invoke('find_all_environments', {});
+        const loadedEnvironments: Environment[] = loadedEnvironmentTransfers
+
+        appContext.appState.environments = loadedEnvironments
+        appContext.updateAppState(appContext.appState)
+    };
+
+    const initialize = async () => {
+        await getRequestSets()
+        await getEnvironments()
+
+        appContext.appState.initialized = true
+        appContext.updateAppState(appContext.appState)
     }
 
     const openItem = (item: DisplayItem) => {
@@ -26,15 +52,36 @@ function AppContextProvider(props: AppContextProviderProps) {
         updateAppState(appContext.appState)
     }
 
+    const saveItem = async (item: DisplayItem) => {
+        if (item.typename === 'HttpRequest') {
+            const result: number | ErrorTransfer = await invoke("save_request", { request: item as HttpRequestTransfer })
+
+            if (typeof result === "number") {
+                console.log('saved successfully')
+                await initialize()
+                return true
+            }
+
+            return false
+        }
+
+        //TODO handle other types
+
+        return false
+    }
+
     const initialContext = {
         appState: {
             openItems: [],
             selectedTabIndex: 0,
+            initialized: false,
             requestSets: [],
             environments: [],
         },
         updateAppState,
-        openItem
+        openItem,
+        saveItem,
+        initialize,
     } as AppCtx
 
     const [appContext, setAppContext] = useState(initialContext)

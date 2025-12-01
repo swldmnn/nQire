@@ -1,7 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "@mui/material"
 import RequestUrlBar from "../components/RequestUrlBar";
 import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "../types/types";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { HttpRequestTransfer, HttpResponseTransfer } from "../types/types_transfer";
 import { invoke } from "@tauri-apps/api/core";
 import RequestBody from "../components/RequestBody";
@@ -9,6 +9,7 @@ import ResponseBody from "../components/ResponseBody";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import RequestHeaders from "../components/RequestHeaders";
 import ItemTitleBar from "../components/ItemTitleBar";
+import { AppContext } from "../AppContext";
 
 interface NewRequestViewProps extends HttpRequestResponseProps {
 }
@@ -17,6 +18,8 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
     if (!inputRequest) {
         return null
     }
+
+    const appContext = useContext(AppContext)
 
     const [request, setRequest] = useState({ ...inputRequest })
     const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
@@ -31,9 +34,10 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
         modifyRequest({ ...request, label: newValue })
     }
 
-    const onSave = () => {
-        setIsModified(false)
-        return false
+    const onSave = async () => {
+        if (await appContext.saveItem(request)) {
+            setIsModified(false)
+        }
     }
 
     async function sendRequest(request?: HttpRequest) {
