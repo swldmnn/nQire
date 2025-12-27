@@ -1,7 +1,8 @@
-use std::{collections::HashMap, env};
+use std::collections::HashMap;
 
 use futures::TryStreamExt;
 use http::{HeaderName, HeaderValue, Request};
+use sqlx::{Sqlite, Transaction};
 
 use crate::{
     domain::{Environment, EnvironmentValue, HttpRequestSet, RequestHeader, RequestMetaData},
@@ -180,21 +181,45 @@ pub async fn save_request(
 ) -> Result<u64, String> {
     let db = &state.db;
 
+    let mut tx = db
+        .begin()
+        .await
+        .map_err(|e| format!("Failed to update request: {}", e))?;
+
+    let rows_affected = update_request(&mut tx, &request)
+        .await
+        .map_err(|e| format!("Failed to update request: {}", e))?;
+
+    save_request_headers(&mut tx, &request)
+        .await
+        .map_err(|e| format!("Failed to update request: {}", e))?;
+
+    tx.commit()
+        .await
+        .map_err(|e| format!("Failed to update request: {}", e))?;
+
+    Ok(rows_affected)
+}
+
+async fn update_request(
+    tx: &mut Transaction<'_, Sqlite>,
+    request: &Request<String>,
+) -> Result<u64, String> {
     if let Some(meta_data) = request.extensions().get::<RequestMetaData>() {
         let id = meta_data.id;
         let label = &meta_data.label;
 
-        let query_result = sqlx::query("UPDATE requests SET label = $1, method = $2, url = $3, body = $4 WHERE id = $5")
-            .bind(label)
-            .bind(request.method().to_string())
-            .bind(request.uri().to_string())
-            .bind(request.body().to_string())
-            .bind(id)
-            .execute(db)
-            .await
-            .map_err(|e| format!("Failed update request: {}", e))?;
-
-        //TODO: update headers
+        let query_result = sqlx::query(
+            "UPDATE requests SET label = ?, method = ?, url = ?, body = ? WHERE id = ?",
+        )
+        .bind(label)
+        .bind(request.method().to_string())
+        .bind(request.uri().to_string())
+        .bind(request.body().to_string())
+        .bind(id)
+        .execute(&mut **tx)
+        .await
+        .map_err(|e| format!("Failed to update request: {}", e))?;
 
         Ok(query_result.rows_affected())
     } else {
@@ -202,17 +227,59 @@ pub async fn save_request(
     }
 }
 
+async fn save_request_headers(
+    tx: &mut Transaction<'_, Sqlite>,
+    request: &Request<String>,
+) -> Result<(), String> {
+    let meta_data = request
+        .extensions()
+        .get::<RequestMetaData>()
+        .ok_or("Cannot update headers: request has no metadata")?;
+
+    // Delete existing headers
+    sqlx::query("DELETE FROM request_headers WHERE request_id = ?")
+        .bind(meta_data.id)
+        .execute(&mut **tx)
+        .await
+        .map_err(|e| format!("Failed to delete old headers: {}", e))?;
+
+    // Insert current headers
+    for (name, value) in request.headers().iter() {
+        sqlx::query("INSERT INTO request_headers (request_id, key, value) VALUES (?, ?, ?)")
+            .bind(meta_data.id)
+            .bind(name.as_str())
+            .bind(
+                value
+                    .to_str()
+                    .map_err(|e| format!("Invalid header value: {}", e))?,
+            )
+            .execute(&mut **tx)
+            .await
+            .map_err(|e| format!("Failed to insert header: {}", e))?;
+    }
+
+    Ok(())
+}
+
 pub async fn save_environment(
     state: &tauri::State<'_, AppState>,
     environment: Environment,
 ) -> Result<u64, String> {
     let db = &state.db;
+    let mut tx = db
+        .begin()
+        .await
+        .map_err(|e| format!("Failed update request: {}", e))?;
 
     //TODO: update other properties
-    let query_result = sqlx::query("UPDATE environments SET label = $1 WHERE id = $2")
+    let query_result = sqlx::query("UPDATE environments SET label = ? WHERE id = ?")
         .bind(environment.label)
         .bind(environment.id)
-        .execute(db)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| format!("Failed update request: {}", e))?;
+
+    tx.commit()
         .await
         .map_err(|e| format!("Failed update request: {}", e))?;
 
