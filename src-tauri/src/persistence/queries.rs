@@ -201,6 +201,31 @@ pub async fn save_request(
     Ok(rows_affected)
 }
 
+pub async fn save_environment(
+    state: &tauri::State<'_, AppState>,
+    environment: Environment,
+) -> Result<u64, String> {
+    let db = &state.db;
+    let mut tx = db
+        .begin()
+        .await
+        .map_err(|e| format!("Failed update request: {}", e))?;
+
+    let rows_affected = update_environment(&mut tx, &environment)
+        .await
+        .map_err(|e| format!("Failed to update request: {}", e))?;
+
+    save_environment_values(&mut tx, &environment)
+        .await
+        .map_err(|e| format!("Failed to update request: {}", e))?;
+
+    tx.commit()
+        .await
+        .map_err(|e| format!("Failed update request: {}", e))?;
+
+    Ok(rows_affected)
+}
+
 async fn update_request(
     tx: &mut Transaction<'_, Sqlite>,
     request: &Request<String>,
@@ -261,27 +286,42 @@ async fn save_request_headers(
     Ok(())
 }
 
-pub async fn save_environment(
-    state: &tauri::State<'_, AppState>,
-    environment: Environment,
+async fn update_environment(
+    tx: &mut Transaction<'_, Sqlite>,
+    environment: &Environment,
 ) -> Result<u64, String> {
-    let db = &state.db;
-    let mut tx = db
-        .begin()
-        .await
-        .map_err(|e| format!("Failed update request: {}", e))?;
-
-    //TODO: update other properties
-    let query_result = sqlx::query("UPDATE environments SET label = ? WHERE id = ?")
-        .bind(environment.label)
+     let query_result = sqlx::query("UPDATE environments SET label = ? WHERE id = ?")
+        .bind(environment.label.to_owned())
         .bind(environment.id)
-        .execute(&mut *tx)
+        .execute(&mut **tx)
         .await
-        .map_err(|e| format!("Failed update request: {}", e))?;
-
-    tx.commit()
-        .await
-        .map_err(|e| format!("Failed update request: {}", e))?;
+        .map_err(|e| format!("Failed to update environment: {}", e))?;
 
     Ok(query_result.rows_affected())
+}
+
+async fn save_environment_values(
+    tx: &mut Transaction<'_, Sqlite>,
+    environment: &Environment,
+) -> Result<(), String> {
+
+    // Delete existing values
+    sqlx::query("DELETE FROM environment_values WHERE environment_id = ?")
+        .bind(environment.id)
+        .execute(&mut **tx)
+        .await
+        .map_err(|e| format!("Failed to delete old environment values: {}", e))?;
+
+    // Insert current values
+    for environment_value in environment.values.iter() {
+        sqlx::query("INSERT INTO environment_values (environment_id, key, value) VALUES (?, ?, ?)")
+            .bind(environment.id)
+            .bind(environment_value.key.as_str())
+            .bind(environment_value.value.as_str())
+            .execute(&mut **tx)
+            .await
+            .map_err(|e| format!("Failed to insert environment values: {}", e))?;
+    }
+
+    Ok(())
 }
