@@ -133,7 +133,7 @@ pub async fn fetch_all_environments(
         values_by_environment_id
             .entry(environment_value.environment_id)
             .or_default()
-            .push(environment_value);
+            .push(EnvironmentValue::from(environment_value));
     }
 
     let all_environment_records: Vec<EnvironmentRecord> =
@@ -155,24 +155,6 @@ pub async fn fetch_all_environments(
     }
 
     Ok(environments)
-}
-
-pub async fn fetch_all_environment_values(
-    state: &tauri::State<'_, AppState>,
-) -> Result<Vec<EnvironmentValue>, String> {
-    let db = &state.db;
-
-    let all_environment_value_records: Vec<EnvironmentValueRecord> =
-        sqlx::query_as::<_, EnvironmentValueRecord>("SELECT * FROM environment_values")
-            .fetch(db)
-            .try_collect()
-            .await
-            .map_err(|e| format!("Failed to fetch environment values {}", e))?;
-
-    Ok(all_environment_value_records
-        .into_iter()
-        .map(EnvironmentValue::from)
-        .collect())
 }
 
 pub async fn save_request(
@@ -224,6 +206,21 @@ pub async fn save_environment(
         .map_err(|e| format!("Failed update request: {}", e))?;
 
     Ok(rows_affected)
+}
+
+async fn fetch_all_environment_values(
+    state: &tauri::State<'_, AppState>,
+) -> Result<Vec<EnvironmentValueRecord>, String> {
+    let db = &state.db;
+
+    let all_environment_value_records: Vec<EnvironmentValueRecord> =
+        sqlx::query_as::<_, EnvironmentValueRecord>("SELECT * FROM environment_values")
+            .fetch(db)
+            .try_collect()
+            .await
+            .map_err(|e| format!("Failed to fetch environment values {}", e))?;
+
+    Ok(all_environment_value_records)
 }
 
 async fn update_request(

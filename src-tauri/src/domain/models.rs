@@ -26,8 +26,6 @@ pub struct Environment {
 }
 
 pub struct EnvironmentValue {
-    pub id: u32,
-    pub environment_id: u32,
     pub key: String,
     pub value: String,
 }

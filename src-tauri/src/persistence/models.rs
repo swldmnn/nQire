@@ -83,8 +83,6 @@ impl From<RequestHeaderRecord> for RequestHeader {
 impl From<EnvironmentValueRecord> for EnvironmentValue {
     fn from(record: EnvironmentValueRecord) -> EnvironmentValue {
         EnvironmentValue {
-            id: record.id,
-            environment_id: record.environment_id,
             key: record.key,
             value: record.value,
         }
