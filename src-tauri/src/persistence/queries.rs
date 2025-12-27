@@ -125,7 +125,7 @@ pub async fn fetch_all_environments(
 
     let all_environment_values = fetch_all_environment_values(state)
         .await
-        .map_err(|e| format!("Failed to fetch requests {}", e))?;
+        .map_err(|e| format!("Failed to fetch environment values {}", e))?;
 
     let mut values_by_environment_id: HashMap<u32, Vec<EnvironmentValue>> = HashMap::new();
     for environment_value in all_environment_values {
@@ -197,4 +197,21 @@ pub async fn save_request(
     } else {
         Err("Cannot update request: request has no metadata".to_owned())
     }
+}
+
+pub async fn save_environment(
+    state: &tauri::State<'_, AppState>,
+    environment: Environment,
+) -> Result<u64, String> {
+    let db = &state.db;
+
+    //TODO: update other properties
+    let query_result = sqlx::query("UPDATE environments SET label = $1 WHERE id = $2")
+        .bind(environment.label)
+        .bind(environment.id)
+        .execute(db)
+        .await
+        .map_err(|e| format!("Failed update request: {}", e))?;
+
+    Ok(query_result.rows_affected())
 }

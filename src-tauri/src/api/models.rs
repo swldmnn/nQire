@@ -164,3 +164,29 @@ impl From<EnvironmentValue> for EnvironmentValueTransfer {
         }
     }
 }
+
+impl From<EnvironmentTransfer> for Environment {
+    fn from(environment_transfer: EnvironmentTransfer) -> Environment {
+        Environment {
+            id: environment_transfer.id,
+            label: environment_transfer.label,
+            values: environment_transfer
+                .values
+                .into_iter()
+                .map(EnvironmentValue::from)
+                .collect(),
+        }
+    }
+}
+
+impl From<EnvironmentValueTransfer> for EnvironmentValue {
+    fn from(environment_value_transfer: EnvironmentValueTransfer) -> EnvironmentValue {
+        //TODO: do not set fix values for ids. maybe ids shouly be removed from the domain model, since they are only necessary for DB?
+        EnvironmentValue {
+            id: 0,
+            environment_id: 0,
+            key: environment_value_transfer.key,
+            value: environment_value_transfer.value,
+        }
+    }
+}

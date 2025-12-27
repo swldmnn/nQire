@@ -57,15 +57,25 @@ function AppContextProvider(props: AppContextProviderProps) {
             const result: number | ErrorTransfer = await invoke("save_request", { request: item as HttpRequestTransfer })
 
             if (typeof result === "number") {
-                console.log('saved successfully')
                 await initialize()
+                openItem(item)
                 return true
             }
 
             return false
         }
 
-        //TODO handle other types
+        if (item.typename === 'Environment') {
+            const result: number | ErrorTransfer = await invoke("save_environment", { environment: item as EnvironmentTransfer })
+
+            if (typeof result === "number") {
+                await initialize()
+                openItem(item)
+                return true
+            }
+
+            return false
+        }
 
         return false
     }

@@ -2,14 +2,17 @@ import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, Ta
 import { Environment } from "../types/types"
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ItemTitleBar from "../components/ItemTitleBar";
+import { AppContext } from "../AppContext";
 
 interface EnvironmentViewProps {
     environment: Environment
 }
 
 function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps) {
+
+const appContext = useContext(AppContext)
 
     const [environment, setEnvironment] = useState({ ...inputEnvironment })
     const [isModified, setIsModified] = useState(false)
@@ -51,9 +54,10 @@ function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps
         modifyEnvironment({ ...environment, values })
     }
 
-    const onSave = () => {
-        setIsModified(false)
-        return false
+    const onSave = async () => {
+        if (await appContext.saveItem(environment)) {
+            setIsModified(false)
+        }
     }
 
     return <Box>

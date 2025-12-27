@@ -1,11 +1,10 @@
 use http::Request;
 
 use crate::{
-    api::{
+    AppState, api::{
         EnvironmentTransfer, ErrorTransfer, HttpRequestSetTransfer, HttpRequestTransfer,
         HttpResponseTransfer,
-    },
-    AppState,
+    }, domain::Environment
 };
 
 #[tauri::command]
@@ -79,6 +78,23 @@ pub async fn save_request(
     })?;
 
     let result = crate::services::save_request(state, req)
+        .await
+        .map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?;
+
+    Ok(result)
+}
+
+#[tauri::command]
+pub async fn save_environment(
+    state: tauri::State<'_, AppState>,
+    environment: EnvironmentTransfer,
+) -> Result<u64, ErrorTransfer> {
+    let env = Environment::from(environment);
+
+    let result = crate::services::save_environment(state, env)
         .await
         .map_err(|e| ErrorTransfer {
             typename: "Error".to_owned(),

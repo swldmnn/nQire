@@ -9,3 +9,14 @@ pub async fn find_all_environments(
 
     Ok(all_environments)
 }
+
+pub async fn save_environment(
+    state: tauri::State<'_, AppState>,
+    environment: Environment,
+) -> Result<u64, String> {
+    let count_updated = crate::persistence::save_environment(&state, environment)
+        .await
+        .map_err(|e| e)?;
+
+    Ok(count_updated)
+}

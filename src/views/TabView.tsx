@@ -17,7 +17,7 @@ function TabView() {
             appContext.appState.selectedTabIndex = Math.max(0, selectedTabIndex - 1)
         }
         appContext.updateAppState(appContext.appState)
-    }
+    }   
 
     return (
         <Box sx={{
