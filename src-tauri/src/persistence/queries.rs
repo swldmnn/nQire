@@ -184,14 +184,17 @@ pub async fn save_request(
         let id = meta_data.id;
         let label = &meta_data.label;
 
-        //TODO: update other properties
-        let query_result = sqlx::query("UPDATE requests SET label = $1, url = $2 WHERE id = $3")
+        let query_result = sqlx::query("UPDATE requests SET label = $1, method = $2, url = $3, body = $4 WHERE id = $5")
             .bind(label)
+            .bind(request.method().to_string())
             .bind(request.uri().to_string())
+            .bind(request.body().to_string())
             .bind(id)
             .execute(db)
             .await
             .map_err(|e| format!("Failed update request: {}", e))?;
+
+        //TODO: update headers
 
         Ok(query_result.rows_affected())
     } else {
