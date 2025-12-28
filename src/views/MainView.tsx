@@ -1,4 +1,4 @@
-import { Box, Button, Typography, useColorScheme } from "@mui/material"
+import { Alert, Box, Button, Snackbar, Typography, useColorScheme } from "@mui/material"
 import Logo from "../components/Logo"
 import TabView from "./TabView"
 import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
@@ -17,6 +17,11 @@ function MainView() {
             appContext.initialize()
         }
     }, []);
+
+
+    const onCloseSnackbar = () => {
+        appContext.hideNotification()
+    }
 
     return (
         <Box id='mainView_root' sx={{
@@ -61,6 +66,22 @@ function MainView() {
                     {appContext.appState.openItems.length ? <TabView /> : <Backplate />}
                 </Box>
             </Box>
+            <Snackbar
+                key={'notification'}
+                open={appContext.appState.notification.open}
+                autoHideDuration={appContext.appState.notification.closeAfterMillis}
+                onClose={onCloseSnackbar}
+                message={appContext.appState.notification.message}
+            >
+                <Alert
+                    onClose={onCloseSnackbar}
+                    severity={appContext.appState.notification.type}
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {appContext.appState.notification.message}
+                </Alert>
+            </Snackbar>
         </Box>
     )
 }

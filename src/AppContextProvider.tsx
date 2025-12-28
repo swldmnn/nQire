@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { AppContext, AppCtx, AppState } from "./AppContext"
+import { AppContext, AppCtx, AppState, NotificationState } from "./AppContext"
 import { DisplayItem, Environment, HttpRequestSet } from "./types/types";
-import { EnvironmentTransfer, ErrorTransfer, HttpRequestSetTransfer, HttpRequestTransfer } from "./types/types_transfer";
+import { EnvironmentTransfer, ErrorTransfer, HttpRequestSetTransfer, HttpRequestTransfer, isError } from "./types/types_transfer";
 import { invoke } from "@tauri-apps/api/core";
 
 interface AppContextProviderProps {
@@ -53,8 +53,15 @@ function AppContextProvider(props: AppContextProviderProps) {
     }
 
     const saveItem = async (item: DisplayItem) => {
-        if (item.typename === 'HttpRequest') {
-            const result: number | ErrorTransfer = await invoke("save_request", { request: item as HttpRequestTransfer })
+        let result: number | ErrorTransfer | undefined = undefined
+
+        try {
+            if (item.typename === 'HttpRequest') {
+                result = await invoke("save_request", { request: item as HttpRequestTransfer })
+            }
+            if (item.typename === 'Environment') {
+                result = await invoke("save_environment", { environment: item as EnvironmentTransfer })
+            }
 
             if (typeof result === "number") {
                 await initialize()
@@ -63,21 +70,22 @@ function AppContextProvider(props: AppContextProviderProps) {
             }
 
             return false
-        }
-
-        if (item.typename === 'Environment') {
-            const result: number | ErrorTransfer = await invoke("save_environment", { environment: item as EnvironmentTransfer })
-
-            if (typeof result === "number") {
-                await initialize()
-                openItem(item)
-                return true
+        } catch (error) {
+            if(isError(error)) {
+                return error.errorMessage
             }
-
             return false
         }
+    }
 
-        return false
+    const showNotification = (notification: NotificationState) => {
+        appContext.appState.notification = notification
+        appContext.updateAppState(appContext.appState)
+    }
+
+    const hideNotification = () => {
+        appContext.appState.notification = { ...appContext.appState.notification, open: false }
+        appContext.updateAppState(appContext.appState)
     }
 
     const initialContext = {
@@ -87,11 +95,19 @@ function AppContextProvider(props: AppContextProviderProps) {
             initialized: false,
             requestSets: [],
             environments: [],
+            notification: {
+                open: false,
+                message: '',
+                type: 'info',
+                closeAfterMillis: 5000,
+            }
         },
         updateAppState,
         openItem,
         saveItem,
         initialize,
+        showNotification,
+        hideNotification,
     } as AppCtx
 
     const [appContext, setAppContext] = useState(initialContext)

@@ -12,7 +12,7 @@ interface EnvironmentViewProps {
 
 function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps) {
 
-const appContext = useContext(AppContext)
+    const appContext = useContext(AppContext)
 
     const [environment, setEnvironment] = useState({ ...inputEnvironment })
     const [isModified, setIsModified] = useState(false)
@@ -55,8 +55,26 @@ const appContext = useContext(AppContext)
     }
 
     const onSave = async () => {
-        if (await appContext.saveItem(environment)) {
+        const result = await appContext.saveItem(environment)
+
+        if (result === true) {
             setIsModified(false)
+
+            appContext.showNotification({
+                open: true,
+                message: 'saved',
+                type: 'success',
+                closeAfterMillis: 5000,
+            })
+        } else {
+            const message = typeof result === 'string' ? result : 'save failed'
+
+            appContext.showNotification({
+                open: true,
+                message,
+                type: 'error',
+                closeAfterMillis: 5000,
+            })
         }
     }
 

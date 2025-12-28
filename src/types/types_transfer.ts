@@ -17,6 +17,10 @@ export interface ErrorTransfer {
     errorMessage: string
 }
 
+export function isError(error: any): error is ErrorTransfer {
+  return error.typename === 'Error';
+}
+
 export interface HttpRequestTransfer {
     typename: 'HttpRequest'
     id: number
