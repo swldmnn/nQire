@@ -1,0 +1,13 @@
+{
+    "cat_environments": "Environments",
+    "cat_request_sets": "Request Sets",
+    "no_environment": "No environment",
+    "create_new": "New",
+    "request_body": "Body",
+    "request_headers": "Headers",
+    "request_response": "Response",
+    "request_header_key": "Key",
+    "request_header_value": "Value",
+    "environment_key": "Key",
+    "environment_value": "Value"
+}

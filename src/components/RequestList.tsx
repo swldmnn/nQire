@@ -15,12 +15,14 @@ import { useContext } from "react";
 import { AppContext } from "../AppContext";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CategoryTitleBar from "./CategoryTitleBar";
+import { useTranslation } from "react-i18next";
 
 interface RequestListProps {
 }
 
 function RequestList({ }: RequestListProps) {
     const appContext = useContext(AppContext)
+    const {t} = useTranslation()
 
     const openItem = (requestSetIndex: number, requestIndex: number) => {
         const item = appContext.appState.requestSets[requestSetIndex].requests[requestIndex]
@@ -29,7 +31,7 @@ function RequestList({ }: RequestListProps) {
 
     return (
         <Box>
-            <CategoryTitleBar title='Request Sets' />
+            <CategoryTitleBar title={t('cat_request_sets')} />
             {
                 appContext.appState.requestSets.map((requestSet, requestSetIndex) =>
                     <Accordion defaultExpanded disableGutters key={`RequestSet_${requestSetIndex}`}>

@@ -3,9 +3,11 @@ import AdjustIcon from '@mui/icons-material/Adjust';
 import { useContext } from "react";
 import { AppContext } from "../AppContext";
 import CategoryTitleBar from "./CategoryTitleBar";
+import { useTranslation } from 'react-i18next';
 
 function EnvironmentList() {
     const appContext = useContext(AppContext)
+    const {t} = useTranslation()
 
     const openItem = (environmentIndex: number) => {
         const item = appContext.appState.environments[environmentIndex]
@@ -14,7 +16,7 @@ function EnvironmentList() {
 
     return (
         <Box>
-            <CategoryTitleBar title="Environments" />
+            <CategoryTitleBar title={t('cat_environments')} />
 
             <List>
                 {appContext.appState.environments.map((environment, index) =>

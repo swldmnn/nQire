@@ -2,6 +2,7 @@ import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, Ta
 import { HttpRequestResponseProps } from "../types/types"
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
+import { useTranslation } from "react-i18next";
 
 interface RequestHeadersProps extends HttpRequestResponseProps {
 }
@@ -10,6 +11,8 @@ function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
     if (!request || !setRequest) {
         return null
     }
+
+    const {t} = useTranslation()
 
     const onHeaderKeyChange = (index: number, newValue: string) => {
         const headers = request.headers.map(h => { return { ...h } })
@@ -40,8 +43,8 @@ function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
             <Table sx={{ minWidth: 650 }} size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{ color: 'secondary.main' }}>Key</TableCell>
-                        <TableCell sx={{ color: 'secondary.main' }}>Value</TableCell>
+                        <TableCell sx={{ color: 'secondary.main' }}>{t('request_header_key')}</TableCell>
+                        <TableCell sx={{ color: 'secondary.main' }}>{t('request_header_value')}</TableCell>
                         <TableCell sx={{ color: 'secondary.main' }}></TableCell>
                     </TableRow>
                 </TableHead>

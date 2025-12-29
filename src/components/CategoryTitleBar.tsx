@@ -1,6 +1,7 @@
 import { Box, IconButton, Menu, MenuItem, Typography } from "@mui/material"
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface CategoryTitleBarProps {
     title: string
@@ -8,6 +9,7 @@ interface CategoryTitleBarProps {
 
 function CategoryTitleBar({ title }: CategoryTitleBarProps) {
 
+    const {t} = useTranslation()
     const ITEM_HEIGHT = 48;
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -53,7 +55,7 @@ function CategoryTitleBar({ title }: CategoryTitleBarProps) {
                 }}
             >
                 <MenuItem key={'menuItem_'} selected={false} onClick={handleClose}>
-                    New
+                    {t('create_new')}
                 </MenuItem>
             </Menu>
         </Box>

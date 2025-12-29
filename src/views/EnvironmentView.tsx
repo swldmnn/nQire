@@ -5,6 +5,7 @@ import AddSharpIcon from '@mui/icons-material/AddSharp';
 import { useContext, useState } from "react";
 import ItemTitleBar from "../components/ItemTitleBar";
 import { AppContext } from "../AppContext";
+import { useTranslation } from "react-i18next";
 
 interface EnvironmentViewProps {
     environment: Environment
@@ -13,6 +14,7 @@ interface EnvironmentViewProps {
 function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps) {
 
     const appContext = useContext(AppContext)
+    const {t} = useTranslation()
 
     const [environment, setEnvironment] = useState({ ...inputEnvironment })
     const [isModified, setIsModified] = useState(false)
@@ -84,8 +86,8 @@ function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps
             <Table sx={{ minWidth: 650 }} size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{ color: 'secondary.main' }}>Key</TableCell>
-                        <TableCell sx={{ color: 'secondary.main' }}>Value</TableCell>
+                        <TableCell sx={{ color: 'secondary.main' }}>{t('environment_key')}</TableCell>
+                        <TableCell sx={{ color: 'secondary.main' }}>{t('environment_value')}</TableCell>
                         <TableCell sx={{ color: 'secondary.main' }}></TableCell>
                     </TableRow>
                 </TableHead>

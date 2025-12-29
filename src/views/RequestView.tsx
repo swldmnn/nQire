@@ -10,6 +10,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import RequestHeaders from "../components/RequestHeaders";
 import ItemTitleBar from "../components/ItemTitleBar";
 import { AppContext } from "../AppContext";
+import { useTranslation } from "react-i18next";
 
 interface NewRequestViewProps extends HttpRequestResponseProps {
 }
@@ -20,6 +21,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
     }
 
     const appContext = useContext(AppContext)
+    const {t} = useTranslation()
 
     const [request, setRequest] = useState({ ...inputRequest })
     const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
@@ -93,7 +95,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
                     color: 'primary.dark',
                 }}
             >
-                <Typography component="span">Body</Typography>
+                <Typography component="span">{t('request_body')}</Typography>
             </AccordionSummary>
             <AccordionDetails>
                 <RequestBody
@@ -111,7 +113,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
                     color: 'primary.dark',
                 }}
             >
-                <Typography component="span">Headers</Typography>
+                <Typography component="span">{t('request_headers')}</Typography>
             </AccordionSummary>
             <AccordionDetails>
                 <RequestHeaders request={request} setRequest={modifyRequest} />
@@ -129,7 +131,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
                     color: 'primary.dark',
                 }}
             >
-                <Typography component="span">Response</Typography>
+                <Typography component="span">{t('request_response')}</Typography>
                 {response.status > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: '.5rem' }}>{`[${response.status}]`}</Typography>}
             </AccordionSummary>
             <AccordionDetails sx={{
