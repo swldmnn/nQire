@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Snackbar, Typography, useColorScheme } from "@mui/material"
+import { Alert, Box, Button, Paper, Snackbar, Typography, useColorScheme } from "@mui/material"
 import Logo from "../components/Logo"
 import TabView from "./TabView"
 import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
@@ -33,23 +33,22 @@ function MainView() {
             boxSizing: 'border-box',
             bgcolor: 'background.default',
         }}>
-            <Box id='mainView_header' sx={{
+            <Paper id='mainView_header' elevation={3} square={true} sx={{
                 display: 'flex',
-                padding: '.8rem',
+                padding: '.5rem',
                 width: '100%',
                 boxSizing: 'border-box',
-                bgcolor: 'grey.800',
-                boxShadow: '0 6px 6px rgba(0, 0, 0, 0.2)'
+                zIndex: 999
             }}>
                 <Logo sx={{ color: 'primary.main', height: "2rem", width: "2rem", verticalAlign: "bottom" }} />
                 <Typography variant='h5' sx={{ marginLeft: '.5rem' }}>n</Typography>
                 <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
                 <Typography variant='h5' >ire</Typography>
-                <EnvironmentChooser sx={{ marginLeft: 'auto', marginRight: '1rem' }}/>
-                <Button  onClick={() => { setMode(mode === 'dark' ? 'light' : 'dark') }}>
+                <EnvironmentChooser sx={{ marginLeft: 'auto', marginRight: '1rem' }} />
+                <Button onClick={() => { setMode(mode === 'dark' ? 'light' : 'dark') }}>
                     {mode === 'light' ? <BrightnessHighIcon /> : <BrightnessLowIcon />}
                 </Button>
-            </Box>
+            </Paper>
 
             <Box id='mainView_content' sx={{
                 display: 'flex',

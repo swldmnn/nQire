@@ -82,7 +82,7 @@ function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps
 
     return <Box>
         <ItemTitleBar item={environment} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
-        <TableContainer component={Paper}>
+        <TableContainer>
             <Table sx={{ minWidth: 650 }} size="small">
                 <TableHead>
                     <TableRow>

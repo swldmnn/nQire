@@ -24,7 +24,7 @@ function CategoryTitleBar({ title }: CategoryTitleBarProps) {
     }
 
     return (
-        <Box sx={{ padding: '.8rem', color: 'primary.main', backgroundColor: 'background.default', display: 'flex' }}>
+        <Box sx={{ padding: '.4rem', color: 'primary.main', backgroundColor: 'background.default', display: 'flex', flexDirection: 'row'}}>
             <Typography variant="button">{title}</Typography>
             <IconButton
                 aria-label="more"

@@ -1,4 +1,4 @@
-import { lightGreen, lime, pink } from '@mui/material/colors';
+import { deepOrange, lime, pink, purple } from '@mui/material/colors';
 import './App.css';
 import {
   ThemeProvider,
@@ -14,8 +14,8 @@ const theme = createTheme({
   colorSchemes: {
     light: {
       palette: {
-        primary: lightGreen,
-        secondary: pink,
+        primary: purple,
+        secondary: deepOrange,
       },
     },
     dark: {

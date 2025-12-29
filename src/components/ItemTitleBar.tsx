@@ -11,7 +11,6 @@ interface TitleBarProps {
 
 function ItemTitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarProps) {
     return (
-        <Card>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -34,7 +33,6 @@ function ItemTitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarP
                     <SaveIcon />
                 </Button>
             </Box>
-        </Card>
     )
 }
 

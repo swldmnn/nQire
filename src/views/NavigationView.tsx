@@ -43,9 +43,11 @@ function NavigationView() {
                     value={selectedIndex}
                     onChange={handleTabChange}
                     orientation="vertical"
+                    scrollButtons="auto"
+                    variant="scrollable"
                     sx={{ width: '100%' }}
                 >
-                    <Tab icon={<PlayArrowIcon />} />
+                    <Tab icon={<PlayArrowIcon />}/>
                     <Tab icon={<AdjustIcon />} />
                 </Tabs>
 
