@@ -24,6 +24,7 @@ export interface AppState {
     initialized: boolean
     requestSets: HttpRequestSet[]
     environments: Environment[]
+    activeEnvironment: string
     notification: NotificationState
 }
 
@@ -34,6 +35,7 @@ export const AppContext = createContext({
         initialized: false,
         requestSets: [],
         environments: [],
+        activeEnvironment: 'none',
         notification: {
             open: false,
             message: '',

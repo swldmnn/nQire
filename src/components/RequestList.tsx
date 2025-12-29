@@ -14,6 +14,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useContext } from "react";
 import { AppContext } from "../AppContext";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import CategoryTitleBar from "./CategoryTitleBar";
 
 interface RequestListProps {
 }
@@ -28,6 +29,7 @@ function RequestList({ }: RequestListProps) {
 
     return (
         <Box>
+            <CategoryTitleBar title='Request Sets' />
             {
                 appContext.appState.requestSets.map((requestSet, requestSetIndex) =>
                     <Accordion defaultExpanded disableGutters key={`RequestSet_${requestSetIndex}`}>

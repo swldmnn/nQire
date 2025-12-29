@@ -7,6 +7,7 @@ import { useContext, useEffect } from "react"
 import { AppContext } from "../AppContext"
 import NavigationView from "./NavigationView"
 import Backplate from "../components/Backplate";
+import EnvironmentChooser from "../components/EnvironmentChooser";
 
 function MainView() {
     const { mode, setMode } = useColorScheme();
@@ -44,7 +45,8 @@ function MainView() {
                 <Typography variant='h5' sx={{ marginLeft: '.5rem' }}>n</Typography>
                 <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
                 <Typography variant='h5' >ire</Typography>
-                <Button sx={{ marginLeft: 'auto' }} onClick={() => { setMode(mode === 'dark' ? 'light' : 'dark') }}>
+                <EnvironmentChooser sx={{ marginLeft: 'auto', marginRight: '1rem' }}/>
+                <Button  onClick={() => { setMode(mode === 'dark' ? 'light' : 'dark') }}>
                     {mode === 'light' ? <BrightnessHighIcon /> : <BrightnessLowIcon />}
                 </Button>
             </Box>
