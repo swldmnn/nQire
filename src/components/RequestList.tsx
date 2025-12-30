@@ -1,28 +1,27 @@
 import {
     List,
-    ListItem,
-    ListItemButton,
-    ListItemText,
-    ListItemIcon,
     Box,
     Accordion,
     AccordionSummary,
     Typography,
-    AccordionDetails
+    AccordionDetails,
 } from "@mui/material"
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../AppContext";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CategoryTitleBar from "./CategoryTitleBar";
 import { useTranslation } from "react-i18next";
+import CustomListItem from "./CustomListItem";
+import ContextMenu from "./ContextMenu";
+import { styles } from "../constants";
 
 interface RequestListProps {
 }
 
 function RequestList({ }: RequestListProps) {
     const appContext = useContext(AppContext)
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
     const openItem = (requestSetIndex: number, requestIndex: number) => {
         const item = appContext.appState.requestSets[requestSetIndex].requests[requestIndex]
@@ -40,21 +39,25 @@ function RequestList({ }: RequestListProps) {
                             sx={{
                                 flexDirection: 'row-reverse',
                                 color: 'primary.main',
+                                padding: styles.padding.default,
                             }}
                         >
                             <Typography component="span">{requestSet.label}</Typography>
+                            <ContextMenu
+                                actions={[{ label: t('delete_item'), callback: () => console.log(t('delete_item')) }]}
+                                sx={{ marginLeft: 'auto' }}
+                            />
                         </AccordionSummary>
-                        <AccordionDetails>
+                        <AccordionDetails sx={{ padding: 0 }}>
                             <List>
                                 {requestSet.requests.map((request, requestIndex) =>
-                                    <ListItem key={'RequestListItem' + requestIndex}>
-                                        <ListItemButton onDoubleClick={() => openItem(requestSetIndex, requestIndex)}>
-                                            <ListItemIcon>
-                                                <PlayArrowIcon />
-                                            </ListItemIcon>
-                                            <ListItemText primary={request.label} />
-                                        </ListItemButton>
-                                    </ListItem>
+                                    <CustomListItem
+                                        key={`RequestListItem_${requestIndex}`}
+                                        item={request}
+                                        icon={PlayArrowIcon}
+                                        onDoubleClick={() => openItem(requestSetIndex, requestIndex)}
+                                        index={requestIndex}
+                                    />
                                 )}
                             </List>
                         </AccordionDetails>

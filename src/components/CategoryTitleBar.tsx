@@ -1,63 +1,28 @@
-import { Box, IconButton, Menu, MenuItem, Typography } from "@mui/material"
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useState } from "react";
+import { Box, Typography } from "@mui/material"
 import { useTranslation } from "react-i18next";
+import { styles } from "../constants";
+import ContextMenu from "./ContextMenu";
 
 interface CategoryTitleBarProps {
     title: string
 }
 
 function CategoryTitleBar({ title }: CategoryTitleBarProps) {
-
-    const {t} = useTranslation()
-    const ITEM_HEIGHT = 48;
-
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl)
-
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget)
-    }
-
-    const handleClose = () => {
-        setAnchorEl(null)
-    }
+    const { t } = useTranslation()
 
     return (
-        <Box sx={{ padding: '.4rem', color: 'primary.main', backgroundColor: 'background.default', display: 'flex', flexDirection: 'row'}}>
+        <Box sx={{
+            padding: styles.padding.default,
+            color: 'primary.main',
+            display: 'flex',
+            flexDirection: 'row',
+            boxSizing: 'border-box',
+            alignItems: 'center'
+        }}>
             <Typography variant="button">{title}</Typography>
-            <IconButton
-                aria-label="more"
-                id="long-button"
-                aria-controls={open ? 'long-menu' : undefined}
-                aria-expanded={open ? 'true' : undefined}
-                aria-haspopup="true"
-                onClick={handleClick}
-                sx={{ marginLeft: 'auto' }}
-            >
-                <MoreVertIcon />
-            </IconButton>
-            <Menu
-                id="long-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                slotProps={{
-                    paper: {
-                        style: {
-                            maxHeight: ITEM_HEIGHT * 4.5,
-                            width: '20ch',
-                        },
-                    },
-                    list: {
-                        'aria-labelledby': 'long-button',
-                    },
-                }}
-            >
-                <MenuItem key={'menuItem_'} selected={false} onClick={handleClose}>
-                    {t('create_new')}
-                </MenuItem>
-            </Menu>
+            <ContextMenu actions={[
+                { label: t('create_item'), callback: () => { console.log(t('create_item')) } }
+            ]} sx={{ marginLeft: 'auto' }} />
         </Box>
     )
 }

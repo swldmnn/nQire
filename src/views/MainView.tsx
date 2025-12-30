@@ -8,6 +8,7 @@ import { AppContext } from "../AppContext"
 import NavigationView from "./NavigationView"
 import Backplate from "../components/Backplate";
 import EnvironmentChooser from "../components/EnvironmentChooser";
+import { styles } from "../constants";
 
 function MainView() {
     const { mode, setMode } = useColorScheme();
@@ -35,13 +36,13 @@ function MainView() {
         }}>
             <Paper id='mainView_header' elevation={3} square={true} sx={{
                 display: 'flex',
-                padding: '.5rem',
+                padding: styles.padding.default,
                 width: '100%',
                 boxSizing: 'border-box',
                 zIndex: 999
             }}>
                 <Logo sx={{ color: 'primary.main', height: "2rem", width: "2rem", verticalAlign: "bottom" }} />
-                <Typography variant='h5' sx={{ marginLeft: '.5rem' }}>n</Typography>
+                <Typography variant='h5' sx={{ marginLeft: styles.padding.default }}>n</Typography>
                 <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
                 <Typography variant='h5' >ire</Typography>
                 <EnvironmentChooser sx={{ marginLeft: 'auto', marginRight: '1rem' }} />

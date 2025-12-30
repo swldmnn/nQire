@@ -11,6 +11,7 @@ import RequestHeaders from "../components/RequestHeaders";
 import ItemTitleBar from "../components/ItemTitleBar";
 import { AppContext } from "../AppContext";
 import { useTranslation } from "react-i18next";
+import { styles } from "../constants";
 
 interface NewRequestViewProps extends HttpRequestResponseProps {
 }
@@ -21,7 +22,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
     }
 
     const appContext = useContext(AppContext)
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
     const [request, setRequest] = useState({ ...inputRequest })
     const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
@@ -132,7 +133,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
                 }}
             >
                 <Typography component="span">{t('request_response')}</Typography>
-                {response.status > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: '.5rem' }}>{`[${response.status}]`}</Typography>}
+                {response.status > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: styles.padding.default }}>{`[${response.status}]`}</Typography>}
             </AccordionSummary>
             <AccordionDetails sx={{
                 minHeight: 0,
