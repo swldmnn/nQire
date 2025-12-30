@@ -40,6 +40,8 @@ function RequestList({ }: RequestListProps) {
                                 flexDirection: 'row-reverse',
                                 color: 'primary.main',
                                 padding: styles.padding.default,
+                                paddingTop: styles.padding.small,
+                                paddingBottom: styles.padding.small,
                             }}
                         >
                             <Typography component="span">{requestSet.label}</Typography>
@@ -49,7 +51,7 @@ function RequestList({ }: RequestListProps) {
                             />
                         </AccordionSummary>
                         <AccordionDetails sx={{ padding: 0 }}>
-                            <List>
+                            <List sx={{ padding: 0 }}>
                                 {requestSet.requests.map((request, requestIndex) =>
                                     <CustomListItem
                                         key={`RequestListItem_${requestIndex}`}

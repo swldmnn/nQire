@@ -26,15 +26,15 @@ function ContextMenu({ actions, sx }: ContextMenuProps) {
 
     return (
         <Box sx={[...(Array.isArray(sx) ? sx : [sx])]}>
-            <IconButton
+            <Box
+                role='button'
                 onClick={(e) => {
                     e.stopPropagation()
                     handleClick(e)
                 }}
-                size="small"
             >
                 <MoreVertIcon />
-            </IconButton>
+            </Box>
             <Menu
                 anchorEl={anchorEl}
                 open={open}
