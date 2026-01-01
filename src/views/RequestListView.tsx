@@ -51,7 +51,6 @@ function RequestListView({ }: RequestListProps) {
                 closeAfterMillis: 5000,
             })
         } catch (error) {
-            console.log(error)
             const message = isError(error) ? error.errorMessage : t('error_create_request')
 
             appContext.showNotification({
@@ -81,7 +80,6 @@ function RequestListView({ }: RequestListProps) {
                 closeAfterMillis: 5000,
             })
         } catch (error) {
-            console.log(error)
             const message = isError(error) ? error.errorMessage : t('error_create_request_set')
 
             appContext.showNotification({
