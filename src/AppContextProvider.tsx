@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { AppContext, AppCtx, AppState, NotificationState } from "./AppContext"
-import { DisplayItem, Environment, HttpRequestSet } from "./types/types";
+import { DisplayItem, Environment, HttpRequest, HttpRequestSet } from "./types/types";
 import { EnvironmentTransfer, ErrorTransfer, HttpRequestSetTransfer, HttpRequestTransfer, isError } from "./types/types_transfer";
 import { invoke } from "@tauri-apps/api/core";
 
@@ -15,7 +15,15 @@ function AppContextProvider(props: AppContextProviderProps) {
 
     const getRequestSets = async () => {
         const loadedRequestSetTransfers: HttpRequestSetTransfer[] = await invoke('find_all_request_sets', {});
-        const loadedRequestSets: HttpRequestSet[] = loadedRequestSetTransfers
+        const loadedRequestSets: HttpRequestSet[] = loadedRequestSetTransfers.map(requestSetTransfer => {
+            return {
+                id: requestSetTransfer.id,
+                label: requestSetTransfer.label,
+                requests: requestSetTransfer.requests
+                    .filter(requestTransfer => !!requestTransfer.id)
+                    .map(requestTransfer => { return { ...requestTransfer } as HttpRequest })
+            } as HttpRequestSet
+        })
 
         appContext.appState.requestSets = loadedRequestSets
         appContext.updateAppState(appContext.appState)
@@ -24,8 +32,8 @@ function AppContextProvider(props: AppContextProviderProps) {
     const getEnvironments = async () => {
         const loadedEnvironmentTransfers: EnvironmentTransfer[] = await invoke('find_all_environments', {});
         const loadedEnvironments: Environment[] = loadedEnvironmentTransfers
-            .filter(env => !!env.id)
-            .map(env => { return { ...env } as Environment })
+            .filter(environmentTransfer => !!environmentTransfer.id)
+            .map(environmentTransfer => { return { ...environmentTransfer } as Environment })
 
         appContext.appState.environments = loadedEnvironments
         appContext.updateAppState(appContext.appState)

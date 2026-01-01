@@ -105,3 +105,51 @@ pub async fn save_environment(
 
     Ok(result)
 }
+
+#[tauri::command]
+pub async fn save_request_set(
+    state: tauri::State<'_, AppState>,
+    request_set: HttpRequestSetTransfer,
+) -> Result<u64, ErrorTransfer> {
+     //TODO implement
+    Err(ErrorTransfer {
+        typename: "Error".to_owned(),
+        error_message: "insert request set not yet implemented".to_owned(),
+    })
+}
+
+#[tauri::command]
+pub async fn delete_environment(
+    state: tauri::State<'_, AppState>,
+    environment_id: u32,
+) -> Result<u64, ErrorTransfer> {
+    //TODO implement
+    Err(ErrorTransfer {
+        typename: "Error".to_owned(),
+        error_message: "delete environment not yet implemented".to_owned(),
+    })
+}
+
+#[tauri::command]
+pub async fn delete_request(
+    state: tauri::State<'_, AppState>,
+    request_id: u32,
+) -> Result<u64, ErrorTransfer> {
+    //TODO implement
+    Err(ErrorTransfer {
+        typename: "Error".to_owned(),
+        error_message: "delete request not yet implemented".to_owned(),
+    })
+}
+
+#[tauri::command]
+pub async fn delete_request_set(
+    state: tauri::State<'_, AppState>,
+    request_set_id: u32,
+) -> Result<u64, ErrorTransfer> {
+    //TODO implement
+    Err(ErrorTransfer {
+        typename: "Error".to_owned(),
+        error_message: "delete request set not yet implemented".to_owned(),
+    })
+}

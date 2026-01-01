@@ -1,7 +1,6 @@
 import { SvgIconComponent } from "@mui/icons-material";
 import { ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-import { DisplayItem } from "../types/types";
-import { useTranslation } from "react-i18next";
+import { Action, DisplayItem } from "../types/types";
 import { styles } from "../constants";
 import ContextMenu from "./ContextMenu";
 
@@ -10,11 +9,10 @@ interface CustomListItemProps {
     item: DisplayItem
     icon: SvgIconComponent
     onDoubleClick: () => void
+    actions: Action[]
 }
 
-function CustomListItem({ index, item, icon: Icon, onDoubleClick }: CustomListItemProps) {
-    const { t } = useTranslation()
-
+function CustomListItem({ index, item, icon: Icon, onDoubleClick, actions }: CustomListItemProps) {
     return (
         <ListItem key={`${item.typename}_${index}`} sx={{ padding: 0 }}>
             <ListItemButton onDoubleClick={onDoubleClick} sx={{ padding: styles.padding.default }}>
@@ -25,7 +23,7 @@ function CustomListItem({ index, item, icon: Icon, onDoubleClick }: CustomListIt
 
             </ListItemButton>
             <ContextMenu
-                actions={[{ label: t('delete_item'), callback: () => console.log(t('delete_item')) }]}
+                actions={actions}
                 sx={{ marginLeft: 'auto', paddingRight: styles.padding.default }}
             />
         </ListItem>

@@ -34,7 +34,7 @@ function EnvironmentListView() {
                 closeAfterMillis: 5000,
             })
         } catch (error) {
-            const message = isError(error) ? error.errorMessage : 'create failed'
+            const message = isError(error) ? error.errorMessage : t('error_create_environment')
 
             appContext.showNotification({
                 open: true,
@@ -43,7 +43,30 @@ function EnvironmentListView() {
                 closeAfterMillis: 5000,
             })
         }
+    }
 
+    const deleteEnvironment = async () => {
+        try {
+            await invoke("delete_environment", {
+                environmentId: 0 //TODO pass correct id
+            })
+
+            appContext.showNotification({
+                open: true,
+                message: 'saved',
+                type: 'success',
+                closeAfterMillis: 5000,
+            })
+        } catch (error) {
+            const message = isError(error) ? error.errorMessage : t('delete_environment_failed')
+
+            appContext.showNotification({
+                open: true,
+                message,
+                type: 'error',
+                closeAfterMillis: 5000,
+            })
+        }
     }
 
     return (
@@ -62,6 +85,7 @@ function EnvironmentListView() {
                         item={environment}
                         onDoubleClick={() => openItem(index)}
                         icon={AdjustIcon}
+                        actions={[{ label: t('delete_item'), callback: () => deleteEnvironment() }]}
                     />
                 )}
             </List>

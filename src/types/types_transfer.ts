@@ -3,8 +3,6 @@
  * Keep in sync with the corresponding backend types to avoid Serialization Errors.
  */
 
-import { HttpRequestSet } from "./types"
-
 export interface HttpRequestSetTransfer {
     typename: 'HttpRequestSet'
     id: number
@@ -23,7 +21,7 @@ export function isError(error: any): error is ErrorTransfer {
 
 export interface HttpRequestTransfer {
     typename: 'HttpRequest'
-    id: number
+    id?: number
     label: string
     method: string
     url: string
@@ -51,9 +49,4 @@ export interface EnvironmentTransfer {
 export interface EnvironmentValueTransfer {
     key: string
     value: string
-}
-
-export const mapRequestSetTransfers = (requestSetTransfers: HttpRequestSetTransfer[]) => {
-    const mappedSequestSets: HttpRequestSet[] = requestSetTransfers
-    return mappedSequestSets
 }

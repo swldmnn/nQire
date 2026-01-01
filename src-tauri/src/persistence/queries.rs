@@ -84,7 +84,9 @@ pub async fn fetch_all_requests(
 
     for request in &mut requests {
         if let Some(request_meta_data) = request.extensions().get::<RequestMetaData>() {
-            if let Some(request_headers) = headers_by_request_id.remove(&request_meta_data.id) {
+            if let Some(request_headers) =
+                headers_by_request_id.remove(&request_meta_data.id.unwrap())
+            {
                 let header_map = request.headers_mut();
                 for request_header in request_headers {
                     let name = HeaderName::from_bytes(request_header.key.as_bytes())
@@ -237,6 +239,11 @@ async fn update_request(
         let id = meta_data.id;
         let label = &meta_data.label;
 
+        if id.is_none() {
+            //TODO insert request if no id given
+            return Err("Insert request not yet implemented".to_owned());
+        }
+
         let query_result = sqlx::query(
             "UPDATE requests SET label = ?, method = ?, url = ?, body = ? WHERE id = ?",
         )
@@ -244,7 +251,7 @@ async fn update_request(
         .bind(request.method().to_string())
         .bind(request.uri().to_string())
         .bind(request.body().to_string())
-        .bind(id)
+        .bind(id.unwrap())
         .execute(&mut **tx)
         .await
         .map_err(|e| format!("Failed to update request: {}", e))?;

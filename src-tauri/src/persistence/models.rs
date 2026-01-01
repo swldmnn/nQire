@@ -59,7 +59,7 @@ impl From<RequestRecord> for Request<String> {
             .method(request_record.method.as_str())
             .uri(request_record.url.to_owned())
             .extension(RequestMetaData {
-                id: request_record.id,
+                id: Some(request_record.id),
                 request_set_id: request_record.request_set_id,
                 label: request_record.label.to_owned(),
             })

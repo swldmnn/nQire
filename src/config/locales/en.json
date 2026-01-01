@@ -4,11 +4,18 @@
     "no_environment": "No environment",
     "create_item": "New",
     "delete_item": "Delete",
+    "add_item": "Add",
     "request_body": "Body",
     "request_headers": "Headers",
     "request_response": "Response",
     "request_header_key": "Key",
     "request_header_value": "Value",
     "environment_key": "Key",
-    "environment_value": "Value"
+    "environment_value": "Value",
+    "error_delete_environment": "Delete environment failed",
+    "error_create_environment": "Create environment failed",
+    "error_delete_request": "Delete request failed",
+    "error_create_request": "Create request failed",
+    "error_create_request_set": "Create request set failed",
+    "error_delete_request_set": "Delete request set failed"
 }

@@ -16,7 +16,7 @@ pub struct HttpRequestSetTransfer {
 #[serde(rename_all = "camelCase")]
 pub struct HttpRequestTransfer {
     pub typename: String,
-    pub id: u32,
+    pub id: Option<u32>,
     pub label: String,
     pub method: String,
     pub url: String,
