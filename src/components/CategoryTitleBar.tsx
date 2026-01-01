@@ -1,15 +1,14 @@
 import { Box, Typography } from "@mui/material"
-import { useTranslation } from "react-i18next";
 import { styles } from "../constants";
 import ContextMenu from "./ContextMenu";
+import { Action } from "../types/types";
 
 interface CategoryTitleBarProps {
     title: string
+    actions: Action[]
 }
 
-function CategoryTitleBar({ title }: CategoryTitleBarProps) {
-    const { t } = useTranslation()
-
+function CategoryTitleBar({ title, actions }: CategoryTitleBarProps) {
     return (
         <Box sx={{
             padding: styles.padding.default,
@@ -20,9 +19,7 @@ function CategoryTitleBar({ title }: CategoryTitleBarProps) {
             alignItems: 'center'
         }}>
             <Typography variant="button">{title}</Typography>
-            <ContextMenu actions={[
-                { label: t('create_item'), callback: () => { console.log(t('create_item')) } }
-            ]} sx={{ marginLeft: 'auto' }} />
+            <ContextMenu actions={actions} sx={{ marginLeft: 'auto' }} />
         </Box>
     )
 }

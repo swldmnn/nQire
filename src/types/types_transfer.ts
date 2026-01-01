@@ -18,7 +18,7 @@ export interface ErrorTransfer {
 }
 
 export function isError(error: any): error is ErrorTransfer {
-  return error.typename === 'Error';
+    return error.typename === 'Error';
 }
 
 export interface HttpRequestTransfer {
@@ -43,7 +43,7 @@ export interface HttpHeaderTransfer {
 
 export interface EnvironmentTransfer {
     typename: 'Environment'
-    id: number
+    id?: number
     label: string
     values: EnvironmentValueTransfer[]
 }

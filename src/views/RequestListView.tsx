@@ -7,19 +7,19 @@ import {
     AccordionDetails,
 } from "@mui/material"
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { AppContext } from "../AppContext";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import CategoryTitleBar from "./CategoryTitleBar";
+import CategoryTitleBar from "../components/CategoryTitleBar";
 import { useTranslation } from "react-i18next";
-import CustomListItem from "./CustomListItem";
-import ContextMenu from "./ContextMenu";
+import CustomListItem from "../components/CustomListItem";
+import ContextMenu from "../components/ContextMenu";
 import { styles } from "../constants";
 
 interface RequestListProps {
 }
 
-function RequestList({ }: RequestListProps) {
+function RequestListView({ }: RequestListProps) {
     const appContext = useContext(AppContext)
     const { t } = useTranslation()
 
@@ -30,7 +30,12 @@ function RequestList({ }: RequestListProps) {
 
     return (
         <Box>
-            <CategoryTitleBar title={t('cat_request_sets')} />
+            <CategoryTitleBar
+                title={t('cat_request_sets')}
+                actions={[
+                    { label: t('create_item'), callback: () => { console.log('create new request') } }
+                ]}
+            />
             {
                 appContext.appState.requestSets.map((requestSet, requestSetIndex) =>
                     <Accordion defaultExpanded disableGutters key={`RequestSet_${requestSetIndex}`}>
@@ -68,4 +73,4 @@ function RequestList({ }: RequestListProps) {
         </Box>)
 }
 
-export default RequestList
+export default RequestListView

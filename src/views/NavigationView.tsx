@@ -1,11 +1,11 @@
 import { Box, Button, Divider, Tab, Tabs } from "@mui/material";
-import RequestList from "../components/RequestList";
+import RequestListView from "./RequestListView";
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import { useState } from "react";
-import EnvironmentList from "../components/EnvironmentList";
+import EnvironmentListView from "./EnvironmentListView";
 
 type SelectionIndex = number | false
 
@@ -47,7 +47,7 @@ function NavigationView() {
                     variant="scrollable"
                     sx={{ width: '100%' }}
                 >
-                    <Tab icon={<PlayArrowIcon />}/>
+                    <Tab icon={<PlayArrowIcon />} />
                     <Tab icon={<AdjustIcon />} />
                 </Tabs>
 
@@ -80,7 +80,7 @@ function NavigationView() {
                                 height: '100%',
                                 width: '100%',
                             }}>
-                            <RequestList />
+                            <RequestListView />
                         </Box>
                         <Box
                             id='navigation_panel_environments'
@@ -91,7 +91,7 @@ function NavigationView() {
                                 height: '100%',
                                 width: '100%',
                             }}>
-                            <EnvironmentList />
+                            <EnvironmentListView />
                         </Box>
                     </Box>
                     <Divider orientation="vertical" flexItem />

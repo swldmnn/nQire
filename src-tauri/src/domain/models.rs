@@ -20,7 +20,7 @@ pub struct HttpRequestSet {
 }
 
 pub struct Environment {
-    pub id: u32,
+    pub id: Option<u32>,
     pub label: String,
     pub values: Vec<EnvironmentValue>,
 }

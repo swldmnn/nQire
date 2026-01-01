@@ -44,3 +44,8 @@ export interface EnvironmentValue {
     key: string
     value: string
 }
+
+export interface Action {
+    label: string,
+    callback: () => void
+}

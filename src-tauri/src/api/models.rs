@@ -42,7 +42,7 @@ pub struct HttpHeaderTransfer {
 #[serde(rename_all = "camelCase")]
 pub struct EnvironmentTransfer {
     pub typename: String,
-    pub id: u32,
+    pub id: Option<u32>,
     pub label: String,
     pub values: Vec<EnvironmentValueTransfer>,
 }

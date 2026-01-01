@@ -1,10 +1,12 @@
 use http::Request;
 
 use crate::{
-    AppState, api::{
+    api::{
         EnvironmentTransfer, ErrorTransfer, HttpRequestSetTransfer, HttpRequestTransfer,
         HttpResponseTransfer,
-    }, domain::Environment
+    },
+    domain::Environment,
+    AppState,
 };
 
 #[tauri::command]

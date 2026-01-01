@@ -1,15 +1,11 @@
-import { Box, IconButton, Menu, MenuItem, SxProps, Theme } from "@mui/material";
+import { Box, Menu, MenuItem, SxProps, Theme } from "@mui/material";
 import { useState } from "react";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Action } from "../types/types";
 
 interface ContextMenuProps {
-    actions: ContextMenuAction[]
+    actions: Action[]
     sx?: SxProps<Theme>;
-}
-
-interface ContextMenuAction {
-    label: string,
-    callback: () => void
 }
 
 function ContextMenu({ actions, sx }: ContextMenuProps) {
@@ -27,6 +23,7 @@ function ContextMenu({ actions, sx }: ContextMenuProps) {
     return (
         <Box sx={[...(Array.isArray(sx) ? sx : [sx])]}>
             <Box
+                sx={{ color: 'text.secondary' }}
                 role='button'
                 onClick={(e) => {
                     e.stopPropagation()

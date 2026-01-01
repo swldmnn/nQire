@@ -92,7 +92,7 @@ impl From<EnvironmentValueRecord> for EnvironmentValue {
 impl From<EnvironmentRecord> for Environment {
     fn from(record: EnvironmentRecord) -> Environment {
         Environment {
-            id: record.id,
+            id: Some(record.id),
             label: record.label,
             values: vec![],
         }

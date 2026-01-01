@@ -149,7 +149,8 @@ pub async fn fetch_all_environments(
         .collect();
 
     for environment in &mut environments {
-        if let Some(environment_values) = values_by_environment_id.remove(&environment.id) {
+        if let Some(environment_values) = values_by_environment_id.remove(&environment.id.unwrap())
+        {
             environment.values = environment_values
         }
     }
@@ -187,6 +188,11 @@ pub async fn save_environment(
     state: &tauri::State<'_, AppState>,
     environment: Environment,
 ) -> Result<u64, String> {
+    if environment.id.is_none() {
+        //TODO insert environment if no id given
+        return Err("Insert environment not yet implemented".to_owned());
+    }
+
     let db = &state.db;
     let mut tx = db
         .begin()
@@ -287,7 +293,7 @@ async fn update_environment(
     tx: &mut Transaction<'_, Sqlite>,
     environment: &Environment,
 ) -> Result<u64, String> {
-     let query_result = sqlx::query("UPDATE environments SET label = ? WHERE id = ?")
+    let query_result = sqlx::query("UPDATE environments SET label = ? WHERE id = ?")
         .bind(environment.label.to_owned())
         .bind(environment.id)
         .execute(&mut **tx)
@@ -301,7 +307,6 @@ async fn save_environment_values(
     tx: &mut Transaction<'_, Sqlite>,
     environment: &Environment,
 ) -> Result<(), String> {
-
     // Delete existing values
     sqlx::query("DELETE FROM environment_values WHERE environment_id = ?")
         .bind(environment.id)

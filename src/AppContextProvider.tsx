@@ -24,6 +24,8 @@ function AppContextProvider(props: AppContextProviderProps) {
     const getEnvironments = async () => {
         const loadedEnvironmentTransfers: EnvironmentTransfer[] = await invoke('find_all_environments', {});
         const loadedEnvironments: Environment[] = loadedEnvironmentTransfers
+            .filter(env => !!env.id)
+            .map(env => { return { ...env } as Environment })
 
         appContext.appState.environments = loadedEnvironments
         appContext.updateAppState(appContext.appState)
@@ -71,7 +73,7 @@ function AppContextProvider(props: AppContextProviderProps) {
 
             return false
         } catch (error) {
-            if(isError(error)) {
+            if (isError(error)) {
                 return error.errorMessage
             }
             return false
