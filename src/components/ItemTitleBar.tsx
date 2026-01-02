@@ -1,4 +1,4 @@
-import { Box, Button, Card, TextField } from "@mui/material"
+import { Box, Button, TextField } from "@mui/material"
 import { DisplayItem } from "../types/types"
 import SaveIcon from '@mui/icons-material/Save';
 import { styles } from "../constants";
@@ -12,7 +12,7 @@ interface TitleBarProps {
 
 function ItemTitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarProps) {
     return (
-            <Card square sx={{
+            <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
                 width: '100%',
@@ -33,7 +33,7 @@ function ItemTitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarP
                 >
                     <SaveIcon />
                 </Button>
-            </Card>
+            </Box>
     )
 }
 

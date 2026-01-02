@@ -39,7 +39,7 @@ function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
     }
 
     return <Box>
-        <TableContainer component={Paper}>
+        <TableContainer>
             <Table sx={{ minWidth: 650 }} size="small">
                 <TableHead>
                     <TableRow>

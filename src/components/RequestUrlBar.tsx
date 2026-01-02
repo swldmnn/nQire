@@ -1,4 +1,4 @@
-import { TextField, Button, Select, MenuItem, Box, Divider, Paper, Card } from "@mui/material";
+import { TextField, Button, Select, MenuItem, Box, Divider, Paper } from "@mui/material";
 import { HttpRequest, HttpRequestResponseProps } from "../types/types";
 import { styles } from "../constants";
 
@@ -19,12 +19,12 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
         setRequest({ ...request, url: newValue })
     }
 
-    return <Card square sx={{
+    return <Box sx={{
         paddingLeft: styles.padding.default,
         paddingRight: styles.padding.default,
         paddingBottom: styles.padding.default,
     }}>
-        <Paper elevation={2} sx={{
+        <Paper elevation={0} variant='outlined' sx={{
             display: 'flex',
             flexDirection: 'row',
             width: '100%',
@@ -63,7 +63,7 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
                 onClick={() => { sendRequest(request) }}
             >Send</Button>
         </Paper>
-    </Card>
+    </Box>
 }
 
 export default RequestUrlBar

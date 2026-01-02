@@ -76,7 +76,11 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
             sendRequest={sendRequest}
         />
 
-        <Accordion defaultExpanded disableGutters>
+        <Accordion
+            defaultExpanded
+            disableGutters
+            elevation={0}
+        >
             <AccordionSummary
                 expandIcon={<KeyboardArrowDownIcon />}
                 sx={{
@@ -94,7 +98,11 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
             </AccordionDetails>
         </Accordion>
 
-        <Accordion defaultExpanded disableGutters>
+        <Accordion
+            defaultExpanded
+            disableGutters
+            elevation={0}
+        >
             <AccordionSummary
                 expandIcon={<KeyboardArrowDownIcon />}
                 sx={{
@@ -109,10 +117,14 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
             </AccordionDetails>
         </Accordion>
 
-        <Accordion defaultExpanded disableGutters sx={{
-            minHeight: 0,
-            minWidth: 0,
-        }}>
+        <Accordion
+            defaultExpanded
+            disableGutters
+            elevation={0}
+            sx={{
+                minHeight: 0,
+                minWidth: 0,
+            }}>
             <AccordionSummary
                 expandIcon={<KeyboardArrowDownIcon />}
                 sx={{

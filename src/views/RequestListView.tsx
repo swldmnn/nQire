@@ -88,7 +88,12 @@ function RequestListView({ }: RequestListProps) {
             />
             {
                 appContext.appState.requestSets.map((requestSet, requestSetIndex) =>
-                    <Accordion defaultExpanded disableGutters key={`RequestSet_${requestSetIndex}`}>
+                    <Accordion
+                        elevation={0}
+                        defaultExpanded
+                        disableGutters
+                        key={`RequestSet_${requestSetIndex}`}
+                    >
                         <AccordionSummary
                             expandIcon={<KeyboardArrowDownIcon />}
                             sx={{
