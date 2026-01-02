@@ -25,10 +25,12 @@ pub async fn fetch_all_request_sets(
     let mut requests_by_request_set_id: HashMap<u32, Vec<Request<String>>> = HashMap::new();
     for request in all_requests {
         if let Some(request_meta_data) = request.extensions().get::<RequestMetaData>() {
-            requests_by_request_set_id
-                .entry(request_meta_data.request_set_id)
-                .or_default()
-                .push(request);
+            if let Some(request_set_id) = request_meta_data.request_set_id {
+                requests_by_request_set_id
+                    .entry(request_set_id)
+                    .or_default()
+                    .push(request);
+            }
         }
     }
 
@@ -171,7 +173,7 @@ pub async fn save_request(
         .await
         .map_err(|e| format!("Failed to update request: {}", e))?;
 
-    let rows_affected = update_request(&mut tx, &request)
+    let rows_affected = upsert_request(&mut tx, &request)
         .await
         .map_err(|e| format!("Failed to update request: {}", e))?;
 
@@ -231,34 +233,52 @@ async fn fetch_all_environment_values(
     Ok(all_environment_value_records)
 }
 
-async fn update_request(
+async fn upsert_request(
     tx: &mut Transaction<'_, Sqlite>,
     request: &Request<String>,
 ) -> Result<u64, String> {
-    if let Some(meta_data) = request.extensions().get::<RequestMetaData>() {
-        let id = meta_data.id;
-        let label = &meta_data.label;
+    let meta_data = request
+        .extensions()
+        .get::<RequestMetaData>()
+        .ok_or("Cannot update headers: request has no metadata")?;
 
-        if id.is_none() {
-            //TODO insert request if no id given
-            return Err("Insert request not yet implemented".to_owned());
+    let maybe_id = meta_data.id;
+    let label = &meta_data.label;
+    let maybe_request_set_id = meta_data.request_set_id;
+
+    match maybe_id {
+        Some(id) => {
+            let query_result = sqlx::query(
+                "UPDATE requests SET label = ?, method = ?, url = ?, body = ? WHERE id = ?",
+            )
+            .bind(label)
+            .bind(request.method().to_string())
+            .bind(request.uri().to_string())
+            .bind(request.body().to_string())
+            .bind(id)
+            .execute(&mut **tx)
+            .await
+            .map_err(|e| format!("Failed to update request: {}", e))?;
+
+            Ok(query_result.rows_affected())
         }
+        None => {
+            let request_set_id = maybe_request_set_id
+                .ok_or("Cannot insert request: Request has no request set id")?;
 
-        let query_result = sqlx::query(
-            "UPDATE requests SET label = ?, method = ?, url = ?, body = ? WHERE id = ?",
-        )
-        .bind(label)
-        .bind(request.method().to_string())
-        .bind(request.uri().to_string())
-        .bind(request.body().to_string())
-        .bind(id.unwrap())
-        .execute(&mut **tx)
-        .await
-        .map_err(|e| format!("Failed to update request: {}", e))?;
+            let query_result =
+        sqlx::query("INSERT INTO requests (request_set_id, label, method, url, body) VALUES (?1, ?2, ?3, ?4, ?5) RETURNING id")
+            .bind(request_set_id)
+            .bind(label)
+            .bind(request.method().to_string())
+            .bind(request.uri().to_string())
+            .bind(request.body().to_string())
+            .execute(&mut **tx)
+            .await
+            .map_err(|e| format!("Failed to update request: {}", e))?;
 
-        Ok(query_result.rows_affected())
-    } else {
-        Err("Cannot update request: request has no metadata".to_owned())
+            Ok(query_result.rows_affected())
+        }
     }
 }
 

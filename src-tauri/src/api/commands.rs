@@ -5,7 +5,7 @@ use crate::{
         EnvironmentTransfer, ErrorTransfer, HttpRequestSetTransfer, HttpRequestTransfer,
         HttpResponseTransfer,
     },
-    domain::Environment,
+    domain::{Environment, RequestMetaData},
     AppState,
 };
 
@@ -73,11 +73,22 @@ pub async fn find_all_environments(
 pub async fn save_request(
     state: tauri::State<'_, AppState>,
     request: HttpRequestTransfer,
+    request_set_id: Option<u32>,
 ) -> Result<u64, ErrorTransfer> {
-    let req = Request::<String>::try_from(request).map_err(|e| ErrorTransfer {
+    let mut req = Request::<String>::try_from(request).map_err(|e| ErrorTransfer {
         typename: "Error".to_owned(),
         error_message: e,
     })?;
+
+    let meta_data = req
+        .extensions_mut()
+        .get_mut::<RequestMetaData>()
+        .ok_or_else(|| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: "Cannot save request: Request has no metadata".to_owned(),
+        })?;
+
+    meta_data.request_set_id = request_set_id;
 
     let result = crate::services::save_request(state, req)
         .await
@@ -111,7 +122,7 @@ pub async fn save_request_set(
     state: tauri::State<'_, AppState>,
     request_set: HttpRequestSetTransfer,
 ) -> Result<u64, ErrorTransfer> {
-     //TODO implement
+    //TODO implement
     Err(ErrorTransfer {
         typename: "Error".to_owned(),
         error_message: "insert request set not yet implemented".to_owned(),

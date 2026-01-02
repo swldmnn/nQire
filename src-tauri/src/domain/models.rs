@@ -3,7 +3,7 @@ use http::Request;
 #[derive(Clone)]
 pub struct RequestMetaData {
     pub id: Option<u32>,
-    pub request_set_id: u32,
+    pub request_set_id: Option<u32>,
     pub label: String,
 }
 

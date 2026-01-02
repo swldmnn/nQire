@@ -31,19 +31,23 @@ function RequestListView({ }: RequestListProps) {
         appContext.openItem({ typename: item.typename, id: item.id, label: '' })
     }
 
-    const createNewRequest = async () => {
-        invoke("save_request", { //TODO set correct values
+    const createNewRequest = async (requestSetIndex: number) => {
+        invoke("save_request", {
             request: {
                 typename: 'HttpRequest',
                 id: undefined,
-                label: 'new_request',
-                url: 'https://new.request',
+                label: t('new_request_label'),
+                url: t('new_request_url'),
                 method: 'GET',
                 headers: [],
                 body: '',
-            } as HttpRequestTransfer
+            } as HttpRequestTransfer,
+            requestSetId: appContext.appState.requestSets[requestSetIndex].id
         })
-            .then(result => showResultNotification(appContext, result, t('item_saved')))
+            .then(result => {
+                appContext.initialize()
+                showResultNotification(appContext, result, t('item_saved'))
+            })
             .catch(error => showResultNotification(appContext, error, t('error_create_request')))
     }
 
@@ -99,7 +103,7 @@ function RequestListView({ }: RequestListProps) {
                             <ContextMenu
                                 actions={[
                                     { label: t('delete_item'), callback: () => deleteRequestSet() },
-                                    { label: t('add_item'), callback: () => createNewRequest() },
+                                    { label: t('add_item'), callback: () => createNewRequest(requestSetIndex) },
                                 ]}
                                 sx={{ marginLeft: 'auto' }}
                             />

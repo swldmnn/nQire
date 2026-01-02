@@ -69,7 +69,7 @@ impl TryFrom<HttpRequestTransfer> for Request<String> {
             .method(request_transfer.method.as_str())
             .extension(RequestMetaData {
                 id: request_transfer.id,
-                request_set_id: 0,
+                request_set_id: None,
                 label: request_transfer.label.to_owned(),
             })
             .uri(request_transfer.url);
