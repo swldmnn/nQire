@@ -15,8 +15,9 @@ import { useTranslation } from "react-i18next";
 import CustomListItem from "../components/CustomListItem";
 import ContextMenu from "../components/ContextMenu";
 import { styles } from "../constants";
-import { HttpRequestSetTransfer, HttpRequestTransfer, isError } from "../types/types_transfer";
+import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer";
 import { invoke } from "@tauri-apps/api/core";
+import { showResultNotification } from "../helpers/notificationHelper";
 
 interface RequestListProps {
 }
@@ -31,112 +32,48 @@ function RequestListView({ }: RequestListProps) {
     }
 
     const createNewRequest = async () => {
-        try {
-            await invoke("save_request", { //TODO set correct values
-                request: {
-                    typename: 'HttpRequest',
-                    id: undefined,
-                    label: 'new_request',
-                    url: 'https://new.request',
-                    method: 'GET',
-                    headers: [],
-                    body: '',
-                } as HttpRequestTransfer
-            })
-
-            appContext.showNotification({
-                open: true,
-                message: 'saved',
-                type: 'success',
-                closeAfterMillis: 5000,
-            })
-        } catch (error) {
-            const message = isError(error) ? error.errorMessage : t('error_create_request')
-
-            appContext.showNotification({
-                open: true,
-                message,
-                type: 'error',
-                closeAfterMillis: 5000,
-            })
-        }
+        invoke("save_request", { //TODO set correct values
+            request: {
+                typename: 'HttpRequest',
+                id: undefined,
+                label: 'new_request',
+                url: 'https://new.request',
+                method: 'GET',
+                headers: [],
+                body: '',
+            } as HttpRequestTransfer
+        })
+            .then(result => showResultNotification(appContext, result, t('item_saved')))
+            .catch(error => showResultNotification(appContext, error, t('error_create_request')))
     }
 
     const createNewRequestSet = async () => {
-        try {
-            await invoke("save_request_set", { //TODO set correct values
-                requestSet: {
-                    typename: 'HttpRequestSet',
-                    id: 0,
-                    label: 'new_request_set',
-                    requests: [],
-                } as HttpRequestSetTransfer
-            })
-
-            appContext.showNotification({
-                open: true,
-                message: 'saved',
-                type: 'success',
-                closeAfterMillis: 5000,
-            })
-        } catch (error) {
-            const message = isError(error) ? error.errorMessage : t('error_create_request_set')
-
-            appContext.showNotification({
-                open: true,
-                message,
-                type: 'error',
-                closeAfterMillis: 5000,
-            })
-        }
+        invoke("save_request_set", { //TODO set correct values
+            requestSet: {
+                typename: 'HttpRequestSet',
+                id: 0,
+                label: 'new_request_set',
+                requests: [],
+            } as HttpRequestSetTransfer
+        })
+            .then(result => showResultNotification(appContext, result, t('item_saved')))
+            .catch(error => showResultNotification(appContext, error, t('error_create_request_set')))
     }
 
     const deleteRequest = async () => {
-        try {
-            await invoke("delete_request", {
-                requestId: 0 //TODO set correct id
-            })
-
-            appContext.showNotification({
-                open: true,
-                message: 'saved',
-                type: 'success',
-                closeAfterMillis: 5000,
-            })
-        } catch (error) {
-            const message = isError(error) ? error.errorMessage : t('error_delete_request')
-
-            appContext.showNotification({
-                open: true,
-                message,
-                type: 'error',
-                closeAfterMillis: 5000,
-            })
-        }
+        invoke("delete_request", {
+            requestId: 0 //TODO set correct id
+        })
+            .then(result => showResultNotification(appContext, result, t('item_deleted')))
+            .catch(error => showResultNotification(appContext, error, t('error_delete_request')))
     }
 
     const deleteRequestSet = async () => {
-        try {
-            await invoke("delete_request_set", {
-                requestSetId: 0 //TODO set correct id
-            })
-
-            appContext.showNotification({
-                open: true,
-                message: 'saved',
-                type: 'success',
-                closeAfterMillis: 5000,
-            })
-        } catch (error) {
-            const message = isError(error) ? error.errorMessage : t('error_delete_request_set')
-
-            appContext.showNotification({
-                open: true,
-                message,
-                type: 'error',
-                closeAfterMillis: 5000,
-            })
-        }
+        invoke("delete_request_set", {
+            requestSetId: 0 //TODO set correct id
+        })
+            .then(result => showResultNotification(appContext, result, t('item_deleted')))
+            .catch(error => showResultNotification(appContext, error, t('error_delete_request_set')))
     }
 
     return (

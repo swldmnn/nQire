@@ -79,12 +79,9 @@ function AppContextProvider(props: AppContextProviderProps) {
                 return true
             }
 
-            return false
+            return isError(result) ? result : false
         } catch (error) {
-            if (isError(error)) {
-                return error.errorMessage
-            }
-            return false
+            return isError(error) ? error : false
         }
     }
 

@@ -1,4 +1,4 @@
-import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
+import { Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
 import { Environment } from "../types/types"
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
@@ -6,6 +6,7 @@ import { useContext, useState } from "react";
 import ItemTitleBar from "../components/ItemTitleBar";
 import { AppContext } from "../AppContext";
 import { useTranslation } from "react-i18next";
+import { showResultNotification } from "../helpers/notificationHelper";
 
 interface EnvironmentViewProps {
     environment: Environment
@@ -14,7 +15,7 @@ interface EnvironmentViewProps {
 function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps) {
 
     const appContext = useContext(AppContext)
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
     const [environment, setEnvironment] = useState({ ...inputEnvironment })
     const [isModified, setIsModified] = useState(false)
@@ -57,27 +58,14 @@ function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps
     }
 
     const onSave = async () => {
-        const result = await appContext.saveItem(environment)
-
-        if (result === true) {
-            setIsModified(false)
-
-            appContext.showNotification({
-                open: true,
-                message: 'saved',
-                type: 'success',
-                closeAfterMillis: 5000,
+        appContext.saveItem(environment)
+            .then(result => {
+                if (result === true) {
+                    setIsModified(false)
+                }
+                showResultNotification(appContext, result, t('item_saved'))
             })
-        } else {
-            const message = typeof result === 'string' ? result : 'save failed'
-
-            appContext.showNotification({
-                open: true,
-                message,
-                type: 'error',
-                closeAfterMillis: 5000,
-            })
-        }
+            .catch(error => showResultNotification(appContext, error, t('error_save_environment')))
     }
 
     return <Box>

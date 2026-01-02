@@ -12,6 +12,7 @@ import ItemTitleBar from "../components/ItemTitleBar";
 import { AppContext } from "../AppContext";
 import { useTranslation } from "react-i18next";
 import { styles } from "../constants";
+import { showResultNotification } from "../helpers/notificationHelper";
 
 interface NewRequestViewProps extends HttpRequestResponseProps {
 }
@@ -38,27 +39,14 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
     }
 
     const onSave = async () => {
-        const result = await appContext.saveItem(request)
-
-        if (result === true) {
-            setIsModified(false)
-
-            appContext.showNotification({
-                open: true,
-                message: 'saved',
-                type: 'success',
-                closeAfterMillis: 5000,
+        appContext.saveItem(request)
+            .then(result => {
+                if (result === true) {
+                    setIsModified(false)
+                }
+                showResultNotification(appContext, result, t('item_saved'))
             })
-        } else {
-            const message = typeof result === 'string' ? result : 'save failed'
-
-            appContext.showNotification({
-                open: true,
-                message,
-                type: 'error',
-                closeAfterMillis: 5000,
-            })
-        }
+            .catch(error => showResultNotification(appContext, error, t('error_save_request')))
     }
 
     async function sendRequest(request?: HttpRequest) {

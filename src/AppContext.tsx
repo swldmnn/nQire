@@ -1,10 +1,11 @@
 import { createContext } from 'react';
 import { DisplayItem, Environment, HttpRequestSet } from './types/types';
+import { ErrorTransfer } from './types/types_transfer';
 
 export interface AppCtx {
     updateAppState: (appState: AppState) => void
     openItem: (item: DisplayItem) => void
-    saveItem: (item: DisplayItem) => Promise<boolean|string>
+    saveItem: (item: DisplayItem) => Promise<boolean|ErrorTransfer>
     initialize: () => void
     showNotification: (notification: NotificationState) => void
     hideNotification: () => void

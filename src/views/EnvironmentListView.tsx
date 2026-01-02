@@ -6,7 +6,8 @@ import CategoryTitleBar from "../components/CategoryTitleBar";
 import { useTranslation } from 'react-i18next';
 import CustomListItem from "../components/CustomListItem";
 import { invoke } from "@tauri-apps/api/core";
-import { EnvironmentTransfer, isError } from "../types/types_transfer";
+import { EnvironmentTransfer } from "../types/types_transfer";
+import { showResultNotification } from "../helpers/notificationHelper";
 
 function EnvironmentListView() {
     const appContext = useContext(AppContext)
@@ -18,55 +19,23 @@ function EnvironmentListView() {
     }
 
     const createNewEnvironment = async () => {
-        try {
-            await invoke("save_environment", {
-                environment: {
-                    typename: 'Environment',
-                    label: 'new_environment',
-                    values: [],
-                } as EnvironmentTransfer
-            })
-
-            appContext.showNotification({
-                open: true,
-                message: 'saved',
-                type: 'success',
-                closeAfterMillis: 5000,
-            })
-        } catch (error) {
-            const message = isError(error) ? error.errorMessage : t('error_create_environment')
-
-            appContext.showNotification({
-                open: true,
-                message,
-                type: 'error',
-                closeAfterMillis: 5000,
-            })
-        }
+        invoke("save_environment", {
+            environment: {
+                typename: 'Environment',
+                label: 'new_environment',
+                values: [],
+            } as EnvironmentTransfer
+        })
+            .then(result => showResultNotification(appContext, result, t('item_saved')))
+            .catch(error => showResultNotification(appContext, error, t('error_create_environment')))
     }
 
     const deleteEnvironment = async () => {
-        try {
-            await invoke("delete_environment", {
-                environmentId: 0 //TODO pass correct id
-            })
-
-            appContext.showNotification({
-                open: true,
-                message: 'saved',
-                type: 'success',
-                closeAfterMillis: 5000,
-            })
-        } catch (error) {
-            const message = isError(error) ? error.errorMessage : t('delete_environment_failed')
-
-            appContext.showNotification({
-                open: true,
-                message,
-                type: 'error',
-                closeAfterMillis: 5000,
-            })
-        }
+        invoke("delete_environment", {
+            environmentId: 0 //TODO pass correct id
+        })
+            .then(result => showResultNotification(appContext, result, t('item_deleted')))
+            .catch(error => showResultNotification(appContext, error, t('error_delete_environment')))
     }
 
     return (
