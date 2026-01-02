@@ -12,7 +12,7 @@ interface TitleBarProps {
 
 function ItemTitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarProps) {
     return (
-            <Box sx={{
+            <Card square sx={{
                 display: 'flex',
                 flexDirection: 'row',
                 width: '100%',
@@ -33,7 +33,7 @@ function ItemTitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarP
                 >
                     <SaveIcon />
                 </Button>
-            </Box>
+            </Card>
     )
 }
 
