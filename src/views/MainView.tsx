@@ -34,7 +34,7 @@ function MainView() {
             boxSizing: 'border-box',
             bgcolor: 'background.default',
         }}>
-            <Paper id='mainView_header' elevation={3} square={true} sx={{
+            <Paper id='mainView_header' square elevation={4} sx={{
                 display: 'flex',
                 padding: styles.padding.default,
                 width: '100%',

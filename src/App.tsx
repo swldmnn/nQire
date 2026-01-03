@@ -16,12 +16,20 @@ const theme = createTheme({
       palette: {
         primary: teal,
         secondary: deepOrange,
+        background: {
+          default: '#fff',
+          paper: '#eee'
+        }
       },
     },
     dark: {
       palette: {
         primary: lime,
         secondary: pink,
+        background: {
+          default: '#222',
+          paper: '#222'
+        }
       },
     },
   },

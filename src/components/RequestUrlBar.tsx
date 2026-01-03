@@ -29,6 +29,7 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
             flexDirection: 'row',
             width: '100%',
             boxSizing: 'border-box',
+            backgroundColor: 'transparent',
         }}>
             <Box sx={{
                 padding: styles.padding.default,

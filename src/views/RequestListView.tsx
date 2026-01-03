@@ -97,6 +97,7 @@ function RequestListView({ }: RequestListProps) {
                         defaultExpanded
                         disableGutters
                         key={`RequestSet_${requestSetIndex}`}
+                        sx={{backgroundColor: 'transparent'}}
                     >
                         <AccordionSummary
                             expandIcon={<KeyboardArrowDownIcon />}

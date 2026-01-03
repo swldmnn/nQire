@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Tab, Tabs } from "@mui/material";
+import { Box, Button, Divider, Paper, Tab, Tabs } from "@mui/material";
 import RequestListView from "./RequestListView";
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
@@ -23,7 +23,8 @@ function NavigationView() {
     };
 
     return (
-        <Box
+        <Paper square
+            elevation={1}
             id='navigation_root'
             sx={{
                 boxSizing: 'border-box',
@@ -97,7 +98,7 @@ function NavigationView() {
                     <Divider orientation="vertical" flexItem />
                 </Box>
             )}
-        </Box>
+        </Paper>
     )
 }
 

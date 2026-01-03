@@ -80,6 +80,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
             defaultExpanded
             disableGutters
             elevation={0}
+            sx={{backgroundColor: 'transparent'}}
         >
             <AccordionSummary
                 expandIcon={<KeyboardArrowDownIcon />}
@@ -102,6 +103,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
             defaultExpanded
             disableGutters
             elevation={0}
+            sx={{backgroundColor: 'transparent'}}
         >
             <AccordionSummary
                 expandIcon={<KeyboardArrowDownIcon />}
@@ -124,6 +126,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
             sx={{
                 minHeight: 0,
                 minWidth: 0,
+                backgroundColor: 'transparent',
             }}>
             <AccordionSummary
                 expandIcon={<KeyboardArrowDownIcon />}
