@@ -25,7 +25,8 @@ function TabView() {
             height: '100%',
             minWidth: 0,
             minHeight: 0,
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            bgcolor: 'background.default',
         }}>
             {appContext.appState.openItems.length > 0 && <TabContainer onClose={onClose}>
                 {

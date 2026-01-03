@@ -26,64 +26,66 @@ function MainView() {
     }
 
     return (
-        <Box id='mainView_root' sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            height: '100vh',
-            boxSizing: 'border-box',
-            bgcolor: 'background.default',
-        }}>
-            <Paper id='mainView_header' square elevation={4} sx={{
+        <Box>
+            <Backplate />
+            <Box id='mainView_root' sx={{
                 display: 'flex',
-                padding: styles.padding.default,
+                flexDirection: 'column',
                 width: '100%',
-                boxSizing: 'border-box',
-                zIndex: 999
-            }}>
-                <Logo sx={{ color: 'primary.main', height: "2rem", width: "2rem", verticalAlign: "bottom" }} />
-                <Typography variant='h5' sx={{ marginLeft: styles.padding.default }}>n</Typography>
-                <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
-                <Typography variant='h5' >ire</Typography>
-                <EnvironmentChooser sx={{ marginLeft: 'auto', marginRight: '1rem' }} />
-                <Button onClick={() => { setMode(mode === 'dark' ? 'light' : 'dark') }}>
-                    {mode === 'light' ? <BrightnessHighIcon /> : <BrightnessLowIcon />}
-                </Button>
-            </Paper>
-
-            <Box id='mainView_content' sx={{
-                display: 'flex',
-                flexGrow: 1,
-                minWidth: 0,
-                minHeight: 0,
+                height: '100vh',
                 boxSizing: 'border-box',
             }}>
-                <NavigationView />
-                <Box id='mainView_editor' sx={{
+                <Paper id='mainView_header' square elevation={4} sx={{
                     display: 'flex',
+                    padding: styles.padding.default,
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    zIndex: 999
+                }}>
+                    <Logo sx={{ color: 'primary.main', height: "2rem", width: "2rem", verticalAlign: "bottom" }} />
+                    <Typography variant='h5' sx={{ marginLeft: styles.padding.default }}>n</Typography>
+                    <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
+                    <Typography variant='h5' >ire</Typography>
+                    <EnvironmentChooser sx={{ marginLeft: 'auto', marginRight: '1rem' }} />
+                    <Button onClick={() => { setMode(mode === 'dark' ? 'light' : 'dark') }}>
+                        {mode === 'light' ? <BrightnessHighIcon /> : <BrightnessLowIcon />}
+                    </Button>
+                </Paper>
+
+                <Box id='mainView_content' sx={{
+                    display: 'flex',
+                    flexGrow: 1,
                     minWidth: 0,
                     minHeight: 0,
-                    flexGrow: 1,
+                    boxSizing: 'border-box',
                 }}>
-                    {appContext.appState.openItems.length ? <TabView /> : <Backplate />}
+                    <NavigationView />
+                    <Box id='mainView_editor' sx={{
+                        display: 'flex',
+                        minWidth: 0,
+                        minHeight: 0,
+                        flexGrow: 1,
+                    }}>
+                        {!!appContext.appState.openItems.length && <TabView />}
+                    </Box>
                 </Box>
-            </Box>
-            <Snackbar
-                key={'notification'}
-                open={appContext.appState.notification.open}
-                autoHideDuration={appContext.appState.notification.closeAfterMillis}
-                onClose={onCloseSnackbar}
-                message={appContext.appState.notification.message}
-            >
-                <Alert
+                <Snackbar
+                    key={'notification'}
+                    open={appContext.appState.notification.open}
+                    autoHideDuration={appContext.appState.notification.closeAfterMillis}
                     onClose={onCloseSnackbar}
-                    severity={appContext.appState.notification.type}
-                    variant="filled"
-                    sx={{ width: '100%' }}
+                    message={appContext.appState.notification.message}
                 >
-                    {appContext.appState.notification.message}
-                </Alert>
-            </Snackbar>
+                    <Alert
+                        onClose={onCloseSnackbar}
+                        severity={appContext.appState.notification.type}
+                        variant="filled"
+                        sx={{ width: '100%' }}
+                    >
+                        {appContext.appState.notification.message}
+                    </Alert>
+                </Snackbar>
+            </Box>
         </Box>
     )
 }

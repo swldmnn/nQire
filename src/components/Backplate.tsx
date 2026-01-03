@@ -4,6 +4,8 @@ import Logo from "./Logo"
 function Backplate() {
     return (
         <Box sx={{
+            position: 'absolute',
+            zIndex: -1,
             width: '100%',
             height: '100%',
             boxSizing: 'border-box',
@@ -14,8 +16,8 @@ function Backplate() {
             opacity: '50%',
         }}>
             <Logo sx={{
-                width: '40rem',
-                height: '40rem',
+                width: '70%',
+                height: '70%',
                 color: 'divider',
                 margin: 'auto'
             }}></Logo>
