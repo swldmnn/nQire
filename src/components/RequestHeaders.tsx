@@ -12,7 +12,7 @@ function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
         return null
     }
 
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
     const onHeaderKeyChange = (index: number, newValue: string) => {
         const headers = request.headers.map(h => { return { ...h } })
@@ -40,7 +40,7 @@ function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
 
     return <Box>
         <TableContainer>
-            <Table sx={{ minWidth: 650 }} size="small">
+            <Table sx={{ minWidth: 100 }} size="small">
                 <TableHead>
                     <TableRow>
                         <TableCell sx={{ color: 'secondary.main' }}>{t('request_header_key')}</TableCell>

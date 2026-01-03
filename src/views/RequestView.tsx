@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Typography } from "@mui/material"
 import RequestUrlBar from "../components/RequestUrlBar";
 import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "../types/types";
 import { useContext, useState } from "react";
@@ -69,85 +69,101 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
         bgcolor: 'grey.850',
         overflow: 'auto',
     }}>
-        <ItemTitleBar item={request} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
-        <RequestUrlBar
-            request={request}
-            setRequest={modifyRequest}
-            sendRequest={sendRequest}
-        />
 
-        <Accordion
-            defaultExpanded
-            disableGutters
-            elevation={0}
-            sx={{backgroundColor: 'transparent'}}
-        >
-            <AccordionSummary
-                expandIcon={<KeyboardArrowDownIcon />}
-                sx={{
-                    flexDirection: 'row-reverse',
-                    color: 'primary.dark',
-                }}
-            >
-                <Typography component="span">{t('request_body')}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-                <RequestBody
+        <Grid container spacing={0}>
+            <Grid size={12}>
+                <ItemTitleBar item={request} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
+            </Grid>
+            <Grid size={12}>
+                <RequestUrlBar
                     request={request}
                     setRequest={modifyRequest}
+                    sendRequest={sendRequest}
                 />
-            </AccordionDetails>
-        </Accordion>
+            </Grid>
+            <Grid size={6}>
+                <Accordion
+                    defaultExpanded
+                    disableGutters
+                    elevation={0}
+                    sx={{ backgroundColor: 'transparent' }}
+                >
+                    <AccordionSummary
+                        expandIcon={<KeyboardArrowDownIcon />}
+                        sx={{
+                            flexDirection: 'row-reverse',
+                            color: 'primary.dark',
+                        }}
+                    >
+                        <Typography component="span">{t('request_body')}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <RequestBody
+                            request={request}
+                            setRequest={modifyRequest}
+                        />
+                    </AccordionDetails>
+                </Accordion>
 
-        <Accordion
-            defaultExpanded
-            disableGutters
-            elevation={0}
-            sx={{backgroundColor: 'transparent'}}
-        >
-            <AccordionSummary
-                expandIcon={<KeyboardArrowDownIcon />}
-                sx={{
-                    flexDirection: 'row-reverse',
-                    color: 'primary.dark',
-                }}
-            >
-                <Typography component="span">{t('request_headers')}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-                <RequestHeaders request={request} setRequest={modifyRequest} />
-            </AccordionDetails>
-        </Accordion>
+                <Accordion
+                    defaultExpanded
+                    disableGutters
+                    elevation={0}
+                    sx={{ backgroundColor: 'transparent' }}
+                >
+                    <AccordionSummary
+                        expandIcon={<KeyboardArrowDownIcon />}
+                        sx={{
+                            flexDirection: 'row-reverse',
+                            color: 'primary.dark',
+                        }}
+                    >
+                        <Typography component="span">{t('request_headers')}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <RequestHeaders request={request} setRequest={modifyRequest} />
+                    </AccordionDetails>
+                </Accordion>
+            </Grid>
+            <Grid size={6}>
+                <Accordion
+                    defaultExpanded
+                    disableGutters
+                    elevation={0}
+                    sx={{
+                        minHeight: 0,
+                        minWidth: 0,
+                        backgroundColor: 'transparent',
+                    }}>
+                    <AccordionSummary
+                        expandIcon={<KeyboardArrowDownIcon />}
+                        sx={{
+                            flexDirection: 'row-reverse',
+                            color: 'primary.dark',
+                        }}
+                    >
+                        <Typography component="span">{t('request_response')}</Typography>
+                        {response.status > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: styles.padding.default }}>{`[${response.status}]`}</Typography>}
+                    </AccordionSummary>
+                    <AccordionDetails sx={{
+                        minHeight: 0,
+                        minWidth: 0,
+                    }}>
+                        <ResponseBody
+                            response={response}
+                            setResponse={setResponse}
+                        />
+                    </AccordionDetails>
+                </Accordion>
+            </Grid>
+        </Grid>
 
-        <Accordion
-            defaultExpanded
-            disableGutters
-            elevation={0}
-            sx={{
-                minHeight: 0,
-                minWidth: 0,
-                backgroundColor: 'transparent',
-            }}>
-            <AccordionSummary
-                expandIcon={<KeyboardArrowDownIcon />}
-                sx={{
-                    flexDirection: 'row-reverse',
-                    color: 'primary.dark',
-                }}
-            >
-                <Typography component="span">{t('request_response')}</Typography>
-                {response.status > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: styles.padding.default }}>{`[${response.status}]`}</Typography>}
-            </AccordionSummary>
-            <AccordionDetails sx={{
-                minHeight: 0,
-                minWidth: 0,
-            }}>
-                <ResponseBody
-                    response={response}
-                    setResponse={setResponse}
-                />
-            </AccordionDetails>
-        </Accordion>
+
+
+
+
+
+
     </Box>
 }
 
