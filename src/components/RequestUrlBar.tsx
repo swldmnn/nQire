@@ -57,6 +57,17 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
                     value={request?.url}
                     onChange={(e) => onUrlChange(e.currentTarget.value)}
                     variant="standard"
+                    sx={{
+                        '& .MuiInput-underline:before': {
+                            display: 'none',  // Hide the default (inactive) underline
+                        },
+                        '& .MuiInput-underline:after': {
+                            display: 'none',  // Hide the focused (active) underline when the field is blurred
+                        },
+                        '& .MuiInput-underline.Mui-focused:after': {
+                            display: 'block',  // Keep the underline visible when focused
+                        },
+                    }}
                 />
             </Box>
             <Button
