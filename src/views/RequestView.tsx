@@ -82,50 +82,53 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
                 />
             </Grid>
             <Grid size={6}>
-                <Accordion
-                    defaultExpanded
-                    disableGutters
-                    elevation={0}
-                    sx={{ backgroundColor: 'transparent' }}
-                >
-                    <AccordionSummary
-                        expandIcon={<KeyboardArrowDownIcon />}
-                        sx={{
-                            flexDirection: 'row-reverse',
-                            color: 'primary.dark',
-                        }}
+                <Box sx={{ borderRight: '1px solid', borderColor: 'divider' }}>
+                    <Accordion
+                        defaultExpanded
+                        disableGutters
+                        elevation={0}
+                        sx={{ backgroundColor: 'transparent' }}
                     >
-                        <Typography component="span">{t('request_body')}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <RequestBody
-                            request={request}
-                            setRequest={modifyRequest}
-                        />
-                    </AccordionDetails>
-                </Accordion>
+                        <AccordionSummary
+                            expandIcon={<KeyboardArrowDownIcon />}
+                            sx={{
+                                flexDirection: 'row-reverse',
+                                color: 'primary.dark',
+                            }}
+                        >
+                            <Typography component="span">{t('request_body')}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <RequestBody
+                                request={request}
+                                setRequest={modifyRequest}
+                            />
+                        </AccordionDetails>
+                    </Accordion>
 
-                <Accordion
-                    defaultExpanded
-                    disableGutters
-                    elevation={0}
-                    sx={{ backgroundColor: 'transparent' }}
-                >
-                    <AccordionSummary
-                        expandIcon={<KeyboardArrowDownIcon />}
-                        sx={{
-                            flexDirection: 'row-reverse',
-                            color: 'primary.dark',
-                        }}
+                    <Accordion
+                        defaultExpanded
+                        disableGutters
+                        elevation={0}
+                        sx={{ backgroundColor: 'transparent' }}
                     >
-                        <Typography component="span">{t('request_headers')}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <RequestHeaders request={request} setRequest={modifyRequest} />
-                    </AccordionDetails>
-                </Accordion>
+                        <AccordionSummary
+                            expandIcon={<KeyboardArrowDownIcon />}
+                            sx={{
+                                flexDirection: 'row-reverse',
+                                color: 'primary.dark',
+                            }}
+                        >
+                            <Typography component="span">{t('request_headers')}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <RequestHeaders request={request} setRequest={modifyRequest} />
+                        </AccordionDetails>
+                    </Accordion>
+                </Box>
             </Grid>
             <Grid size={6}>
+
                 <Accordion
                     defaultExpanded
                     disableGutters
@@ -155,6 +158,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
                         />
                     </AccordionDetails>
                 </Accordion>
+
             </Grid>
         </Grid>
 
