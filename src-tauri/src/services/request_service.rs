@@ -22,3 +22,14 @@ pub async fn save_request(
 
     Ok(count_updated)
 }
+
+pub async fn delete_request(
+    state: tauri::State<'_, AppState>,
+    request_id: u32,
+) -> Result<u64, String> {
+    let count_deleted = crate::persistence::delete_request(&state, request_id)
+        .await
+        .map_err(|e| e)?;
+
+    Ok(count_deleted)
+}

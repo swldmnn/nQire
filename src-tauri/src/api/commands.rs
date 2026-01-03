@@ -146,11 +146,14 @@ pub async fn delete_request(
     state: tauri::State<'_, AppState>,
     request_id: u32,
 ) -> Result<u64, ErrorTransfer> {
-    //TODO implement
-    Err(ErrorTransfer {
-        typename: "Error".to_owned(),
-        error_message: "delete request not yet implemented".to_owned(),
-    })
+    let result = crate::services::delete_request(state, request_id)
+        .await
+        .map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?;
+
+    Ok(result)
 }
 
 #[tauri::command]

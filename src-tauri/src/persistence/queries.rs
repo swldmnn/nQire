@@ -188,6 +188,36 @@ pub async fn save_request(
     Ok(rows_affected)
 }
 
+pub async fn delete_request(
+    state: &tauri::State<'_, AppState>,
+    request_id: u32,
+) -> Result<u64, String> {
+    let db = &state.db;
+
+    let mut tx = db
+        .begin()
+        .await
+        .map_err(|e| format!("Failed to delete request: {}", e))?;
+
+    sqlx::query("DELETE FROM request_headers WHERE request_id = ?")
+        .bind(request_id)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| format!("Failed to delete request: {}", e))?;
+
+    let query_result = sqlx::query("DELETE FROM requests WHERE id = ?")
+        .bind(request_id)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| format!("Failed to delete request: {}", e))?;
+
+    tx.commit()
+        .await
+        .map_err(|e| format!("Failed to delete request: {}", e))?;
+
+    Ok(query_result.rows_affected())
+}
+
 pub async fn save_environment(
     state: &tauri::State<'_, AppState>,
     environment: Environment,

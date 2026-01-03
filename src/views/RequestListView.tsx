@@ -64,11 +64,15 @@ function RequestListView({ }: RequestListProps) {
             .catch(error => showResultNotification(appContext, error, t('error_create_request_set')))
     }
 
-    const deleteRequest = async () => {
+    const deleteRequest = async (requestSetIndex: number, requestIndex: number) => {
         invoke("delete_request", {
-            requestId: 0 //TODO set correct id
+            requestId: appContext.appState.requestSets[requestSetIndex].requests[requestIndex].id
         })
-            .then(result => showResultNotification(appContext, result, t('item_deleted')))
+            .then(result => {
+                appContext.initialize()
+                //TODO sync open items
+                showResultNotification(appContext, result, t('item_deleted'))
+            })
             .catch(error => showResultNotification(appContext, error, t('error_delete_request')))
     }
 
@@ -122,7 +126,7 @@ function RequestListView({ }: RequestListProps) {
                                         icon={PlayArrowIcon}
                                         onDoubleClick={() => openItem(requestSetIndex, requestIndex)}
                                         index={requestIndex}
-                                        actions={[{ label: t('delete_item'), callback: () => deleteRequest() }]}
+                                        actions={[{ label: t('delete_item'), callback: () => deleteRequest(requestSetIndex, requestIndex) }]}
                                     />
                                 )}
                             </List>
