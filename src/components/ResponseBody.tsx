@@ -1,4 +1,4 @@
-import { Box } from "@mui/material"
+import { Box, useColorScheme } from "@mui/material"
 import { HttpRequestResponseProps } from "../types/types"
 import JSONPretty from "react-json-pretty";
 
@@ -6,6 +6,9 @@ interface ResponseBodyProps extends HttpRequestResponseProps {
 }
 
 function ResponseBody({ response }: ResponseBodyProps) {
+  const { mode } = useColorScheme();
+  const themeClass = mode === 'dark' ? 'dark-theme' : 'light-theme';
+
   return <Box sx={{
     width: '100%',
     height: '100%',
@@ -22,7 +25,9 @@ function ResponseBody({ response }: ResponseBodyProps) {
       minHeight: 0,
       overflow: 'auto',
     }}>
-      <JSONPretty id="json-pretty" data={response?.body ?? ''}></JSONPretty>
+      <div className={`json-pretty-wrapper ${themeClass}`}>
+        <JSONPretty id="json-pretty" data={response?.body ?? ''}></JSONPretty>
+      </div>
     </Box>
   </Box>
 }

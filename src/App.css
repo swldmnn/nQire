@@ -20,7 +20,40 @@ button {
   cursor: pointer;
 }
 
-.__json-pretty__ {
+/* Json pretty light */
+.json-pretty-wrapper.light-theme .__json-pretty__ {
+  line-height: 1.3;
+  color: rgb(28, 28, 28);
+  overflow: auto;
+  padding-left: .5rem;
+  font-size: .8rem;
+}
+
+.json-pretty-wrapper.light-theme .__json-key__ {
+  color: rgb(235, 114, 77);
+}
+
+.json-pretty-wrapper.light-theme .__json-value__ {
+  color: rgb(144, 131, 225);
+}
+
+.json-pretty-wrapper.light-theme .__json-string__ {
+  color: rgb(44, 126, 126);
+}
+
+.json-pretty-wrapper.light-theme .__json-boolean__ {
+  color: rgba(102, 153, 204, 1);
+}
+
+.json-pretty-wrapper.light-theme .__json-pretty-error__ {
+  line-height: 1.3;
+  color: rgba(248, 248, 242, 1);
+  background: #1e1e1e;
+  overflow: auto;
+}
+
+/* Json pretty dark */
+.json-pretty-wrapper.dark-theme .__json-pretty__ {
   line-height: 1.3;
   color: rgba(248, 248, 242, 1);
   overflow: auto;
@@ -28,24 +61,23 @@ button {
   font-size: .8rem;
 }
 
-.__json-key__ {
+.json-pretty-wrapper.dark-theme .__json-key__ {
   color: rgba(255, 94, 94, 1);
 }
 
-.__json-value__ {
+.json-pretty-wrapper.dark-theme .__json-value__ {
   color: rgba(253, 176, 130, 1);
 }
 
-
-.__json-string__ {
+.json-pretty-wrapper.dark-theme .__json-string__ {
   color: rgba(233, 253, 172, 1);
 }
 
-.__json-boolean__ {
+.json-pretty-wrapper.dark-theme .__json-boolean__ {
   color: rgba(102, 153, 204, 1);
 }
 
-.__json-pretty-error__ {
+.json-pretty-wrapper.dark-theme .__json-pretty-error__ {
   line-height: 1.3;
   color: rgba(248, 248, 242, 1);
   background: #1e1e1e;
