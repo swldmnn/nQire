@@ -1,7 +1,8 @@
 
 export const styles = {
-    padding: {
-        default: '.5rem',
+    spaces: {
+        large: '.8rem',
+        medium: '.5rem',
         small: '.1rem',
     }
 }

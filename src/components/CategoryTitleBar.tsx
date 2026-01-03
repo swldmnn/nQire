@@ -11,7 +11,7 @@ interface CategoryTitleBarProps {
 function CategoryTitleBar({ title, actions }: CategoryTitleBarProps) {
     return (
         <Box sx={{
-            padding: styles.padding.default,
+            padding: styles.spaces.medium,
             color: 'primary.main',
             display: 'flex',
             flexDirection: 'row',

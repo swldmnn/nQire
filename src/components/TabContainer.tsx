@@ -20,9 +20,7 @@ export interface TabContentProps {
 
 const isTabContentProps = (object: any): object is TabContentProps => !!object.label
 
-function CustomTabPanel(props: TabPanelProps) {
-    const { children, isSelected, index, ...other } = props;
-
+function CustomTabPanel({ children, isSelected, index, ...other }: TabPanelProps) {
     return (
         <Box
             role="tabpanel"

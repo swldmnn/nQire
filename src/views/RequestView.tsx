@@ -66,7 +66,6 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
         minWidth: 0,
         display: 'flex',
         flexDirection: 'column',
-        bgcolor: 'grey.850',
         overflow: 'auto',
     }}>
 
@@ -146,7 +145,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
                         }}
                     >
                         <Typography component="span">{t('request_response')}</Typography>
-                        {response.status > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: styles.padding.default }}>{`[${response.status}]`}</Typography>}
+                        {response.status > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: styles.spaces.medium }}>{`[${response.status}]`}</Typography>}
                     </AccordionSummary>
                     <AccordionDetails sx={{
                         minHeight: 0,

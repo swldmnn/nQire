@@ -23,6 +23,8 @@ function EnvironmentChooser({ sx }: EnvironmentChooserProps) {
                 value={appContext.appState.activeEnvironment}
                 onChange={(e) => onChange(e.target.value)}
                 size='small'
+                sx={{width: '100%'}}
+                variant='standard'
             >
                 <MenuItem value="none" key='envItem_none'>{t('no_environment')}</MenuItem>
                 {

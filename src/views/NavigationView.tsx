@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Paper, Tab, Tabs } from "@mui/material";
+import { Box, Button, Divider, Paper, Tab, Tabs, Typography, useColorScheme } from "@mui/material";
 import RequestListView from "./RequestListView";
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
@@ -6,10 +6,16 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import { useState } from "react";
 import EnvironmentListView from "./EnvironmentListView";
+import Logo from "../components/Logo";
+import { styles } from "../constants";
+import EnvironmentChooser from "../components/EnvironmentChooser";
+import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
+import BrightnessLowIcon from '@mui/icons-material/BrightnessLow';
 
 type SelectionIndex = number | false
 
 function NavigationView() {
+    const { mode, setMode } = useColorScheme();
     const [selectedIndex, setSelectedIndex] = useState(false as SelectionIndex)
     const [lastSelectedIndex, setLastSelectedIndex] = useState(0)
 
@@ -23,23 +29,36 @@ function NavigationView() {
     };
 
     return (
-        <Paper square
+        <Paper id='navigation_root'
+            square
             elevation={1}
-            id='navigation_root'
             sx={{
                 boxSizing: 'border-box',
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'row'
             }}>
-            <Box
-                id='navigation_sidebar'
+            <Paper id='navigation_sidebar'
+                square
+                elevation={4}
                 sx={{
                     boxSizing: 'border-box',
                     height: '100%',
+                    width: '8rem',
                     display: 'flex',
-                    flexDirection: 'column'
+                    flexDirection: 'column',
+                    zIndex: 100,
                 }}>
+
+                <Box sx={{ display: 'flex', flexDirection: 'row', padding: styles.spaces.large }}>
+                    <Logo sx={{ color: 'primary.main', height: "2rem", width: "2rem", verticalAlign: "bottom" }} />
+                    <Typography variant='h5' sx={{ marginLeft: styles.spaces.medium }}>n</Typography>
+                    <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
+                    <Typography variant='h5' >ire</Typography>
+                </Box>
+
+                <Divider flexItem />
+
                 <Tabs
                     value={selectedIndex}
                     onChange={handleTabChange}
@@ -53,15 +72,25 @@ function NavigationView() {
                 </Tabs>
 
                 <Box id='navigation_filler' sx={{ flexGrow: 1 }} />
+
+                <Divider flexItem sx={{ marginBottom: styles.spaces.large }} />
+
+                <Button onClick={() => { setMode(mode === 'dark' ? 'light' : 'dark') }} sx={{ color: 'text.secondary' }}>
+                    {mode === 'light' ? <BrightnessHighIcon /> : <BrightnessLowIcon />}
+                </Button>
+                <EnvironmentChooser sx={{
+                    width: '100%',
+                    marginBottom: styles.spaces.large,
+                    padding: styles.spaces.medium,
+                    boxSizing: 'border-box'
+                }} />
+
                 <Divider flexItem />
 
-                <Button
-                    sx={{ color: 'divider' }}
-                    onClick={toggleExpandState}
-                >
+                <Button sx={{ color: 'divider' }} onClick={toggleExpandState}>
                     {selectedIndex === false ? <KeyboardDoubleArrowRightIcon /> : <KeyboardDoubleArrowLeftIcon />}
                 </Button>
-            </Box>
+            </Paper>
 
             <Divider orientation="vertical" flexItem />
 

@@ -20,9 +20,9 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
     }
 
     return <Box sx={{
-        paddingLeft: styles.padding.default,
-        paddingRight: styles.padding.default,
-        paddingBottom: styles.padding.default,
+        paddingLeft: styles.spaces.medium,
+        paddingRight: styles.spaces.medium,
+        paddingBottom: styles.spaces.medium,
     }}>
         <Paper elevation={0} variant='outlined' sx={{
             display: 'flex',
@@ -32,7 +32,7 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
             backgroundColor: 'transparent',
         }}>
             <Box sx={{
-                padding: styles.padding.default,
+                padding: styles.spaces.medium,
                 display: 'flex',
                 flexDirection: 'row',
                 width: '100%',
@@ -48,8 +48,8 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
                 </Select>
 
                 <Divider orientation="vertical" flexItem sx={{
-                    marginLeft: styles.padding.default,
-                    marginRight: styles.padding.default
+                    marginLeft: styles.spaces.medium,
+                    marginRight: styles.spaces.medium
                 }} />
 
                 <TextField

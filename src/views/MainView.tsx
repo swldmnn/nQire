@@ -1,17 +1,11 @@
-import { Alert, Box, Button, Paper, Snackbar, Typography, useColorScheme } from "@mui/material"
-import Logo from "../components/Logo"
+import { Alert, Box, Snackbar } from "@mui/material"
 import TabView from "./TabView"
-import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
-import BrightnessLowIcon from '@mui/icons-material/BrightnessLow';
 import { useContext, useEffect } from "react"
 import { AppContext } from "../AppContext"
 import NavigationView from "./NavigationView"
 import Backplate from "../components/Backplate";
-import EnvironmentChooser from "../components/EnvironmentChooser";
-import { styles } from "../constants";
 
 function MainView() {
-    const { mode, setMode } = useColorScheme();
     const appContext = useContext(AppContext)
 
     useEffect(() => {
@@ -35,23 +29,6 @@ function MainView() {
                 height: '100vh',
                 boxSizing: 'border-box',
             }}>
-                <Paper id='mainView_header' square elevation={4} sx={{
-                    display: 'flex',
-                    padding: styles.padding.default,
-                    width: '100%',
-                    boxSizing: 'border-box',
-                    zIndex: 999
-                }}>
-                    <Logo sx={{ color: 'primary.main', height: "2rem", width: "2rem", verticalAlign: "bottom" }} />
-                    <Typography variant='h5' sx={{ marginLeft: styles.padding.default }}>n</Typography>
-                    <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
-                    <Typography variant='h5' >ire</Typography>
-                    <EnvironmentChooser sx={{ marginLeft: 'auto', marginRight: '1rem' }} />
-                    <Button onClick={() => { setMode(mode === 'dark' ? 'light' : 'dark') }}>
-                        {mode === 'light' ? <BrightnessHighIcon /> : <BrightnessLowIcon />}
-                    </Button>
-                </Paper>
-
                 <Box id='mainView_content' sx={{
                     display: 'flex',
                     flexGrow: 1,

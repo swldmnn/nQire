@@ -104,9 +104,9 @@ function RequestListView({ }: RequestListProps) {
                             sx={{
                                 flexDirection: 'row-reverse',
                                 color: 'primary.main',
-                                padding: styles.padding.default,
-                                paddingTop: styles.padding.small,
-                                paddingBottom: styles.padding.small,
+                                padding: styles.spaces.medium,
+                                paddingTop: styles.spaces.small,
+                                paddingBottom: styles.spaces.small,
                             }}
                         >
                             <Typography component="span">{requestSet.label}</Typography>

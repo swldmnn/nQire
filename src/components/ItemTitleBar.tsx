@@ -16,7 +16,7 @@ function ItemTitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarP
                 display: 'flex',
                 flexDirection: 'row',
                 width: '100%',
-                padding: styles.padding.default,
+                padding: styles.spaces.medium,
                 boxSizing: 'border-box'
             }}>
                 <TextField

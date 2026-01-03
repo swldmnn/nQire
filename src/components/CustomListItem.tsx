@@ -15,7 +15,7 @@ interface CustomListItemProps {
 function CustomListItem({ index, item, icon: Icon, onDoubleClick, actions }: CustomListItemProps) {
     return (
         <ListItem key={`${item.typename}_${index}`} sx={{ padding: 0 }}>
-            <ListItemButton onDoubleClick={onDoubleClick} sx={{ padding: styles.padding.default }}>
+            <ListItemButton onDoubleClick={onDoubleClick} sx={{ padding: styles.spaces.medium }}>
                 <ListItemIcon>
                     <Icon />
                 </ListItemIcon>
@@ -24,7 +24,7 @@ function CustomListItem({ index, item, icon: Icon, onDoubleClick, actions }: Cus
             </ListItemButton>
             <ContextMenu
                 actions={actions}
-                sx={{ marginLeft: 'auto', paddingRight: styles.padding.default }}
+                sx={{ marginLeft: 'auto', paddingRight: styles.spaces.medium }}
             />
         </ListItem>
     )
