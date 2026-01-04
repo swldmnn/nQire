@@ -12,7 +12,7 @@ import ItemTitleBar from "../components/ItemTitleBar";
 import { AppContext } from "../AppContext";
 import { useTranslation } from "react-i18next";
 import { styles } from "../constants";
-import { showResultNotification } from "../helpers/notificationHelper";
+import { useNotification } from "../contexts/notification/useNotification";
 
 interface NewRequestViewProps extends HttpRequestResponseProps {
 }
@@ -24,6 +24,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
 
     const appContext = useContext(AppContext)
     const { t } = useTranslation()
+    const notificationContext = useNotification()
 
     const [request, setRequest] = useState({ ...inputRequest })
     const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
@@ -44,9 +45,9 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
                 if (result === true) {
                     setIsModified(false)
                 }
-                showResultNotification(appContext, result, t('item_saved'))
+                notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
             })
-            .catch(error => showResultNotification(appContext, error, t('error_save_request')))
+            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_save_request') } }))
     }
 
     async function sendRequest(request?: HttpRequest) {
@@ -160,13 +161,6 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
 
             </Grid>
         </Grid>
-
-
-
-
-
-
-
     </Box>
 }
 

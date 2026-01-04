@@ -36,7 +36,8 @@ function NavigationView() {
                 boxSizing: 'border-box',
                 height: '100%',
                 display: 'flex',
-                flexDirection: 'row'
+                flexDirection: 'row',
+                zIndex: 50,
             }}>
             <Paper id='navigation_sidebar'
                 square

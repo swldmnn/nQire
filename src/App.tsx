@@ -1,11 +1,11 @@
-import { deepOrange, grey, lime, pink, teal } from '@mui/material/colors';
+import { deepOrange, lime, pink, teal } from '@mui/material/colors';
 import './App.css';
 import {
   ThemeProvider,
   createTheme,
 } from '@mui/material';
-import AppContextProvider from './AppContextProvider';
 import MainView from './views/MainView';
+import GlobalContextProvider from './GlobalContextProvider';
 
 const theme = createTheme({
   cssVariables: {
@@ -41,13 +41,13 @@ const theme = createTheme({
 
 function App() {
   return (
-    <AppContextProvider>
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      <GlobalContextProvider>
         <main>
           <MainView />
         </main>
-      </ThemeProvider>
-    </AppContextProvider>
+      </GlobalContextProvider>
+    </ThemeProvider>
   )
 }
 

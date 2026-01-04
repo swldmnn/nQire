@@ -17,7 +17,7 @@ import ContextMenu from "../components/ContextMenu";
 import { styles } from "../constants";
 import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer";
 import { invoke } from "@tauri-apps/api/core";
-import { showResultNotification } from "../helpers/notificationHelper";
+import { useNotification } from "../contexts/notification/useNotification";
 
 interface RequestListProps {
 }
@@ -25,6 +25,7 @@ interface RequestListProps {
 function RequestListView({ }: RequestListProps) {
     const appContext = useContext(AppContext)
     const { t } = useTranslation()
+    const notificationContext = useNotification()
 
     const openItem = (requestSetIndex: number, requestIndex: number) => {
         const item = appContext.appState.requestSets[requestSetIndex].requests[requestIndex]
@@ -46,9 +47,9 @@ function RequestListView({ }: RequestListProps) {
         })
             .then(result => {
                 appContext.initialize()
-                showResultNotification(appContext, result, t('item_saved'))
+                notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
             })
-            .catch(error => showResultNotification(appContext, error, t('error_create_request')))
+            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_request') } }))
     }
 
     const createNewRequestSet = async () => {
@@ -60,8 +61,8 @@ function RequestListView({ }: RequestListProps) {
                 requests: [],
             } as HttpRequestSetTransfer
         })
-            .then(result => showResultNotification(appContext, result, t('item_saved')))
-            .catch(error => showResultNotification(appContext, error, t('error_create_request_set')))
+            .then(result => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } }))
+            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_request_set') } }))
     }
 
     const deleteRequest = async (requestSetIndex: number, requestIndex: number) => {
@@ -71,17 +72,17 @@ function RequestListView({ }: RequestListProps) {
             .then(result => {
                 appContext.initialize()
                 //TODO sync open items
-                showResultNotification(appContext, result, t('item_deleted'))
+                notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } })
             })
-            .catch(error => showResultNotification(appContext, error, t('error_delete_request')))
+            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_request') } }))
     }
 
     const deleteRequestSet = async () => {
         invoke("delete_request_set", {
             requestSetId: 0 //TODO set correct id
         })
-            .then(result => showResultNotification(appContext, result, t('item_deleted')))
-            .catch(error => showResultNotification(appContext, error, t('error_delete_request_set')))
+            .then(result => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } }))
+            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_request_set') } }))
     }
 
     return (
@@ -97,7 +98,7 @@ function RequestListView({ }: RequestListProps) {
                         defaultExpanded
                         disableGutters
                         key={`RequestSet_${requestSetIndex}`}
-                        sx={{backgroundColor: 'transparent'}}
+                        sx={{ backgroundColor: 'transparent' }}
                     >
                         <AccordionSummary
                             expandIcon={<KeyboardArrowDownIcon />}

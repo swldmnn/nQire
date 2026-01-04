@@ -6,7 +6,7 @@ import { useContext, useState } from "react";
 import ItemTitleBar from "../components/ItemTitleBar";
 import { AppContext } from "../AppContext";
 import { useTranslation } from "react-i18next";
-import { showResultNotification } from "../helpers/notificationHelper";
+import { useNotification } from "../contexts/notification/useNotification";
 
 interface EnvironmentViewProps {
     environment: Environment
@@ -16,6 +16,7 @@ function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps
 
     const appContext = useContext(AppContext)
     const { t } = useTranslation()
+    const notificationContext = useNotification()
 
     const [environment, setEnvironment] = useState({ ...inputEnvironment })
     const [isModified, setIsModified] = useState(false)
@@ -63,9 +64,9 @@ function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps
                 if (result === true) {
                     setIsModified(false)
                 }
-                showResultNotification(appContext, result, t('item_saved'))
+                notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
             })
-            .catch(error => showResultNotification(appContext, error, t('error_save_environment')))
+            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_save_environment') } }))
     }
 
     return <Box>

@@ -7,11 +7,13 @@ import { useTranslation } from 'react-i18next';
 import CustomListItem from "../components/CustomListItem";
 import { invoke } from "@tauri-apps/api/core";
 import { EnvironmentTransfer } from "../types/types_transfer";
-import { showResultNotification } from "../helpers/notificationHelper";
+import { useNotification } from "../contexts/notification/useNotification";
+
 
 function EnvironmentListView() {
     const appContext = useContext(AppContext)
     const { t } = useTranslation()
+    const notificationContext = useNotification()
 
     const openItem = (environmentIndex: number) => {
         const item = appContext.appState.environments[environmentIndex]
@@ -26,16 +28,16 @@ function EnvironmentListView() {
                 values: [],
             } as EnvironmentTransfer
         })
-            .then(result => showResultNotification(appContext, result, t('item_saved')))
-            .catch(error => showResultNotification(appContext, error, t('error_create_environment')))
+            .then(result => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } }))
+            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_environment') } }))
     }
 
     const deleteEnvironment = async () => {
         invoke("delete_environment", {
             environmentId: 0 //TODO pass correct id
         })
-            .then(result => showResultNotification(appContext, result, t('item_deleted')))
-            .catch(error => showResultNotification(appContext, error, t('error_delete_environment')))
+            .then(result => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } }))
+            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_environment') } }))
     }
 
     return (

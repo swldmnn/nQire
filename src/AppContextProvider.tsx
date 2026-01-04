@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { AppContext, AppCtx, AppState, NotificationState } from "./AppContext"
+import { AppContext, AppCtx, AppState } from "./AppContext"
 import { DisplayItem, Environment, HttpRequest, HttpRequestSet } from "./types/types";
 import { EnvironmentTransfer, ErrorTransfer, HttpRequestSetTransfer, HttpRequestTransfer, isError } from "./types/types_transfer";
 import { invoke } from "@tauri-apps/api/core";
@@ -85,16 +85,6 @@ function AppContextProvider(props: AppContextProviderProps) {
         }
     }
 
-    const showNotification = (notification: NotificationState) => {
-        appContext.appState.notification = notification
-        appContext.updateAppState(appContext.appState)
-    }
-
-    const hideNotification = () => {
-        appContext.appState.notification = { ...appContext.appState.notification, open: false }
-        appContext.updateAppState(appContext.appState)
-    }
-
     const initialContext = {
         appState: {
             openItems: [],
@@ -103,19 +93,11 @@ function AppContextProvider(props: AppContextProviderProps) {
             requestSets: [],
             environments: [],
             activeEnvironment: 'none',
-            notification: {
-                open: false,
-                message: '',
-                type: 'info',
-                closeAfterMillis: 5000,
-            }
         },
         updateAppState,
         openItem,
         saveItem,
         initialize,
-        showNotification,
-        hideNotification,
     } as AppCtx
 
     const [appContext, setAppContext] = useState(initialContext)

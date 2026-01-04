@@ -5,18 +5,9 @@ import { ErrorTransfer } from './types/types_transfer';
 export interface AppCtx {
     updateAppState: (appState: AppState) => void
     openItem: (item: DisplayItem) => void
-    saveItem: (item: DisplayItem) => Promise<boolean|ErrorTransfer>
+    saveItem: (item: DisplayItem) => Promise<boolean | ErrorTransfer>
     initialize: () => void
-    showNotification: (notification: NotificationState) => void
-    hideNotification: () => void
     appState: AppState
-}
-
-export interface NotificationState {
-    open: boolean
-    message: string
-    type: 'success' | 'info' | 'warning' | 'error'
-    closeAfterMillis: 5000
 }
 
 export interface AppState {
@@ -26,7 +17,6 @@ export interface AppState {
     requestSets: HttpRequestSet[]
     environments: Environment[]
     activeEnvironment: string
-    notification: NotificationState
 }
 
 export const AppContext = createContext({
@@ -37,17 +27,9 @@ export const AppContext = createContext({
         requestSets: [],
         environments: [],
         activeEnvironment: 'none',
-        notification: {
-            open: false,
-            message: '',
-            type: 'info',
-            closeAfterMillis: 5000,
-        }
     },
     updateAppState: () => { },
     openItem: () => { },
     saveItem: async () => false,
     initialize: () => { },
-    showNotification: () => { },
-    hideNotification: () => { },
 } as AppCtx);
