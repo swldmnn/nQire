@@ -1,16 +1,16 @@
-import { isError } from "../../types/types_transfer";
-import { Notification, NotificationAction, NotificationState, NotifyPayload } from "./types";
+import { isError } from "../../types/types_transfer"
+import { Notification, NotificationAction, NotificationState, NotifyPayload } from "./types"
 
 const DEFAULT_CLOSE_AFER_MILLIS = 5000
 
 export const notificationReducer = (state: NotificationState, action: NotificationAction): NotificationState => {
     switch (action.type) {
         case 'NOTIFY':
-            return { showNotification: true, notification: buildNotification(action.payload) };
+            return { showNotification: true, notification: buildNotification(action.payload) }
         case 'HIDE':
-            return { ...state, showNotification: false };
+            return { ...state, showNotification: false }
         default:
-            return state;
+            return state
     }
 };
 

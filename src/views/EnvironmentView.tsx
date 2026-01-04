@@ -1,22 +1,27 @@
 import { Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
 import { Environment } from "../types/types"
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import AddSharpIcon from '@mui/icons-material/AddSharp';
-import { useContext, useState } from "react";
-import ItemTitleBar from "../components/ItemTitleBar";
-import { AppContext } from "../AppContext";
-import { useTranslation } from "react-i18next";
-import { useNotification } from "../contexts/notification/useNotification";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import AddSharpIcon from '@mui/icons-material/AddSharp'
+import { useContext, useState } from "react"
+import ItemTitleBar from "../components/ItemTitleBar"
+import { AppContext } from "../AppContext"
+import { useTranslation } from "react-i18next"
+import { useNotification } from "../contexts/notification/useNotification"
+import { useTabs } from "../contexts/tabs/useTabs"
 
 interface EnvironmentViewProps {
     environment: Environment
 }
 
 function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps) {
+    if (!inputEnvironment) {
+        return null
+    }
 
     const appContext = useContext(AppContext)
     const { t } = useTranslation()
     const notificationContext = useNotification()
+    const tabsContext = useTabs()
 
     const [environment, setEnvironment] = useState({ ...inputEnvironment })
     const [isModified, setIsModified] = useState(false)
@@ -24,10 +29,6 @@ function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps
     const modifyEnvironment = (environment: Environment) => {
         setEnvironment(environment)
         setIsModified(true)
-    }
-
-    if (!environment) {
-        return null
     }
 
     const onLabelChange = (newValue: string) => {
@@ -63,6 +64,7 @@ function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps
             .then(result => {
                 if (result === true) {
                     setIsModified(false)
+                    tabsContext.dispatch({ type: 'UPDATE_TAB', tabItem: environment })
                 }
                 notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
             })

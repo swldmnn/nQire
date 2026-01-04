@@ -1,18 +1,19 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Typography } from "@mui/material"
-import RequestUrlBar from "../components/RequestUrlBar";
-import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "../types/types";
-import { useContext, useState } from "react";
-import { HttpRequestTransfer, HttpResponseTransfer } from "../types/types_transfer";
-import { invoke } from "@tauri-apps/api/core";
-import RequestBody from "../components/RequestBody";
-import ResponseBody from "../components/ResponseBody";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import RequestHeaders from "../components/RequestHeaders";
-import ItemTitleBar from "../components/ItemTitleBar";
-import { AppContext } from "../AppContext";
-import { useTranslation } from "react-i18next";
-import { styles } from "../constants";
-import { useNotification } from "../contexts/notification/useNotification";
+import RequestUrlBar from "../components/RequestUrlBar"
+import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "../types/types"
+import { useContext, useState } from "react"
+import { HttpRequestTransfer, HttpResponseTransfer } from "../types/types_transfer"
+import { invoke } from "@tauri-apps/api/core"
+import RequestBody from "../components/RequestBody"
+import ResponseBody from "../components/ResponseBody"
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import RequestHeaders from "../components/RequestHeaders"
+import ItemTitleBar from "../components/ItemTitleBar"
+import { AppContext } from "../AppContext"
+import { useTranslation } from "react-i18next"
+import { styles } from "../constants"
+import { useNotification } from "../contexts/notification/useNotification"
+import { useTabs } from "../contexts/tabs/useTabs"
 
 interface NewRequestViewProps extends HttpRequestResponseProps {
 }
@@ -25,6 +26,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
     const appContext = useContext(AppContext)
     const { t } = useTranslation()
     const notificationContext = useNotification()
+    const tabsContext = useTabs()
 
     const [request, setRequest] = useState({ ...inputRequest })
     const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
@@ -44,6 +46,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
             .then(result => {
                 if (result === true) {
                     setIsModified(false)
+                    tabsContext.dispatch({ type: 'UPDATE_TAB', tabItem: request })
                 }
                 notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
             })

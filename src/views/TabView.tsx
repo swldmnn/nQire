@@ -1,23 +1,82 @@
-import { useContext } from "react"
-import TabContainer from "../components/TabContainer"
-import { AppContext } from "../AppContext"
-import { Box } from "@mui/material"
-import TabContentWrapper from "../components/TabContentWrapper"
+import { Box, Tab, Tabs } from "@mui/material"
+import { useTabs } from "../contexts/tabs/useTabs"
+import { AppContext, AppCtx } from "../AppContext"
+import { TabItem } from "../types/types"
 import RequestView from "./RequestView"
-import EnvironmentView from "../views/EnvironmentView"
+import EnvironmentView from "./EnvironmentView"
+import { useContext } from "react"
+import CloseIcon from '@mui/icons-material/Close'
+
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    isSelected: boolean;
+}
+
+function getTabContent(
+    appContext: AppCtx,
+    tabItem: TabItem,
+) {
+    switch (tabItem.typename) {
+        case 'HttpRequest': {
+            const request = appContext.appState.requestSets
+                .flatMap(set => set.requests)
+                .find(request => request.id === tabItem.id)
+
+            return request ? <RequestView
+                request={request}
+                key={`RequestView_${request.label}`}
+            /> : null
+
+        }
+        case 'Environment': {
+            const environment = appContext.appState.environments
+                .find(environment => environment.id === tabItem.id)
+
+            return environment ?
+                <EnvironmentView
+                    environment={environment}
+                    key={`EnvironmentView_${environment.label}`} /> : null
+        }
+        default:
+            return <Box>Unknown Content</Box>
+    }
+}
+
+function CustomTabPanel({ children, isSelected, index, ...other }: TabPanelProps) {
+    return (
+        <Box
+            role="tabpanel"
+            hidden={!isSelected}
+            {...other}
+            sx={{
+                width: '100%',
+                height: '100%',
+                minWidth: 0,
+                minHeight: 0,
+                boxSizing: 'border-box',
+            }}
+        >
+            {children}
+        </Box>
+    );
+}
 
 function TabView() {
     const appContext = useContext(AppContext)
+    const tabsContext = useTabs()
 
-    const onClose = (index: number) => {
-        appContext.appState.openItems.splice(index, 1)
+    const onChange = (_event: React.SyntheticEvent, newValue: number) => {
+        tabsContext.dispatch({ type: 'SELECT_TAB', tabIndex: newValue })
+    }
 
-        const selectedTabIndex = appContext.appState.selectedTabIndex
-        if (index <= selectedTabIndex) {
-            appContext.appState.selectedTabIndex = Math.max(0, selectedTabIndex - 1)
-        }
-        appContext.updateAppState(appContext.appState)
-    }   
+    const onClose = (tabItem: TabItem) => {
+        tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: tabItem })
+    }
+
+    if (!tabsContext.state.openTabs.length) {
+        return null
+    }
 
     return (
         <Box sx={{
@@ -26,42 +85,48 @@ function TabView() {
             minWidth: 0,
             minHeight: 0,
             boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
             bgcolor: 'background.default',
         }}>
-            {appContext.appState.openItems.length > 0 && <TabContainer onClose={onClose}>
-                {
-                    appContext.appState.openItems.map((item, index) => {
-                        if (item.typename === 'HttpRequest') {
-                            const request = appContext.appState.requestSets
-                                .flatMap(set => set.requests)
-                                .find(request => request.id === item.id)
-
-                            if (request) {
-                                return <TabContentWrapper label={request.label} key={`RequestViewWrapper_${index}_${request.label}`}>
-                                    <RequestView
-                                        request={request}
-                                        key={`RequestView_${index}_${request.label}`}
-                                    />
-                                </TabContentWrapper>
-                            }
-                        }
-
-                        if (item.typename === 'Environment') {
-                            const environment = appContext.appState.environments
-                                .find(environment => environment.id === item.id)
-
-                            if (environment) {
-                                return <TabContentWrapper label={environment.label} key={`EnvironmentViewWrapper_${index}_${environment.label}`}>
-                                    <EnvironmentView environment={environment} />
-                                </TabContentWrapper>
-                            }
-                        }
-
-                        return null
-                    })
-                }
-            </TabContainer>}
-        </Box>)
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs
+                    scrollButtons="auto"
+                    variant="scrollable"
+                    value={tabsContext.state.selectedTabIndex}
+                    onChange={onChange}
+                >
+                    {tabsContext.state.openTabs.map((tabItem, index) =>
+                        <Tab
+                            label={<div>
+                                {tabItem.label}
+                                <CloseIcon
+                                    onClick={(e) => { e.stopPropagation(); onClose(tabItem) }}
+                                    sx={{ height: '1rem', verticalAlign: 'bottom', color: 'secondary.main' }}
+                                />
+                            </div>}
+                            key={`tab_${index}_${tabItem.label}`}
+                        ></Tab>
+                    )}
+                </Tabs>
+            </Box>
+            <Box sx={{
+                flexGrow: 1,
+                minWidth: 0,
+                minHeight: 0,
+            }}>
+                {tabsContext.state.openTabs.map((tabItem, index) =>
+                    <CustomTabPanel
+                        index={index}
+                        isSelected={index === tabsContext.state.selectedTabIndex}
+                        key={`tabPanel_${index}_${tabItem.label}`}
+                    >
+                        {getTabContent(appContext, tabItem)}
+                    </CustomTabPanel>
+                )}
+            </Box>
+        </Box>
+    )
 }
 
 export default TabView

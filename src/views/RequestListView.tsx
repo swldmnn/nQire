@@ -6,18 +6,19 @@ import {
     Typography,
     AccordionDetails,
 } from "@mui/material"
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { useContext } from "react";
-import { AppContext } from "../AppContext";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import CategoryTitleBar from "../components/CategoryTitleBar";
-import { useTranslation } from "react-i18next";
-import CustomListItem from "../components/CustomListItem";
-import ContextMenu from "../components/ContextMenu";
-import { styles } from "../constants";
-import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer";
-import { invoke } from "@tauri-apps/api/core";
-import { useNotification } from "../contexts/notification/useNotification";
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import { useContext } from "react"
+import { AppContext } from "../AppContext"
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import CategoryTitleBar from "../components/CategoryTitleBar"
+import { useTranslation } from "react-i18next"
+import CustomListItem from "../components/CustomListItem"
+import ContextMenu from "../components/ContextMenu"
+import { styles } from "../constants"
+import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer"
+import { invoke } from "@tauri-apps/api/core"
+import { useNotification } from "../contexts/notification/useNotification"
+import { useTabs } from "../contexts/tabs/useTabs"
 
 interface RequestListProps {
 }
@@ -26,10 +27,11 @@ function RequestListView({ }: RequestListProps) {
     const appContext = useContext(AppContext)
     const { t } = useTranslation()
     const notificationContext = useNotification()
+    const tabsContext = useTabs()
 
     const openItem = (requestSetIndex: number, requestIndex: number) => {
         const item = appContext.appState.requestSets[requestSetIndex].requests[requestIndex]
-        appContext.openItem({ typename: item.typename, id: item.id, label: '' })
+        tabsContext.dispatch({ type: 'OPEN_TAB', tabItem: { typename: item.typename, id: item.id, label: item.label } })
     }
 
     const createNewRequest = async (requestSetIndex: number) => {
@@ -66,10 +68,13 @@ function RequestListView({ }: RequestListProps) {
     }
 
     const deleteRequest = async (requestSetIndex: number, requestIndex: number) => {
+
+        const request = appContext.appState.requestSets[requestSetIndex].requests[requestIndex]
         invoke("delete_request", {
-            requestId: appContext.appState.requestSets[requestSetIndex].requests[requestIndex].id
+            requestId: request.id
         })
             .then(result => {
+                tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: request })
                 appContext.initialize()
                 //TODO sync open items
                 notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } })

@@ -1,10 +1,10 @@
 export type NotificationAction =
-    | { type: 'NOTIFY'; payload: NotifyPayload }
+    | { type: 'NOTIFY', payload: NotifyPayload }
     | { type: 'HIDE' }
 
 export interface NotifyPayload {
-    closeAfterMillis?: number,
-    value: any,
+    closeAfterMillis?: number
+    value: any
     defaultMessage?: string
 }
 
@@ -20,6 +20,6 @@ export interface NotificationState {
 }
 
 export interface NotificationContextType {
-    state: NotificationState;
-    dispatch: React.Dispatch<NotificationAction>;
+    state: NotificationState
+    dispatch: React.Dispatch<NotificationAction>
 }

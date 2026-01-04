@@ -3,7 +3,7 @@ import TabView from "./TabView"
 import { useContext, useEffect } from "react"
 import { AppContext } from "../AppContext"
 import NavigationView from "./NavigationView"
-import Backplate from "../components/Backplate";
+import Backplate from "../components/Backplate"
 import { useNotification } from "../contexts/notification/useNotification"
 
 function MainView() {
@@ -45,7 +45,7 @@ function MainView() {
                         minHeight: 0,
                         flexGrow: 1,
                     }}>
-                        {!!appContext.appState.openItems.length && <TabView />}
+                        <TabView />
                     </Box>
                 </Box>
                 <Snackbar

@@ -1,5 +1,5 @@
 
-export interface DisplayItem {
+export interface TabItem {
     typename: string
     id: number
     label: string
@@ -12,12 +12,12 @@ export interface HttpRequestResponseProps {
     setResponse?: (response: HttpResponse) => void
 }
 
-export interface HttpRequestSet extends DisplayItem {
+export interface HttpRequestSet extends TabItem {
     typename: 'HttpRequestSet'
     requests: HttpRequest[]
 }
 
-export interface HttpRequest extends DisplayItem {
+export interface HttpRequest extends TabItem {
     typename: 'HttpRequest'
     method: string
     url: string
@@ -35,7 +35,7 @@ export interface HttpHeader {
     value: string
 }
 
-export interface Environment extends DisplayItem {
+export interface Environment extends TabItem {
     typename: 'Environment'
     values: EnvironmentValue[]
 }

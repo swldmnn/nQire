@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { AppContext, AppCtx, AppState } from "./AppContext"
-import { DisplayItem, Environment, HttpRequest, HttpRequestSet } from "./types/types";
+import { TabItem, Environment, HttpRequest, HttpRequestSet } from "./types/types";
 import { EnvironmentTransfer, ErrorTransfer, HttpRequestSetTransfer, HttpRequestTransfer, isError } from "./types/types_transfer";
 import { invoke } from "@tauri-apps/api/core";
 
@@ -47,22 +47,7 @@ function AppContextProvider(props: AppContextProviderProps) {
         appContext.updateAppState(appContext.appState)
     }
 
-    const openItem = (item: DisplayItem) => {
-        const openItemIndex = appContext.appState.openItems.findIndex(openItem =>
-            openItem.typename === item.typename && openItem.id === item.id
-        )
-
-        if (openItemIndex >= 0) {
-            appContext.appState.selectedTabIndex = openItemIndex
-        } else {
-            appContext.appState.openItems.push(item)
-            appContext.appState.selectedTabIndex = appContext.appState.openItems.length - 1
-        }
-
-        updateAppState(appContext.appState)
-    }
-
-    const saveItem = async (item: DisplayItem) => {
+    const saveItem = async (item: TabItem) => {
         let result: number | ErrorTransfer | undefined = undefined
 
         try {
@@ -75,7 +60,6 @@ function AppContextProvider(props: AppContextProviderProps) {
 
             if (typeof result === "number") {
                 await initialize()
-                openItem(item)
                 return true
             }
 
@@ -87,14 +71,11 @@ function AppContextProvider(props: AppContextProviderProps) {
 
     const initialContext = {
         appState: {
-            openItems: [],
-            selectedTabIndex: 0,
             initialized: false,
             requestSets: [],
             environments: [],
         },
         updateAppState,
-        openItem,
         saveItem,
         initialize,
     } as AppCtx

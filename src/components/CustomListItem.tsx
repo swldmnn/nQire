@@ -1,12 +1,12 @@
 import { SvgIconComponent } from "@mui/icons-material";
 import { ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-import { Action, DisplayItem } from "../types/types";
+import { Action, TabItem } from "../types/types";
 import { styles } from "../constants";
 import ContextMenu from "./ContextMenu";
 
 interface CustomListItemProps {
     index: number
-    item: DisplayItem
+    item: TabItem
     icon: SvgIconComponent
     onDoubleClick: () => void
     actions: Action[]
