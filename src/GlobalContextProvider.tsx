@@ -1,4 +1,5 @@
 import AppContextProvider from "./AppContextProvider";
+import { EnvironmentProvider } from "./contexts/environment/EnvironmentContext";
 import { NotificationProvider } from "./contexts/notification/NotificationContext";
 
 interface GlobalContextProviderProps {
@@ -8,9 +9,11 @@ interface GlobalContextProviderProps {
 const GlobalContextProvider: React.FC<GlobalContextProviderProps> = ({ children }) => {
   return (
     <NotificationProvider>
-      <AppContextProvider>
-        {children}
-      </AppContextProvider>
+      <EnvironmentProvider>
+        <AppContextProvider>
+          {children}
+        </AppContextProvider>
+      </EnvironmentProvider>
     </NotificationProvider>
   );
 };

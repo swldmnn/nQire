@@ -16,7 +16,6 @@ export interface AppState {
     initialized: boolean
     requestSets: HttpRequestSet[]
     environments: Environment[]
-    activeEnvironment: string
 }
 
 export const AppContext = createContext({
@@ -26,7 +25,6 @@ export const AppContext = createContext({
         initialized: false,
         requestSets: [],
         environments: [],
-        activeEnvironment: 'none',
     },
     updateAppState: () => { },
     openItem: () => { },

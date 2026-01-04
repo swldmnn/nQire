@@ -92,7 +92,6 @@ function AppContextProvider(props: AppContextProviderProps) {
             initialized: false,
             requestSets: [],
             environments: [],
-            activeEnvironment: 'none',
         },
         updateAppState,
         openItem,
