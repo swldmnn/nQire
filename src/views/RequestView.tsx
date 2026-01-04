@@ -1,7 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Typography } from "@mui/material"
 import RequestUrlBar from "../components/RequestUrlBar"
 import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "../types/types"
-import { useContext, useState } from "react"
+import { useState } from "react"
 import { HttpRequestTransfer, HttpResponseTransfer } from "../types/types_transfer"
 import { invoke } from "@tauri-apps/api/core"
 import RequestBody from "../components/RequestBody"
@@ -9,11 +9,11 @@ import ResponseBody from "../components/ResponseBody"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import RequestHeaders from "../components/RequestHeaders"
 import ItemTitleBar from "../components/ItemTitleBar"
-import { AppContext } from "../AppContext"
 import { useTranslation } from "react-i18next"
 import { styles } from "../constants"
 import { useNotification } from "../contexts/notification/useNotification"
 import { useTabs } from "../contexts/tabs/useTabs"
+import { useItems } from "../contexts/items/useItems"
 
 interface NewRequestViewProps extends HttpRequestResponseProps {
 }
@@ -23,10 +23,10 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
         return null
     }
 
-    const appContext = useContext(AppContext)
     const { t } = useTranslation()
     const notificationContext = useNotification()
     const tabsContext = useTabs()
+    const itemsContext = useItems()
 
     const [request, setRequest] = useState({ ...inputRequest })
     const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
@@ -42,15 +42,20 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
     }
 
     const onSave = async () => {
-        appContext.saveItem(request)
-            .then(result => {
-                if (result === true) {
-                    setIsModified(false)
-                    tabsContext.dispatch({ type: 'UPDATE_TAB', tabItem: request })
-                }
-                notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
-            })
-            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_save_request') } }))
+        try {
+            const result = await itemsContext.state.saveItem(request)
+
+            if (result === true) {
+                const { requestSets, environments } = await itemsContext.state.loadItems()
+                itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
+
+                setIsModified(false)
+                tabsContext.dispatch({ type: 'UPDATE_TAB', tabItem: request })
+            }
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
+        } catch (error) {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_save_request') } })
+        }
     }
 
     async function sendRequest(request?: HttpRequest) {

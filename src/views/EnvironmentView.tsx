@@ -2,12 +2,12 @@ import { Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead
 import { Environment } from "../types/types"
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import AddSharpIcon from '@mui/icons-material/AddSharp'
-import { useContext, useState } from "react"
+import { useState } from "react"
 import ItemTitleBar from "../components/ItemTitleBar"
-import { AppContext } from "../AppContext"
 import { useTranslation } from "react-i18next"
 import { useNotification } from "../contexts/notification/useNotification"
 import { useTabs } from "../contexts/tabs/useTabs"
+import { useItems } from "../contexts/items/useItems"
 
 interface EnvironmentViewProps {
     environment: Environment
@@ -18,10 +18,10 @@ function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps
         return null
     }
 
-    const appContext = useContext(AppContext)
     const { t } = useTranslation()
     const notificationContext = useNotification()
     const tabsContext = useTabs()
+    const itemsContext = useItems()
 
     const [environment, setEnvironment] = useState({ ...inputEnvironment })
     const [isModified, setIsModified] = useState(false)
@@ -60,15 +60,18 @@ function EnvironmentView({ environment: inputEnvironment }: EnvironmentViewProps
     }
 
     const onSave = async () => {
-        appContext.saveItem(environment)
-            .then(result => {
-                if (result === true) {
-                    setIsModified(false)
-                    tabsContext.dispatch({ type: 'UPDATE_TAB', tabItem: environment })
-                }
-                notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
-            })
-            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_save_environment') } }))
+        try {
+            const result = await itemsContext.state.saveItem(environment)
+            if (result === true) {
+                const { requestSets, environments } = await itemsContext.state.loadItems()
+                itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
+
+                setIsModified(false)
+                tabsContext.dispatch({ type: 'UPDATE_TAB', tabItem: environment })
+            }
+        } catch (error) {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_save_environment') } })
+        }
     }
 
     return <Box>

@@ -1,11 +1,11 @@
 import { Box, Tab, Tabs } from "@mui/material"
 import { useTabs } from "../contexts/tabs/useTabs"
-import { AppContext, AppCtx } from "../AppContext"
 import { TabItem } from "../types/types"
 import RequestView from "./RequestView"
 import EnvironmentView from "./EnvironmentView"
-import { useContext } from "react"
 import CloseIcon from '@mui/icons-material/Close'
+import { useItems } from "../contexts/items/useItems"
+import { ItemsContextType } from "../contexts/items/types"
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -14,12 +14,12 @@ interface TabPanelProps {
 }
 
 function getTabContent(
-    appContext: AppCtx,
+    itemsContext: ItemsContextType,
     tabItem: TabItem,
 ) {
     switch (tabItem.typename) {
         case 'HttpRequest': {
-            const request = appContext.appState.requestSets
+            const request = itemsContext.state.requestSets
                 .flatMap(set => set.requests)
                 .find(request => request.id === tabItem.id)
 
@@ -30,7 +30,7 @@ function getTabContent(
 
         }
         case 'Environment': {
-            const environment = appContext.appState.environments
+            const environment = itemsContext.state.environments
                 .find(environment => environment.id === tabItem.id)
 
             return environment ?
@@ -63,8 +63,8 @@ function CustomTabPanel({ children, isSelected, index, ...other }: TabPanelProps
 }
 
 function TabView() {
-    const appContext = useContext(AppContext)
     const tabsContext = useTabs()
+    const itemsContext = useItems()
 
     const onChange = (_event: React.SyntheticEvent, newValue: number) => {
         tabsContext.dispatch({ type: 'SELECT_TAB', tabIndex: newValue })
@@ -121,7 +121,7 @@ function TabView() {
                         isSelected={index === tabsContext.state.selectedTabIndex}
                         key={`tabPanel_${index}_${tabItem.label}`}
                     >
-                        {getTabContent(appContext, tabItem)}
+                        {getTabContent(itemsContext, tabItem)}
                     </CustomTabPanel>
                 )}
             </Box>

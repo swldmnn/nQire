@@ -1,7 +1,5 @@
 import { Box, List } from "@mui/material"
 import AdjustIcon from '@mui/icons-material/Adjust'
-import { useContext } from "react"
-import { AppContext } from "../AppContext"
 import CategoryTitleBar from "../components/CategoryTitleBar"
 import { useTranslation } from 'react-i18next'
 import CustomListItem from "../components/CustomListItem"
@@ -9,16 +7,17 @@ import { invoke } from "@tauri-apps/api/core"
 import { EnvironmentTransfer } from "../types/types_transfer"
 import { useNotification } from "../contexts/notification/useNotification"
 import { useTabs } from "../contexts/tabs/useTabs"
+import { useItems } from "../contexts/items/useItems"
 
 
 function EnvironmentListView() {
-    const appContext = useContext(AppContext)
     const { t } = useTranslation()
     const notificationContext = useNotification()
     const tabsContext = useTabs()
+    const itemsContext = useItems()
 
     const openItem = (environmentIndex: number) => {
-        const item = appContext.appState.environments[environmentIndex]
+        const item = itemsContext.state.environments[environmentIndex]
         tabsContext.dispatch({ type: 'OPEN_TAB', tabItem: { typename: item.typename, id: item.id, label: item.label } })
     }
 
@@ -51,7 +50,7 @@ function EnvironmentListView() {
                 ]}
             />
             <List>
-                {appContext.appState.environments.map((environment, index) =>
+                {itemsContext.state.environments.map((environment, index) =>
                     <CustomListItem
                         key={`EnvironmentListItem_${index}`}
                         index={index}

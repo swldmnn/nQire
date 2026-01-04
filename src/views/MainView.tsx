@@ -1,19 +1,22 @@
 import { Alert, Box, Snackbar } from "@mui/material"
 import TabView from "./TabView"
-import { useContext, useEffect } from "react"
-import { AppContext } from "../AppContext"
+import { useEffect } from "react"
 import NavigationView from "./NavigationView"
 import Backplate from "../components/Backplate"
 import { useNotification } from "../contexts/notification/useNotification"
+import { useItems } from "../contexts/items/useItems"
 
 function MainView() {
-    const appContext = useContext(AppContext)
     const notificationContext = useNotification()
+    const itemsContext = useItems()
 
     useEffect(() => {
-        if (!appContext.appState.initialized) {
-            appContext.initialize()
+        const loadItems = async () => {
+            const { requestSets, environments } = await itemsContext.state.loadItems()
+            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
         }
+
+        loadItems()
     }, []);
 
 

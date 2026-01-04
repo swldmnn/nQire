@@ -1,8 +1,7 @@
 import { Box, MenuItem, Select, SxProps, Theme } from "@mui/material"
-import { useContext } from "react";
-import { AppContext } from "../AppContext";
-import { useTranslation } from "react-i18next";
-import { useEnvironment } from "../contexts/environment/useEnvironment";
+import { useTranslation } from "react-i18next"
+import { useEnvironment } from "../contexts/environment/useEnvironment"
+import { useItems } from "../contexts/items/useItems"
 
 interface EnvironmentChooserProps {
     sx?: SxProps<Theme>;
@@ -10,9 +9,9 @@ interface EnvironmentChooserProps {
 
 function EnvironmentChooser({ sx }: EnvironmentChooserProps) {
 
-    const appContext = useContext(AppContext)
     const { t } = useTranslation()
     const environmentContext = useEnvironment()
+    const itemsContext = useItems()
 
     const onChange = (newValue: number) => {
         environmentContext.dispatch({ type: 'SET_ACTIVE_ENVIRONMENT', environmentId: newValue })
@@ -30,7 +29,7 @@ function EnvironmentChooser({ sx }: EnvironmentChooserProps) {
             >
                 <MenuItem value={-1} key='envItem_none'>{t('no_environment')}</MenuItem>
                 {
-                    appContext.appState.environments.map(environment =>
+                    itemsContext.state.environments.map(environment =>
                         <MenuItem value={environment.id} key={`envItem_${environment.label}`}>{environment.label}</MenuItem>
                     )
                 }

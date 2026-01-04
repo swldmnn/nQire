@@ -7,8 +7,6 @@ import {
     AccordionDetails,
 } from "@mui/material"
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
-import { useContext } from "react"
-import { AppContext } from "../AppContext"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import CategoryTitleBar from "../components/CategoryTitleBar"
 import { useTranslation } from "react-i18next"
@@ -19,39 +17,43 @@ import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_tran
 import { invoke } from "@tauri-apps/api/core"
 import { useNotification } from "../contexts/notification/useNotification"
 import { useTabs } from "../contexts/tabs/useTabs"
+import { useItems } from "../contexts/items/useItems"
 
 interface RequestListProps {
 }
 
 function RequestListView({ }: RequestListProps) {
-    const appContext = useContext(AppContext)
     const { t } = useTranslation()
     const notificationContext = useNotification()
     const tabsContext = useTabs()
+    const itemsContext = useItems()
 
     const openItem = (requestSetIndex: number, requestIndex: number) => {
-        const item = appContext.appState.requestSets[requestSetIndex].requests[requestIndex]
+        const item = itemsContext.state.requestSets[requestSetIndex].requests[requestIndex]
         tabsContext.dispatch({ type: 'OPEN_TAB', tabItem: { typename: item.typename, id: item.id, label: item.label } })
     }
 
     const createNewRequest = async (requestSetIndex: number) => {
-        invoke("save_request", {
-            request: {
-                typename: 'HttpRequest',
-                id: undefined,
-                label: t('new_request_label'),
-                url: t('new_request_url'),
-                method: 'GET',
-                headers: [],
-                body: '',
-            } as HttpRequestTransfer,
-            requestSetId: appContext.appState.requestSets[requestSetIndex].id
-        })
-            .then(result => {
-                appContext.initialize()
-                notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
+        try {
+            const result = await invoke("save_request", {
+                request: {
+                    typename: 'HttpRequest',
+                    id: undefined,
+                    label: t('new_request_label'),
+                    url: t('new_request_url'),
+                    method: 'GET',
+                    headers: [],
+                    body: '',
+                } as HttpRequestTransfer,
+                requestSetId: itemsContext.state.requestSets[requestSetIndex].id
             })
-            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_request') } }))
+
+            const { requestSets, environments } = await itemsContext.state.loadItems()
+            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
+        } catch (error) {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_request') } })
+        }
     }
 
     const createNewRequestSet = async () => {
@@ -68,18 +70,19 @@ function RequestListView({ }: RequestListProps) {
     }
 
     const deleteRequest = async (requestSetIndex: number, requestIndex: number) => {
-
-        const request = appContext.appState.requestSets[requestSetIndex].requests[requestIndex]
-        invoke("delete_request", {
-            requestId: request.id
-        })
-            .then(result => {
-                tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: request })
-                appContext.initialize()
-                //TODO sync open items
-                notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } })
+        try {
+            const request = itemsContext.state.requestSets[requestSetIndex].requests[requestIndex]
+            const result = await invoke("delete_request", {
+                requestId: request.id
             })
-            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_request') } }))
+
+            tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: request })
+            const { requestSets, environments } = await itemsContext.state.loadItems()
+            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } })
+        } catch (error) {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_request') } })
+        }
     }
 
     const deleteRequestSet = async () => {
@@ -97,7 +100,7 @@ function RequestListView({ }: RequestListProps) {
                 actions={[{ label: t('create_item'), callback: () => createNewRequestSet() }]}
             />
             {
-                appContext.appState.requestSets.map((requestSet, requestSetIndex) =>
+                itemsContext.state.requestSets.map((requestSet, requestSetIndex) =>
                     <Accordion
                         elevation={0}
                         defaultExpanded
