@@ -222,28 +222,23 @@ pub async fn save_environment(
     state: &tauri::State<'_, AppState>,
     environment: Environment,
 ) -> Result<u64, String> {
-    if environment.id.is_none() {
-        //TODO insert environment if no id given
-        return Err("Insert environment not yet implemented".to_owned());
-    }
-
     let db = &state.db;
     let mut tx = db
         .begin()
         .await
-        .map_err(|e| format!("Failed update request: {}", e))?;
+        .map_err(|e| format!("Failed update environment: {}", e))?;
 
-    let rows_affected = update_environment(&mut tx, &environment)
+    let rows_affected = upsert_environment(&mut tx, &environment)
         .await
-        .map_err(|e| format!("Failed to update request: {}", e))?;
+        .map_err(|e| format!("Failed to update environment: {}", e))?;
 
     save_environment_values(&mut tx, &environment)
         .await
-        .map_err(|e| format!("Failed to update request: {}", e))?;
+        .map_err(|e| format!("Failed to update environment values: {}", e))?;
 
     tx.commit()
         .await
-        .map_err(|e| format!("Failed update request: {}", e))?;
+        .map_err(|e| format!("Failed update environment: {}", e))?;
 
     Ok(rows_affected)
 }
@@ -346,18 +341,33 @@ async fn save_request_headers(
     Ok(())
 }
 
-async fn update_environment(
+async fn upsert_environment(
     tx: &mut Transaction<'_, Sqlite>,
     environment: &Environment,
 ) -> Result<u64, String> {
-    let query_result = sqlx::query("UPDATE environments SET label = ? WHERE id = ?")
-        .bind(environment.label.to_owned())
-        .bind(environment.id)
-        .execute(&mut **tx)
-        .await
-        .map_err(|e| format!("Failed to update environment: {}", e))?;
+    match environment.id {
+        Some(id) => {
+            let query_result = sqlx::query("UPDATE environments SET label = ? WHERE id = ?")
+                .bind(environment.label.to_owned())
+                .bind(id)
+                .execute(&mut **tx)
+                .await
+                .map_err(|e| format!("Failed to update environment: {}", e))?;
 
-    Ok(query_result.rows_affected())
+            Ok(query_result.rows_affected())
+        }
+        None => {
+            let query_result =
+                sqlx::query("INSERT INTO environments (label) VALUES (?1) RETURNING id")
+                    .bind(environment.label.to_owned())
+                    .bind(environment.id)
+                    .execute(&mut **tx)
+                    .await
+                    .map_err(|e| format!("Failed to create environment: {}", e))?;
+
+            Ok(query_result.rows_affected())
+        }
+    }
 }
 
 async fn save_environment_values(

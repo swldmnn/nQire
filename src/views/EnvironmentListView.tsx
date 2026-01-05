@@ -22,15 +22,21 @@ function EnvironmentListView() {
     }
 
     const createNewEnvironment = async () => {
-        invoke("save_environment", {
-            environment: {
-                typename: 'Environment',
-                label: 'new_environment',
-                values: [],
-            } as EnvironmentTransfer
-        })
-            .then(result => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } }))
-            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_environment') } }))
+        try {
+            const result = await invoke("save_environment", {
+                environment: {
+                    typename: 'Environment',
+                    label: t('new_environment_label'),
+                    values: [],
+                } as EnvironmentTransfer
+            })
+
+            const { requestSets, environments } = await itemsContext.state.loadItems()
+            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
+        } catch (error) {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_environment') } })
+        }
     }
 
     const deleteEnvironment = async () => {

@@ -22,5 +22,6 @@
     "error_create_request_set": "Create request set failed",
     "error_delete_request_set": "Delete request set failed",
     "new_request_label": "New request",
-    "new_request_url": "https://new.request"
+    "new_request_url": "https://new.request",
+    "new_environment_label": "New env"
 }
