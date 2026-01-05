@@ -46,7 +46,7 @@ pub struct EnvironmentValueRecord {
 impl From<RequestSetRecord> for HttpRequestSet {
     fn from(request_set_record: RequestSetRecord) -> Self {
         HttpRequestSet {
-            id: request_set_record.id,
+            id: Some(request_set_record.id),
             label: request_set_record.label,
             requests: vec![],
         }

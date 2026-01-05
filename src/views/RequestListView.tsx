@@ -57,16 +57,21 @@ function RequestListView({ }: RequestListProps) {
     }
 
     const createNewRequestSet = async () => {
-        invoke("save_request_set", { //TODO set correct values
-            requestSet: {
-                typename: 'HttpRequestSet',
-                id: 0,
-                label: 'new_request_set',
-                requests: [],
-            } as HttpRequestSetTransfer
-        })
-            .then(result => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } }))
-            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_request_set') } }))
+        try {
+            const result = await invoke("save_request_set", {
+                requestSet: {
+                    typename: 'HttpRequestSet',
+                    label: t('new_request_set_label'),
+                    requests: [],
+                } as HttpRequestSetTransfer
+            })
+
+            const { requestSets, environments } = await itemsContext.state.loadItems()
+            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
+        } catch (error) {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_request_set') } })
+        }
     }
 
     const deleteRequest = async (requestSetIndex: number, requestIndex: number) => {

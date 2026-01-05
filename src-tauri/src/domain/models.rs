@@ -14,7 +14,7 @@ pub struct RequestHeader {
 }
 
 pub struct HttpRequestSet {
-    pub id: u32,
+    pub id: Option<u32>,
     pub label: String,
     pub requests: Vec<Request<String>>,
 }

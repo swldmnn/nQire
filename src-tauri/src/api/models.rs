@@ -7,7 +7,7 @@ use crate::domain::{Environment, EnvironmentValue, HttpRequestSet, RequestMetaDa
 #[serde(rename_all = "camelCase")]
 pub struct HttpRequestSetTransfer {
     pub typename: String,
-    pub id: u32,
+    pub id: Option<u32>,
     pub label: String,
     pub requests: Vec<HttpRequestTransfer>,
 }
@@ -136,6 +136,22 @@ impl TryFrom<HttpRequestSet> for HttpRequestSetTransfer {
                 .requests
                 .into_iter()
                 .map(HttpRequestTransfer::try_from)
+                .collect::<Result<Vec<_>, _>>()?,
+        })
+    }
+}
+
+impl TryFrom<HttpRequestSetTransfer> for HttpRequestSet {
+    type Error = String;
+
+    fn try_from(request_set_transfer: HttpRequestSetTransfer) -> Result<Self, Self::Error> {
+        Ok(HttpRequestSet {
+            id: request_set_transfer.id,
+            label: request_set_transfer.label.to_owned(),
+            requests: request_set_transfer
+                .requests
+                .into_iter()
+                .map(Request::<String>::try_from)
                 .collect::<Result<Vec<_>, _>>()?,
         })
     }

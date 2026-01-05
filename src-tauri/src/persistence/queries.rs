@@ -47,7 +47,7 @@ pub async fn fetch_all_request_sets(
         .collect::<Vec<HttpRequestSet>>();
 
     for request_set in &mut request_sets {
-        if let Some(requests) = requests_by_request_set_id.remove(&request_set.id) {
+        if let Some(requests) = requests_by_request_set_id.remove(&request_set.id.unwrap()) {
             request_set.requests = requests;
         }
     }
@@ -273,6 +273,27 @@ pub async fn delete_environment(
     Ok(query_result.rows_affected())
 }
 
+pub async fn save_request_set(
+    state: &tauri::State<'_, AppState>,
+    request_set: HttpRequestSet,
+) -> Result<u64, String> {
+    let db = &state.db;
+    let mut tx = db
+        .begin()
+        .await
+        .map_err(|e| format!("Failed update request set: {}", e))?;
+
+    let rows_affected = upsert_request_set(&mut tx, &request_set)
+        .await
+        .map_err(|e| format!("Failed to update request set: {}", e))?;
+
+    tx.commit()
+        .await
+        .map_err(|e| format!("Failed update request set: {}", e))?;
+
+    Ok(rows_affected)
+}
+
 async fn fetch_all_environment_values(
     state: &tauri::State<'_, AppState>,
 ) -> Result<Vec<EnvironmentValueRecord>, String> {
@@ -390,10 +411,37 @@ async fn upsert_environment(
             let query_result =
                 sqlx::query("INSERT INTO environments (label) VALUES (?1) RETURNING id")
                     .bind(environment.label.to_owned())
-                    .bind(environment.id)
                     .execute(&mut **tx)
                     .await
                     .map_err(|e| format!("Failed to create environment: {}", e))?;
+
+            Ok(query_result.rows_affected())
+        }
+    }
+}
+
+async fn upsert_request_set(
+    tx: &mut Transaction<'_, Sqlite>,
+    request_set: &HttpRequestSet,
+) -> Result<u64, String> {
+    match request_set.id {
+        Some(id) => {
+            let query_result = sqlx::query("UPDATE request_sets SET label = ? WHERE id = ?")
+                .bind(request_set.label.to_owned())
+                .bind(id)
+                .execute(&mut **tx)
+                .await
+                .map_err(|e| format!("Failed to update request set: {}", e))?;
+
+            Ok(query_result.rows_affected())
+        }
+        None => {
+            let query_result =
+                sqlx::query("INSERT INTO request_sets (label) VALUES (?1) RETURNING id")
+                    .bind(request_set.label.to_owned())
+                    .execute(&mut **tx)
+                    .await
+                    .map_err(|e| format!("Failed to create request set: {}", e))?;
 
             Ok(query_result.rows_affected())
         }

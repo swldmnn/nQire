@@ -5,7 +5,7 @@
 
 export interface HttpRequestSetTransfer {
     typename: 'HttpRequestSet'
-    id: number
+    id?: number
     label: string
     requests: HttpRequestTransfer[]
 }

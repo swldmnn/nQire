@@ -5,7 +5,7 @@ use crate::{
         EnvironmentTransfer, ErrorTransfer, HttpRequestSetTransfer, HttpRequestTransfer,
         HttpResponseTransfer,
     },
-    domain::{Environment, RequestMetaData},
+    domain::{Environment, HttpRequestSet, RequestMetaData},
     AppState,
 };
 
@@ -122,11 +122,19 @@ pub async fn save_request_set(
     state: tauri::State<'_, AppState>,
     request_set: HttpRequestSetTransfer,
 ) -> Result<u64, ErrorTransfer> {
-    //TODO implement
-    Err(ErrorTransfer {
+    let req_set = HttpRequestSet::try_from(request_set).map_err(|e| ErrorTransfer {
         typename: "Error".to_owned(),
-        error_message: "insert request set not yet implemented".to_owned(),
-    })
+        error_message: e,
+    })?;
+
+    let result = crate::services::save_request_set(state, req_set)
+        .await
+        .map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?;
+
+    Ok(result)
 }
 
 #[tauri::command]
