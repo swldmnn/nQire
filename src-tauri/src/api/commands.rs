@@ -134,11 +134,14 @@ pub async fn delete_environment(
     state: tauri::State<'_, AppState>,
     environment_id: u32,
 ) -> Result<u64, ErrorTransfer> {
-    //TODO implement
-    Err(ErrorTransfer {
-        typename: "Error".to_owned(),
-        error_message: "delete environment not yet implemented".to_owned(),
-    })
+    let result = crate::services::delete_environment(state, environment_id)
+        .await
+        .map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?;
+
+    Ok(result)
 }
 
 #[tauri::command]

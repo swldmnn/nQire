@@ -39,12 +39,18 @@ function EnvironmentListView() {
         }
     }
 
-    const deleteEnvironment = async () => {
-        invoke("delete_environment", {
-            environmentId: 0 //TODO pass correct id
-        })
-            .then(result => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } }))
-            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_environment') } }))
+    const deleteEnvironment = async (index: number) => {
+        try {
+            const environment = itemsContext.state.environments[index]
+            const result = await invoke("delete_environment", { environmentId: environment.id })
+
+            tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: environment })
+            const { requestSets, environments } = await itemsContext.state.loadItems()
+            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } })
+        } catch (error) {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_environment') } })
+        }
     }
 
     return (
@@ -63,7 +69,7 @@ function EnvironmentListView() {
                         item={environment}
                         onDoubleClick={() => openItem(index)}
                         icon={AdjustIcon}
-                        actions={[{ label: t('delete_item'), callback: () => deleteEnvironment() }]}
+                        actions={[{ label: t('delete_item'), callback: () => deleteEnvironment(index) }]}
                     />
                 )}
             </List>

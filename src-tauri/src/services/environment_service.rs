@@ -20,3 +20,14 @@ pub async fn save_environment(
 
     Ok(count_updated)
 }
+
+pub async fn delete_environment(
+    state: tauri::State<'_, AppState>,
+    environment_id: u32,
+) -> Result<u64, String> {
+    let count_deleted = crate::persistence::delete_environment(&state, environment_id)
+        .await
+        .map_err(|e| e)?;
+
+    Ok(count_deleted)
+}

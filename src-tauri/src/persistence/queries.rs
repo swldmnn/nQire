@@ -243,6 +243,36 @@ pub async fn save_environment(
     Ok(rows_affected)
 }
 
+pub async fn delete_environment(
+    state: &tauri::State<'_, AppState>,
+    environment_id: u32,
+) -> Result<u64, String> {
+    let db = &state.db;
+
+    let mut tx = db
+        .begin()
+        .await
+        .map_err(|e| format!("Failed to delete environment: {}", e))?;
+
+    sqlx::query("DELETE FROM environment_values WHERE environment_id = ?")
+        .bind(environment_id)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| format!("Failed to delete environment: {}", e))?;
+
+    let query_result = sqlx::query("DELETE FROM environments WHERE id = ?")
+        .bind(environment_id)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| format!("Failed to delete environment: {}", e))?;
+
+    tx.commit()
+        .await
+        .map_err(|e| format!("Failed to delete environment: {}", e))?;
+
+    Ok(query_result.rows_affected())
+}
+
 async fn fetch_all_environment_values(
     state: &tauri::State<'_, AppState>,
 ) -> Result<Vec<EnvironmentValueRecord>, String> {
