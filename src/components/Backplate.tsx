@@ -13,13 +13,14 @@ function Backplate() {
             justifyContent: 'center',
             alignItems: 'center',
             overflow: 'clip',
-            opacity: '50%',
+            backgroundColor: 'background.default',
         }}>
             <Logo sx={{
                 width: '70%',
                 height: '70%',
                 color: 'divider',
-                margin: 'auto'
+                margin: 'auto',
+                opacity: '50%',
             }}></Logo>
         </Box>
     )

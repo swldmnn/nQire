@@ -27,8 +27,8 @@ const theme = createTheme({
         primary: lime,
         secondary: pink,
         background: {
-          default: '#222',
-          paper: '#222'
+          default: '#111',
+          paper: '#111'
         }
       },
     },
