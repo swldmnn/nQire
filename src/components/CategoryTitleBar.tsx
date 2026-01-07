@@ -19,7 +19,7 @@ function CategoryTitleBar({ title, actions }: CategoryTitleBarProps) {
             alignItems: 'center'
         }}>
             <Typography variant="button">{title}</Typography>
-            <ContextMenu actions={actions} sx={{ marginLeft: 'auto' }} />
+            {!!actions.length && <ContextMenu actions={actions} sx={{ marginLeft: 'auto' }} />}
         </Box>
     )
 }

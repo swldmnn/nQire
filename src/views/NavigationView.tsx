@@ -11,6 +11,8 @@ import { styles } from "../constants";
 import EnvironmentChooser from "../components/EnvironmentChooser";
 import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
 import BrightnessLowIcon from '@mui/icons-material/BrightnessLow';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
+import ImportExportListView from "./ImportExportListView";
 
 type SelectionIndex = number | false
 
@@ -70,6 +72,7 @@ function NavigationView() {
                 >
                     <Tab icon={<PlayArrowIcon />} />
                     <Tab icon={<AdjustIcon />} />
+                    <Tab icon={<ImportExportIcon />} />
                 </Tabs>
 
                 <Box id='navigation_filler' sx={{ flexGrow: 1 }} />
@@ -123,6 +126,17 @@ function NavigationView() {
                                 width: '100%',
                             }}>
                             <EnvironmentListView />
+                        </Box>
+                        <Box
+                            id='navigation_panel_import_export'
+                            role='tabpanel'
+                            hidden={selectedIndex !== 2}
+                            sx={{
+                                boxSizing: 'border-box',
+                                height: '100%',
+                                width: '100%',
+                            }}>
+                            <ImportExportListView />
                         </Box>
                     </Box>
                     <Divider orientation="vertical" flexItem />

@@ -1,6 +1,7 @@
 {
     "cat_environments": "Environments",
     "cat_request_sets": "Apis",
+    "cat_impex": "Import/Export",
     "no_environment": "No env",
     "create_item": "New",
     "delete_item": "Delete",
@@ -24,5 +25,7 @@
     "new_request_label": "New request",
     "new_request_url": "https://new.request",
     "new_environment_label": "New env",
-    "new_request_set_label": "New API"
+    "new_request_set_label": "New API",
+    "import_item_label": "Import",
+    "export_item_label": "Export"
 }

@@ -6,6 +6,8 @@ import EnvironmentView from "./EnvironmentView"
 import CloseIcon from '@mui/icons-material/Close'
 import { useItems } from "../contexts/items/useItems"
 import { ItemsContextType } from "../contexts/items/types"
+import ImportView from "./ImportView"
+import ExportView from "./ExportView"
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -37,6 +39,12 @@ function getTabContent(
                 <EnvironmentView
                     environment={environment}
                     key={`EnvironmentView_${environment.label}`} /> : null
+        }
+        case 'ImportItem': {
+            return <ImportView />
+        }
+        case 'ExportItem': {
+            return <ExportView />
         }
         default:
             return <Box>Unknown Content</Box>

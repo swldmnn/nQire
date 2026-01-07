@@ -22,10 +22,10 @@ function CustomListItem({ index, item, icon: Icon, onDoubleClick, actions }: Cus
                 <ListItemText primary={item.label} />
 
             </ListItemButton>
-            <ContextMenu
+            {!!actions.length && <ContextMenu
                 actions={actions}
                 sx={{ marginLeft: 'auto', paddingRight: styles.spaces.medium }}
-            />
+            />}
         </ListItem>
     )
 }
