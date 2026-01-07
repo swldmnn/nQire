@@ -10,7 +10,9 @@ CREATE TABLE requests (
     method TEXT,
     url TEXT,
     body TEXT,
-    FOREIGN KEY (request_set_id) REFERENCES request_sets(id)
+    FOREIGN KEY (request_set_id) 
+        REFERENCES request_sets(id) 
+        ON DELETE CASCADE
 );
 
 CREATE TABLE request_headers (
@@ -18,7 +20,9 @@ CREATE TABLE request_headers (
     request_id INTEGER,
     key TEXT,
     value TEXT,
-    FOREIGN KEY (request_id) REFERENCES requests(id)
+    FOREIGN KEY (request_id) 
+        REFERENCES requests(id) 
+        ON DELETE CASCADE
 );
 
 CREATE TABLE environments (
@@ -31,7 +35,9 @@ CREATE TABLE environment_values (
     environment_id INTEGER,
     key TEXT,
     value TEXT,
-    FOREIGN KEY (environment_id) REFERENCES environments(id)
+    FOREIGN KEY (environment_id) 
+        REFERENCES environments(id) 
+        ON DELETE CASCADE
 );
 
 INSERT INTO request_sets (id, label)

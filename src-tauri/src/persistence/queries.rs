@@ -194,24 +194,9 @@ pub async fn delete_request(
 ) -> Result<u64, String> {
     let db = &state.db;
 
-    let mut tx = db
-        .begin()
-        .await
-        .map_err(|e| format!("Failed to delete request: {}", e))?;
-
-    sqlx::query("DELETE FROM request_headers WHERE request_id = ?")
-        .bind(request_id)
-        .execute(&mut *tx)
-        .await
-        .map_err(|e| format!("Failed to delete request: {}", e))?;
-
     let query_result = sqlx::query("DELETE FROM requests WHERE id = ?")
         .bind(request_id)
-        .execute(&mut *tx)
-        .await
-        .map_err(|e| format!("Failed to delete request: {}", e))?;
-
-    tx.commit()
+        .execute(db)
         .await
         .map_err(|e| format!("Failed to delete request: {}", e))?;
 
@@ -249,24 +234,9 @@ pub async fn delete_environment(
 ) -> Result<u64, String> {
     let db = &state.db;
 
-    let mut tx = db
-        .begin()
-        .await
-        .map_err(|e| format!("Failed to delete environment: {}", e))?;
-
-    sqlx::query("DELETE FROM environment_values WHERE environment_id = ?")
-        .bind(environment_id)
-        .execute(&mut *tx)
-        .await
-        .map_err(|e| format!("Failed to delete environment: {}", e))?;
-
     let query_result = sqlx::query("DELETE FROM environments WHERE id = ?")
         .bind(environment_id)
-        .execute(&mut *tx)
-        .await
-        .map_err(|e| format!("Failed to delete environment: {}", e))?;
-
-    tx.commit()
+        .execute(db)
         .await
         .map_err(|e| format!("Failed to delete environment: {}", e))?;
 
