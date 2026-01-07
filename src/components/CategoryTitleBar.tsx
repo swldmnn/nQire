@@ -16,7 +16,8 @@ function CategoryTitleBar({ title, actions }: CategoryTitleBarProps) {
             display: 'flex',
             flexDirection: 'row',
             boxSizing: 'border-box',
-            alignItems: 'center'
+            alignItems: 'center',
+            height: '2.5rem'
         }}>
             <Typography variant="button">{title}</Typography>
             {!!actions.length && <ContextMenu actions={actions} sx={{ marginLeft: 'auto' }} />}

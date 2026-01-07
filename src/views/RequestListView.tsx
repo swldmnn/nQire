@@ -6,7 +6,7 @@ import {
     Typography,
     AccordionDetails,
 } from "@mui/material"
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import CategoryTitleBar from "../components/CategoryTitleBar"
 import { useTranslation } from "react-i18next"
@@ -146,7 +146,7 @@ function RequestListView({ }: RequestListProps) {
                                     <CustomListItem
                                         key={`RequestListItem_${requestIndex}`}
                                         item={request}
-                                        icon={PlayArrowIcon}
+                                        icon={PlayArrowOutlinedIcon}
                                         onDoubleClick={() => openItem(requestSetIndex, requestIndex)}
                                         index={requestIndex}
                                         actions={[{ label: t('delete_item'), callback: () => deleteRequest(requestSetIndex, requestIndex) }]}

@@ -1,5 +1,4 @@
 import { Box, List } from "@mui/material"
-import AdjustIcon from '@mui/icons-material/Adjust'
 import CategoryTitleBar from "../components/CategoryTitleBar"
 import { useTranslation } from 'react-i18next'
 import CustomListItem from "../components/CustomListItem"
@@ -8,6 +7,7 @@ import { EnvironmentTransfer } from "../types/types_transfer"
 import { useNotification } from "../contexts/notification/useNotification"
 import { useTabs } from "../contexts/tabs/useTabs"
 import { useItems } from "../contexts/items/useItems"
+import CropFreeOutlinedIcon from '@mui/icons-material/CropFreeOutlined';
 
 
 function EnvironmentListView() {
@@ -68,7 +68,7 @@ function EnvironmentListView() {
                         index={index}
                         item={environment}
                         onDoubleClick={() => openItem(index)}
-                        icon={AdjustIcon}
+                        icon={CropFreeOutlinedIcon}
                         actions={[{ label: t('delete_item'), callback: () => deleteEnvironment(index) }]}
                     />
                 )}

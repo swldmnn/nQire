@@ -1,11 +1,11 @@
 import { Box, List } from "@mui/material"
 import CustomListItem from "../components/CustomListItem"
 import { useTranslation } from "react-i18next"
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import CategoryTitleBar from "../components/CategoryTitleBar";
 import { TabItem } from "../types/types";
 import { useTabs } from "../contexts/tabs/useTabs";
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 
 function ImportExportListView() {
     const { t } = useTranslation()
@@ -30,7 +30,7 @@ function ImportExportListView() {
                     index={1}
                     item={importItem}
                     onDoubleClick={() => { openItem(importItem) }}
-                    icon={ArrowDownwardIcon}
+                    icon={FileDownloadOutlinedIcon}
                     actions={[]}
                 />
                 <CustomListItem
@@ -38,7 +38,7 @@ function ImportExportListView() {
                     index={2}
                     item={exportItem}
                     onDoubleClick={() => { openItem(exportItem) }}
-                    icon={ArrowUpwardIcon}
+                    icon={FileUploadOutlinedIcon}
                     actions={[]}
                 />
             </List>

@@ -2,8 +2,8 @@ import { Box, Button, Divider, Paper, Tab, Tabs, Typography, useColorScheme } fr
 import RequestListView from "./RequestListView";
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import AdjustIcon from '@mui/icons-material/Adjust';
+import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
+import CropFreeOutlinedIcon from '@mui/icons-material/CropFreeOutlined';
 import { useState } from "react";
 import EnvironmentListView from "./EnvironmentListView";
 import Logo from "../components/Logo";
@@ -70,8 +70,8 @@ function NavigationView() {
                     variant="scrollable"
                     sx={{ width: '100%' }}
                 >
-                    <Tab icon={<PlayArrowIcon />} />
-                    <Tab icon={<AdjustIcon />} />
+                    <Tab icon={<PlayArrowOutlinedIcon />} />
+                    <Tab icon={<CropFreeOutlinedIcon />} />
                     <Tab icon={<ImportExportIcon />} />
                 </Tabs>
 
