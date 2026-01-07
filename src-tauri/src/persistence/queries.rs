@@ -264,6 +264,21 @@ pub async fn save_request_set(
     Ok(rows_affected)
 }
 
+pub async fn delete_request_set(
+    state: &tauri::State<'_, AppState>,
+    request_set_id: u32,
+) -> Result<u64, String> {
+    let db = &state.db;
+
+    let query_result = sqlx::query("DELETE FROM request_sets WHERE id = ?")
+        .bind(request_set_id)
+        .execute(db)
+        .await
+        .map_err(|e| format!("Failed to delete request set: {}", e))?;
+
+    Ok(query_result.rows_affected())
+}
+
 async fn fetch_all_environment_values(
     state: &tauri::State<'_, AppState>,
 ) -> Result<Vec<EnvironmentValueRecord>, String> {

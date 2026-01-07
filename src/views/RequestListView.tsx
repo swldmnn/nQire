@@ -90,12 +90,20 @@ function RequestListView({ }: RequestListProps) {
         }
     }
 
-    const deleteRequestSet = async () => {
-        invoke("delete_request_set", {
-            requestSetId: 0 //TODO set correct id
-        })
-            .then(result => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } }))
-            .catch(error => notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_request_set') } }))
+    const deleteRequestSet = async (index: number) => {
+        try {
+            const requestSet = itemsContext.state.requestSets[index]
+            const result = await invoke("delete_request_set", {
+                requestSetId: requestSet.id
+            })
+
+            requestSet.requests.forEach(request => tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: request }))
+            const { requestSets, environments } = await itemsContext.state.loadItems()
+            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } })
+        } catch (error) {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_request_set') } })
+        }
     }
 
     return (
@@ -126,7 +134,7 @@ function RequestListView({ }: RequestListProps) {
                             <Typography component="span">{requestSet.label}</Typography>
                             <ContextMenu
                                 actions={[
-                                    { label: t('delete_item'), callback: () => deleteRequestSet() },
+                                    { label: t('delete_item'), callback: () => deleteRequestSet(requestSetIndex) },
                                     { label: t('add_item'), callback: () => createNewRequest(requestSetIndex) },
                                 ]}
                                 sx={{ marginLeft: 'auto' }}
