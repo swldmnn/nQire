@@ -20,6 +20,24 @@ button {
   cursor: pointer;
 }
 
+/* Http colors light */
+.http-get.light-theme {
+  color: rgb(53, 145, 195);
+}
+
+.http-post.light-theme {
+  color: rgb(188, 57, 118);
+}
+
+/* Http colors dark */
+.http-get.dark-theme {
+  color: rgb(69, 184, 255);
+}
+
+.http-post.dark-theme {
+  color: rgb(250, 60, 127);
+}
+
 /* Json pretty light */
 .json-pretty-wrapper.light-theme .__json-pretty__ {
   line-height: 1.3;

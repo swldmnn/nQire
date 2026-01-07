@@ -5,6 +5,7 @@ import {
     AccordionSummary,
     Typography,
     AccordionDetails,
+    useColorScheme,
 } from "@mui/material"
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
@@ -27,6 +28,9 @@ function RequestListView({ }: RequestListProps) {
     const notificationContext = useNotification()
     const tabsContext = useTabs()
     const itemsContext = useItems()
+    const { mode } = useColorScheme();
+    
+    const themeClass = mode === 'dark' ? 'dark-theme' : 'light-theme';
 
     const openItem = (requestSetIndex: number, requestIndex: number) => {
         const item = itemsContext.state.requestSets[requestSetIndex].requests[requestIndex]
@@ -150,6 +154,7 @@ function RequestListView({ }: RequestListProps) {
                                         onDoubleClick={() => openItem(requestSetIndex, requestIndex)}
                                         index={requestIndex}
                                         actions={[{ label: t('delete_item'), callback: () => deleteRequest(requestSetIndex, requestIndex) }]}
+                                        className={`http-${request.method.toLowerCase()} ${themeClass}`}
                                     />
                                 )}
                             </List>

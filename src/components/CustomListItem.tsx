@@ -10,14 +10,15 @@ interface CustomListItemProps {
     icon: SvgIconComponent
     onDoubleClick: () => void
     actions: Action[]
+    className?: string
 }
 
-function CustomListItem({ index, item, icon: Icon, onDoubleClick, actions }: CustomListItemProps) {
+function CustomListItem({ index, item, icon: Icon, onDoubleClick, actions, className }: CustomListItemProps) {
     return (
         <ListItem key={`${item.typename}_${index}`} sx={{ padding: 0 }}>
             <ListItemButton onDoubleClick={onDoubleClick} sx={{ padding: styles.spaces.medium }}>
                 <ListItemIcon>
-                    <Icon />
+                    <Icon className={className}/>
                 </ListItemIcon>
                 <ListItemText primary={item.label} />
 

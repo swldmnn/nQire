@@ -1,4 +1,4 @@
-import { TextField, Button, Select, MenuItem, Box, Divider, Paper } from "@mui/material";
+import { TextField, Button, Select, MenuItem, Box, Divider, Paper, useColorScheme } from "@mui/material";
 import { HttpRequest, HttpRequestResponseProps } from "../types/types";
 import { styles } from "../constants";
 
@@ -10,6 +10,9 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
     if (!request || !setRequest) {
         return null
     }
+
+    const { mode } = useColorScheme();
+    const themeClass = mode === 'dark' ? 'dark-theme' : 'light-theme';
 
     const onMethodChange = (newValue: string) => {
         setRequest({ ...request, method: newValue })
@@ -42,9 +45,12 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
                     value={request?.method}
                     onChange={(e) => onMethodChange(e.target.value)}
                     variant="standard"
+                    className={`http-${request.method.toLowerCase()} ${themeClass}`}
+                    disableUnderline
+                    sx={{fontWeight: 'bold'}}
                 >
-                    <MenuItem value="GET">GET</MenuItem>
-                    <MenuItem value="POST">POST</MenuItem>
+                    <MenuItem value="GET" className={`http-get ${themeClass}`} sx={{fontWeight: 'bold'}}>GET</MenuItem>
+                    <MenuItem value="POST" className={`http-post ${themeClass}`} sx={{fontWeight: 'bold'}}>POST</MenuItem>
                 </Select>
 
                 <Divider orientation="vertical" flexItem sx={{
