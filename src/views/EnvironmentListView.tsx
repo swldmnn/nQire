@@ -30,8 +30,9 @@ function EnvironmentListView() {
 
     const deleteEnvironmentMutation = useMutation({
         mutationFn: invokeDeleteEnvironment,
-        onSuccess: () => {
+        onSuccess: (_result, environment_id) => {
             queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironments] })
+            tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: { typename: 'Environment', id: environment_id, label: '' } })
             notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('item_deleted') } })
         },
         onError: (error) => {
