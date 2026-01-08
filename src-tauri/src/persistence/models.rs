@@ -23,7 +23,6 @@ pub struct RequestRecord {
 
 #[derive(Debug, FromRow)]
 pub struct RequestHeaderRecord {
-    pub id: u32,
     pub request_id: u32,
     pub key: String,
     pub value: String,
@@ -37,7 +36,6 @@ pub struct EnvironmentRecord {
 
 #[derive(Debug, FromRow)]
 pub struct EnvironmentValueRecord {
-    pub id: u32,
     pub environment_id: u32,
     pub key: String,
     pub value: String,
