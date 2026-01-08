@@ -1,11 +1,14 @@
 import { Box, Paper, Typography } from "@mui/material"
 import { styles } from "../constants"
 import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
+import { useTranslation } from "react-i18next";
 
 function ExportView() {
+    const { t } = useTranslation()
+
     return (
         <Box sx={{
-            padding: styles.spaces.large, 
+            padding: styles.spaces.large,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -21,7 +24,7 @@ function ExportView() {
                     justifyContent: 'center',
                 }}>
                 <EngineeringOutlinedIcon sx={{ fontSize: 28, marginRight: styles.spaces.medium }} />
-                <Typography variant='button'>! Under construction !</Typography>
+                <Typography variant='button'>{t('coming_soon')}</Typography>
             </Paper>
         </Box>
     )

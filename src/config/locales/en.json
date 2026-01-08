@@ -28,5 +28,6 @@
     "new_environment_label": "New env",
     "new_request_set_label": "New API",
     "import_item_label": "Import",
-    "export_item_label": "Export"
+    "export_item_label": "Export",
+    "coming_soon": "Coming soon..."
 }

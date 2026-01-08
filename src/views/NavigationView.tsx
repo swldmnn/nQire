@@ -47,17 +47,17 @@ function NavigationView() {
                 sx={{
                     boxSizing: 'border-box',
                     height: '100%',
-                    width: '8rem',
+                    width: '6rem',
                     display: 'flex',
                     flexDirection: 'column',
                     zIndex: 100,
                 }}>
 
                 <Box sx={{ display: 'flex', flexDirection: 'row', padding: styles.spaces.large }}>
-                    <Logo sx={{ color: 'primary.main', height: "2rem", width: "2rem", verticalAlign: "bottom" }} />
-                    <Typography variant='h5' sx={{ marginLeft: styles.spaces.medium }}>n</Typography>
-                    <Typography variant='h5' sx={{ color: 'primary.main' }}>Q</Typography>
-                    <Typography variant='h5' >ire</Typography>
+                    <Logo sx={{ color: 'primary.main', height: "1.5rem", width: "1.5rem", verticalAlign: "bottom" }} />
+                    <Typography variant='h6' sx={{ marginLeft: styles.spaces.small }}>n</Typography>
+                    <Typography variant='h6' sx={{ color: 'primary.main' }}>Q</Typography>
+                    <Typography variant='h6' >ire</Typography>
                 </Box>
 
                 <Divider flexItem />
@@ -103,7 +103,7 @@ function NavigationView() {
                     id='navigation_panels'
                     sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}
                 >
-                    <Box sx={{ width: '18rem' }}>
+                    <Box sx={{ width: '14rem' }}>
                         <Box
                             id='navigation_panel_requests'
                             role='tabpanel'

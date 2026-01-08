@@ -17,8 +17,8 @@ function CustomListItem({ index, item, icon: Icon, onDoubleClick, actions, class
     return (
         <ListItem key={`${item.typename}_${index}`} sx={{ padding: 0 }}>
             <ListItemButton onDoubleClick={onDoubleClick} sx={{ padding: styles.spaces.medium }}>
-                <ListItemIcon>
-                    <Icon className={className}/>
+                <ListItemIcon sx={{minWidth: 0, marginRight: styles.spaces.medium}}>
+                    <Icon className={className} />
                 </ListItemIcon>
                 <ListItemText primary={item.label} />
 

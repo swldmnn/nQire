@@ -39,14 +39,13 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
     const saveEnvironmentMutation = useMutation({
         mutationFn: saveEnvironment,
         onSuccess: () => {
-            if (!environment) {
-                return
+            if (environment) {
+                setIsModified(false)
+                queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironments] })
+                queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironment] })
+                tabsContext.dispatch({ type: 'UPDATE_TAB', tabItem: environment })
+                notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('item_saved') } })
             }
-            setIsModified(false)
-            queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironments] })
-            queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironment] })
-            tabsContext.dispatch({ type: 'UPDATE_TAB', tabItem: environment })
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('error_save_environment') } })
         },
         onError: (error) => {
             notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_save_environment') } })

@@ -16,8 +16,8 @@ function Backplate() {
             backgroundColor: 'background.default',
         }}>
             <Logo sx={{
-                width: '70%',
-                height: '70%',
+                width: '65%',
+                height: '65%',
                 color: 'divider',
                 margin: 'auto',
                 opacity: '50%',
