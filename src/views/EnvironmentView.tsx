@@ -101,11 +101,19 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
         }
     }
 
-    return <Box>
+    return <Box sx={{
+        height: '100%',
+        width: '100%',
+        minHeight: 0,
+        minWidth: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'auto',
+    }}>
         {environment && <Box>
             <ItemTitleBar item={environment} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
             <TableContainer>
-                <Table sx={{ minWidth: 650 }} size="small">
+                <Table sx={{ minWidth: 500 }} size="small">
                     <TableHead>
                         <TableRow>
                             <TableCell sx={{ color: 'secondary.main' }}>{t('environment_key')}</TableCell>
@@ -127,6 +135,7 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
                                         key={`value_key_${index}`}
                                         value={value.key}
                                         onChange={(e) => onKeyChange(index, e.currentTarget.value)}
+                                        sx={{ width: '100%' }}
                                     />
                                 </TableCell>
                                 <TableCell key={`environment_value_${index}`}>
@@ -137,6 +146,7 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
                                         key={`value_value_${index}`}
                                         value={value.value}
                                         onChange={(e) => onValueChange(index, e.currentTarget.value)}
+                                        sx={{ width: '100%' }}
                                     />
                                 </TableCell>
                                 <TableCell key={`environment_value_delete_${index}`}>
@@ -151,7 +161,7 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
                                 </TableCell>
                             </TableRow>
                         ))}
-                        <TableRow key={`environment_${environment.label}_value_add`}>
+                        <TableRow key={`environment_${environment.label}_value_add`} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                             <TableCell colSpan={3} key='value_add'>
                                 <IconButton sx={{ color: 'secondary.main' }} onClick={() => onValueAdd()}>
                                     <AddSharpIcon />
