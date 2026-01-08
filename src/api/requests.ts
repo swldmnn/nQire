@@ -1,10 +1,15 @@
 import { invoke } from "@tauri-apps/api/core";
-import { HttpRequest, HttpRequestSet } from "../types/types";
+import { HttpRequest, HttpRequestSet, HttpResponse } from "../types/types";
 import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer";
 
 export type SaveRequestInput = {
   request: HttpRequestTransfer,
   requestSetId?: number,
+}
+
+export async function sendHttpRequest(request: HttpRequestTransfer): Promise<HttpResponse> {
+  const response = await invoke("send_http_request", { request })
+  return response as HttpResponse
 }
 
 export async function fetchRequestSets(): Promise<HttpRequestSet[]> {

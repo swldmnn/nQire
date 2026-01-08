@@ -1,5 +1,4 @@
 import { EnvironmentProvider } from "./contexts/environment/EnvironmentContext"
-import { ItemsProvider } from "./contexts/items/ItemsContext"
 import { NotificationProvider } from "./contexts/notification/NotificationContext"
 import { TabsProvider } from "./contexts/tabs/TabsContext"
 
@@ -12,9 +11,7 @@ const AppContextProvider: React.FC<AppContextProviderProps> = ({ children }) => 
     <NotificationProvider>
       <EnvironmentProvider>
         <TabsProvider>
-          <ItemsProvider>
-            {children}
-          </ItemsProvider>
+          {children}
         </TabsProvider>
       </EnvironmentProvider>
     </NotificationProvider>
