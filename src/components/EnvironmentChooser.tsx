@@ -13,7 +13,7 @@ function EnvironmentChooser({ sx }: EnvironmentChooserProps) {
     const { t } = useTranslation()
     const environmentContext = useEnvironment()
 
-     const { data: environments } = useQuery({
+    const { data: environments } = useQuery({
         queryKey: [queries.fetchEnvironments],
         queryFn: fetchEnvironments
     })
