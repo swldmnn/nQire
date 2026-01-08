@@ -2,7 +2,7 @@ use http::Request;
 use sqlx::FromRow;
 
 use crate::domain::{
-    Environment, EnvironmentValue, HttpRequestSet, RequestHeader, RequestMetaData,
+    Environment, EnvironmentValue, HttpRequestSet, RequestMetaData,
 };
 
 #[derive(Debug, FromRow)]
@@ -67,16 +67,6 @@ impl From<RequestRecord> for Request<String> {
             .unwrap();
 
         request
-    }
-}
-
-impl From<RequestHeaderRecord> for RequestHeader {
-    fn from(record: RequestHeaderRecord) -> RequestHeader {
-        RequestHeader {
-            request_id: record.request_id,
-            key: record.key,
-            value: record.value,
-        }
     }
 }
 

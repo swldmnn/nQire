@@ -7,12 +7,6 @@ pub struct RequestMetaData {
     pub label: String,
 }
 
-pub struct RequestHeader {
-    pub request_id: u32,
-    pub key: String,
-    pub value: String,
-}
-
 pub struct HttpRequestSet {
     pub id: Option<u32>,
     pub label: String,
