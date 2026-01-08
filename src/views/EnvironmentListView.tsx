@@ -2,54 +2,67 @@ import { Box, List } from "@mui/material"
 import CategoryTitleBar from "../components/CategoryTitleBar"
 import { useTranslation } from 'react-i18next'
 import CustomListItem from "../components/CustomListItem"
-import { invoke } from "@tauri-apps/api/core"
 import { EnvironmentTransfer } from "../types/types_transfer"
 import { useNotification } from "../contexts/notification/useNotification"
 import { useTabs } from "../contexts/tabs/useTabs"
-import { useItems } from "../contexts/items/useItems"
 import CropFreeOutlinedIcon from '@mui/icons-material/CropFreeOutlined';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { deleteEnvironment as invokeDeleteEnvironment, fetchEnvironments, saveEnvironment as invokeSaveEnvironment } from "../api/environments"
+import { queries } from "../constants"
 
 
 function EnvironmentListView() {
     const { t } = useTranslation()
     const notificationContext = useNotification()
     const tabsContext = useTabs()
-    const itemsContext = useItems()
+    const queryClient = useQueryClient()
+
+    const saveEnvironmentMutation = useMutation({
+        mutationFn: invokeSaveEnvironment,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironments] })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('item_saved') } })
+        },
+        onError: (error) => {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_environment') } })
+        }
+    })
+
+    const deleteEnvironmentMutation = useMutation({
+        mutationFn: invokeDeleteEnvironment,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironments] })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('item_deleted') } })
+        },
+        onError: (error) => {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_environment') } })
+        }
+    })
+
+    const { data: environments, isLoading } = useQuery({
+        queryKey: [queries.fetchEnvironments],
+        queryFn: fetchEnvironments
+    })
 
     const openItem = (environmentIndex: number) => {
-        const item = itemsContext.state.environments[environmentIndex]
-        tabsContext.dispatch({ type: 'OPEN_TAB', tabItem: { typename: item.typename, id: item.id, label: item.label } })
-    }
-
-    const createNewEnvironment = async () => {
-        try {
-            const result = await invoke("save_environment", {
-                environment: {
-                    typename: 'Environment',
-                    label: t('new_environment_label'),
-                    values: [],
-                } as EnvironmentTransfer
-            })
-
-            const { requestSets, environments } = await itemsContext.state.loadItems()
-            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
-        } catch (error) {
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_environment') } })
+        const item = environments?.[environmentIndex]
+        if (item) {
+            tabsContext.dispatch({ type: 'OPEN_TAB', tabItem: { typename: item.typename, id: item.id, label: item.label } })
         }
     }
 
-    const deleteEnvironment = async (index: number) => {
-        try {
-            const environment = itemsContext.state.environments[index]
-            const result = await invoke("delete_environment", { environmentId: environment.id })
+    const createEnvironment = async () => {
+        saveEnvironmentMutation.mutate({
+            typename: 'Environment',
+            label: t('new_environment_label'),
+            values: [],
+        } as EnvironmentTransfer)
+    }
 
-            tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: environment })
-            const { requestSets, environments } = await itemsContext.state.loadItems()
-            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } })
-        } catch (error) {
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_environment') } })
+    const onDeleteEnvironment = async (index: number) => {
+        const environment = environments?.[index]
+        if (environment) {
+            deleteEnvironmentMutation.mutate(environment.id)
         }
     }
 
@@ -58,21 +71,21 @@ function EnvironmentListView() {
             <CategoryTitleBar
                 title={t('cat_environments')}
                 actions={[
-                    { label: t('create_item'), callback: () => { createNewEnvironment() } }
+                    { label: t('create_item'), callback: () => { createEnvironment() } }
                 ]}
             />
-            <List>
-                {itemsContext.state.environments.map((environment, index) =>
+            {!isLoading && environments && <List>
+                {environments.map((environment, index) =>
                     <CustomListItem
                         key={`EnvironmentListItem_${index}`}
                         index={index}
                         item={environment}
                         onDoubleClick={() => openItem(index)}
                         icon={CropFreeOutlinedIcon}
-                        actions={[{ label: t('delete_item'), callback: () => deleteEnvironment(index) }]}
+                        actions={[{ label: t('delete_item'), callback: () => onDeleteEnvironment(index) }]}
                     />
                 )}
-            </List>
+            </List>}
         </Box>)
 }
 

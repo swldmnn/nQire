@@ -16,6 +16,7 @@
     "environment_key": "Key",
     "environment_value": "Value",
     "error_delete_environment": "Delete environment failed",
+    "error_fetch_environments": "Fetch environments failed",
     "error_create_environment": "Create environment failed",
     "error_save_environment": "Save environment failed",
     "error_delete_request": "Delete request failed",

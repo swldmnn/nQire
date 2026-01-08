@@ -6,3 +6,8 @@ export const styles = {
         small: '.1rem',
     }
 }
+
+export const queries = {
+    fetchEnvironments: 'fetchEnvironments',
+    fetchEnvironment: 'fetchEnvironment',
+}

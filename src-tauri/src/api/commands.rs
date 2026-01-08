@@ -70,6 +70,21 @@ pub async fn find_all_environments(
 }
 
 #[tauri::command]
+pub async fn find_environment(
+    state: tauri::State<'_, AppState>,
+    environment_id: u32,
+) -> Result<EnvironmentTransfer, ErrorTransfer> {
+    let environment = crate::services::find_environment(state, environment_id)
+        .await
+        .map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?;
+
+    Ok(EnvironmentTransfer::from(environment))
+}
+
+#[tauri::command]
 pub async fn save_request(
     state: tauri::State<'_, AppState>,
     request: HttpRequestTransfer,
@@ -104,17 +119,17 @@ pub async fn save_request(
 pub async fn save_environment(
     state: tauri::State<'_, AppState>,
     environment: EnvironmentTransfer,
-) -> Result<u64, ErrorTransfer> {
+) -> Result<EnvironmentTransfer, ErrorTransfer> {
     let env = Environment::from(environment);
 
-    let result = crate::services::save_environment(state, env)
+    let saved_environment = crate::services::save_environment(state, env)
         .await
         .map_err(|e| ErrorTransfer {
             typename: "Error".to_owned(),
             error_message: e,
         })?;
 
-    Ok(result)
+    Ok(EnvironmentTransfer::from(saved_environment))
 }
 
 #[tauri::command]

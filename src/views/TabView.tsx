@@ -32,13 +32,10 @@ function getTabContent(
 
         }
         case 'Environment': {
-            const environment = itemsContext.state.environments
-                .find(environment => environment.id === tabItem.id)
-
-            return environment ?
-                <EnvironmentView
-                    environment={environment}
-                    key={`EnvironmentView_${environment.label}`} /> : null
+            return <EnvironmentView
+                environmentId={tabItem.id}
+                key={`EnvironmentView_${tabItem.label}`}
+            />
         }
         case 'ImportItem': {
             return <ImportView />

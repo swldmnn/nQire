@@ -6,6 +6,9 @@ import {
 } from '@mui/material'
 import MainView from './views/MainView'
 import AppContextProvider from './AppContextProvider'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
 
 const theme = createTheme({
   cssVariables: {
@@ -42,12 +45,14 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <AppContextProvider>
-        <main>
-          <MainView />
-        </main>
-      </AppContextProvider>
-    </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AppContextProvider>
+          <main>
+            <MainView />
+          </main>
+        </AppContextProvider>
+      </QueryClientProvider>
+    </ThemeProvider >
   )
 }
 

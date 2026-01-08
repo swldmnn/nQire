@@ -68,6 +68,7 @@ pub fn run() {
             api::send_http_request,
             api::find_all_request_sets,
             api::find_all_environments,
+            api::find_environment,
             api::save_request,
             api::save_environment,
             api::delete_environment,

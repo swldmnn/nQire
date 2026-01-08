@@ -5,11 +5,8 @@ use http::{HeaderName, HeaderValue, Request};
 use sqlx::{Sqlite, Transaction};
 
 use crate::{
-    domain::{Environment, EnvironmentValue, HttpRequestSet, RequestHeader, RequestMetaData},
-    persistence::{
-        EnvironmentRecord, EnvironmentValueRecord, RequestHeaderRecord, RequestRecord,
-        RequestSetRecord,
-    },
+    domain::{HttpRequestSet, RequestHeader, RequestMetaData},
+    persistence::{RequestHeaderRecord, RequestRecord, RequestSetRecord},
     AppState,
 };
 
@@ -123,45 +120,6 @@ pub async fn fetch_all_request_headers(
         .collect())
 }
 
-pub async fn fetch_all_environments(
-    state: &tauri::State<'_, AppState>,
-) -> Result<Vec<Environment>, String> {
-    let db = &state.db;
-
-    let all_environment_values = fetch_all_environment_values(state)
-        .await
-        .map_err(|e| format!("Failed to fetch environment values {}", e))?;
-
-    let mut values_by_environment_id: HashMap<u32, Vec<EnvironmentValue>> = HashMap::new();
-    for environment_value in all_environment_values {
-        values_by_environment_id
-            .entry(environment_value.environment_id)
-            .or_default()
-            .push(EnvironmentValue::from(environment_value));
-    }
-
-    let all_environment_records: Vec<EnvironmentRecord> =
-        sqlx::query_as::<_, EnvironmentRecord>("SELECT * FROM environments")
-            .fetch(db)
-            .try_collect()
-            .await
-            .map_err(|e| format!("Failed to fetch environments {}", e))?;
-
-    let mut environments: Vec<Environment> = all_environment_records
-        .into_iter()
-        .map(Environment::from)
-        .collect();
-
-    for environment in &mut environments {
-        if let Some(environment_values) = values_by_environment_id.remove(&environment.id.unwrap())
-        {
-            environment.values = environment_values
-        }
-    }
-
-    Ok(environments)
-}
-
 pub async fn save_request(
     state: &tauri::State<'_, AppState>,
     request: Request<String>,
@@ -203,46 +161,6 @@ pub async fn delete_request(
     Ok(query_result.rows_affected())
 }
 
-pub async fn save_environment(
-    state: &tauri::State<'_, AppState>,
-    environment: Environment,
-) -> Result<u64, String> {
-    let db = &state.db;
-    let mut tx = db
-        .begin()
-        .await
-        .map_err(|e| format!("Failed update environment: {}", e))?;
-
-    let rows_affected = upsert_environment(&mut tx, &environment)
-        .await
-        .map_err(|e| format!("Failed to update environment: {}", e))?;
-
-    save_environment_values(&mut tx, &environment)
-        .await
-        .map_err(|e| format!("Failed to update environment values: {}", e))?;
-
-    tx.commit()
-        .await
-        .map_err(|e| format!("Failed update environment: {}", e))?;
-
-    Ok(rows_affected)
-}
-
-pub async fn delete_environment(
-    state: &tauri::State<'_, AppState>,
-    environment_id: u32,
-) -> Result<u64, String> {
-    let db = &state.db;
-
-    let query_result = sqlx::query("DELETE FROM environments WHERE id = ?")
-        .bind(environment_id)
-        .execute(db)
-        .await
-        .map_err(|e| format!("Failed to delete environment: {}", e))?;
-
-    Ok(query_result.rows_affected())
-}
-
 pub async fn save_request_set(
     state: &tauri::State<'_, AppState>,
     request_set: HttpRequestSet,
@@ -277,21 +195,6 @@ pub async fn delete_request_set(
         .map_err(|e| format!("Failed to delete request set: {}", e))?;
 
     Ok(query_result.rows_affected())
-}
-
-async fn fetch_all_environment_values(
-    state: &tauri::State<'_, AppState>,
-) -> Result<Vec<EnvironmentValueRecord>, String> {
-    let db = &state.db;
-
-    let all_environment_value_records: Vec<EnvironmentValueRecord> =
-        sqlx::query_as::<_, EnvironmentValueRecord>("SELECT * FROM environment_values")
-            .fetch(db)
-            .try_collect()
-            .await
-            .map_err(|e| format!("Failed to fetch environment values {}", e))?;
-
-    Ok(all_environment_value_records)
 }
 
 async fn upsert_request(
@@ -377,34 +280,6 @@ async fn save_request_headers(
     Ok(())
 }
 
-async fn upsert_environment(
-    tx: &mut Transaction<'_, Sqlite>,
-    environment: &Environment,
-) -> Result<u64, String> {
-    match environment.id {
-        Some(id) => {
-            let query_result = sqlx::query("UPDATE environments SET label = ? WHERE id = ?")
-                .bind(environment.label.to_owned())
-                .bind(id)
-                .execute(&mut **tx)
-                .await
-                .map_err(|e| format!("Failed to update environment: {}", e))?;
-
-            Ok(query_result.rows_affected())
-        }
-        None => {
-            let query_result =
-                sqlx::query("INSERT INTO environments (label) VALUES (?1) RETURNING id")
-                    .bind(environment.label.to_owned())
-                    .execute(&mut **tx)
-                    .await
-                    .map_err(|e| format!("Failed to create environment: {}", e))?;
-
-            Ok(query_result.rows_affected())
-        }
-    }
-}
-
 async fn upsert_request_set(
     tx: &mut Transaction<'_, Sqlite>,
     request_set: &HttpRequestSet,
@@ -431,29 +306,4 @@ async fn upsert_request_set(
             Ok(query_result.rows_affected())
         }
     }
-}
-
-async fn save_environment_values(
-    tx: &mut Transaction<'_, Sqlite>,
-    environment: &Environment,
-) -> Result<(), String> {
-    // Delete existing values
-    sqlx::query("DELETE FROM environment_values WHERE environment_id = ?")
-        .bind(environment.id)
-        .execute(&mut **tx)
-        .await
-        .map_err(|e| format!("Failed to delete old environment values: {}", e))?;
-
-    // Insert current values
-    for environment_value in environment.values.iter() {
-        sqlx::query("INSERT INTO environment_values (environment_id, key, value) VALUES (?, ?, ?)")
-            .bind(environment.id)
-            .bind(environment_value.key.as_str())
-            .bind(environment_value.value.as_str())
-            .execute(&mut **tx)
-            .await
-            .map_err(|e| format!("Failed to insert environment values: {}", e))?;
-    }
-
-    Ok(())
 }

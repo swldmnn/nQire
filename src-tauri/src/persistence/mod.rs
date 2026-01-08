@@ -1,4 +1,6 @@
 pub mod models;
-pub mod queries;
+pub mod request_repository;
+pub mod environment_repository;
 pub use models::*;
-pub use queries::*;
+pub use request_repository::*;
+pub use environment_repository::*;
