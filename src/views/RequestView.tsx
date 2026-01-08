@@ -2,8 +2,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Typography } 
 import RequestUrlBar from "../components/RequestUrlBar"
 import { HttpRequest, HttpResponse } from "../types/types"
 import { useEffect, useState } from "react"
-import { HttpRequestTransfer, HttpResponseTransfer } from "../types/types_transfer"
-import { invoke } from "@tauri-apps/api/core"
+import { HttpRequestTransfer } from "../types/types_transfer"
 import RequestBody from "../components/RequestBody"
 import ResponseBody from "../components/ResponseBody"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
@@ -14,7 +13,7 @@ import { queries, styles } from "../constants"
 import { useNotification } from "../contexts/notification/useNotification"
 import { useTabs } from "../contexts/tabs/useTabs"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { fetchRequest, saveRequest as invokeSaveRequest } from "../api/requests"
+import { fetchRequest, saveRequest as invokeSaveRequest, sendHttpRequest } from "../api/requests"
 
 interface RequestViewProps {
     requestId: number
@@ -78,8 +77,8 @@ function RequestView({ requestId }: RequestViewProps) {
         }
 
         const req = { ...request, body: request.body ?? '' }
-        const response = await invoke("send_http_request", { request: req as HttpRequestTransfer }) as HttpResponseTransfer
-        setResponse(response as HttpResponse)
+        const response = await sendHttpRequest(req)
+        setResponse(response)
     }
 
     return <Box sx={{
