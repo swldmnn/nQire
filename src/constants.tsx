@@ -10,4 +10,6 @@ export const styles = {
 export const queries = {
     fetchEnvironments: 'fetchEnvironments',
     fetchEnvironment: 'fetchEnvironment',
+    fetchRequestSets: 'fetchRequestSets',
+    fetchRequest: 'fetchRequest',
 }

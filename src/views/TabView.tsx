@@ -4,8 +4,6 @@ import { TabItem } from "../types/types"
 import RequestView from "./RequestView"
 import EnvironmentView from "./EnvironmentView"
 import CloseIcon from '@mui/icons-material/Close'
-import { useItems } from "../contexts/items/useItems"
-import { ItemsContextType } from "../contexts/items/types"
 import ImportView from "./ImportView"
 import ExportView from "./ExportView"
 
@@ -16,19 +14,14 @@ interface TabPanelProps {
 }
 
 function getTabContent(
-    itemsContext: ItemsContextType,
     tabItem: TabItem,
 ) {
     switch (tabItem.typename) {
         case 'HttpRequest': {
-            const request = itemsContext.state.requestSets
-                .flatMap(set => set.requests)
-                .find(request => request.id === tabItem.id)
-
-            return request ? <RequestView
-                request={request}
-                key={`RequestView_${request.label}`}
-            /> : null
+            return <RequestView
+                requestId={tabItem.id}
+                key={`RequestView_${tabItem.label}`}
+            />
 
         }
         case 'Environment': {
@@ -69,7 +62,6 @@ function CustomTabPanel({ children, isSelected, index, ...other }: TabPanelProps
 
 function TabView() {
     const tabsContext = useTabs()
-    const itemsContext = useItems()
 
     const onChange = (_event: React.SyntheticEvent, newValue: number) => {
         tabsContext.dispatch({ type: 'SELECT_TAB', tabIndex: newValue })
@@ -126,7 +118,7 @@ function TabView() {
                         isSelected={index === tabsContext.state.selectedTabIndex}
                         key={`tabPanel_${index}_${tabItem.label}`}
                     >
-                        {getTabContent(itemsContext, tabItem)}
+                        {getTabContent(tabItem)}
                     </CustomTabPanel>
                 )}
             </Box>

@@ -1,6 +1,11 @@
 import { invoke } from "@tauri-apps/api/core";
 import { HttpRequest, HttpRequestSet } from "../types/types";
-import { HttpRequestSetTransfer } from "../types/types_transfer";
+import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer";
+
+export type SaveRequestInput = {
+  request: HttpRequestTransfer,
+  requestSetId?: number,
+}
 
 export async function fetchRequestSets(): Promise<HttpRequestSet[]> {
   const requestSetTransfers: HttpRequestSetTransfer[] = await invoke('find_all_request_sets', {});
@@ -16,4 +21,35 @@ export async function fetchRequestSets(): Promise<HttpRequestSet[]> {
   })
 
   return requestSets
+}
+
+export async function fetchRequest(requestId: number): Promise<HttpRequest> {
+  const requestTransfer: HttpRequestTransfer = await invoke('find_request', { requestId });
+  console.log
+  return requestTransfer as HttpRequest
+}
+
+export async function saveRequest({ request, requestSetId }: SaveRequestInput): Promise<HttpRequest> {
+  const requestTransfer: HttpRequestTransfer = await invoke("save_request", { request, requestSetId })
+  return requestTransfer as HttpRequest
+}
+
+export async function saveRequestSet(requestSet: HttpRequestSetTransfer): Promise<HttpRequestSet> {
+  const requestSetTransfer: HttpRequestSetTransfer = await invoke("save_request_set", { requestSet })
+
+  return {
+    id: requestSetTransfer.id,
+    label: requestSetTransfer.label,
+    requests: requestSetTransfer.requests
+      .filter(requestTransfer => !!requestTransfer.id)
+      .map(requestTransfer => { return { ...requestTransfer } as HttpRequest })
+  } as HttpRequestSet
+}
+
+export async function deleteRequest(requestId: number): Promise<void> {
+  await invoke("delete_request", { requestId })
+}
+
+export async function deleteRequestSet(requestSetId: number) {
+  await invoke("delete_request_set", { requestSetId })
 }

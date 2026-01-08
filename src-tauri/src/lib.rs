@@ -74,7 +74,8 @@ pub fn run() {
             api::delete_environment,
             api::delete_request,
             api::delete_request_set,
-            api::save_request_set
+            api::save_request_set,
+            api::find_request,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

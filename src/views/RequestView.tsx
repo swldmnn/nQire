@@ -1,7 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Typography } from "@mui/material"
 import RequestUrlBar from "../components/RequestUrlBar"
-import { HttpRequest, HttpRequestResponseProps, HttpResponse } from "../types/types"
-import { useState } from "react"
+import { HttpRequest, HttpResponse } from "../types/types"
+import { useEffect, useState } from "react"
 import { HttpRequestTransfer, HttpResponseTransfer } from "../types/types_transfer"
 import { invoke } from "@tauri-apps/api/core"
 import RequestBody from "../components/RequestBody"
@@ -10,27 +10,50 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import RequestHeaders from "../components/RequestHeaders"
 import ItemTitleBar from "../components/ItemTitleBar"
 import { useTranslation } from "react-i18next"
-import { styles } from "../constants"
+import { queries, styles } from "../constants"
 import { useNotification } from "../contexts/notification/useNotification"
 import { useTabs } from "../contexts/tabs/useTabs"
-import { useItems } from "../contexts/items/useItems"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { fetchRequest, saveRequest as invokeSaveRequest } from "../api/requests"
 
-interface NewRequestViewProps extends HttpRequestResponseProps {
+interface RequestViewProps {
+    requestId: number
 }
 
-function RequestView({ request: inputRequest }: NewRequestViewProps) {
-    if (!inputRequest) {
-        return null
-    }
-
+function RequestView({ requestId }: RequestViewProps) {
     const { t } = useTranslation()
     const notificationContext = useNotification()
     const tabsContext = useTabs()
-    const itemsContext = useItems()
+    const queryClient = useQueryClient()
 
-    const [request, setRequest] = useState({ ...inputRequest })
+    const { data: fetchedRequest } = useQuery({
+        queryKey: [queries.fetchRequest, requestId],
+        queryFn: () => fetchRequest(requestId),
+    })
+
+    const [request, setRequest] = useState(fetchedRequest)
     const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
     const [isModified, setIsModified] = useState(false)
+
+    useEffect(() => {
+        if (fetchedRequest) {
+            setRequest(fetchedRequest);
+        }
+    }, [fetchedRequest]);
+
+    const saveRequestMutation = useMutation({
+        mutationFn: invokeSaveRequest,
+        onSuccess: (_result, input) => {
+            queryClient.invalidateQueries({ queryKey: [queries.fetchRequestSets] })
+            queryClient.invalidateQueries({ queryKey: [queries.fetchRequest] })
+            setIsModified(false)
+            tabsContext.dispatch({ type: 'UPDATE_TAB', tabItem: { typename: 'HttpRequest', id: input.request.id ?? -1, label: input.request.label } })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('item_saved') } })
+        },
+        onError: (error) => {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_save_request') } })
+        }
+    })
 
     const modifyRequest = (request: HttpRequest) => {
         setRequest(request)
@@ -38,23 +61,14 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
     }
 
     const onLabelChange = (newValue: string) => {
-        modifyRequest({ ...request, label: newValue })
+        if (request) {
+            modifyRequest({ ...request, label: newValue })
+        }
     }
 
     const onSave = async () => {
-        try {
-            const result = await itemsContext.state.saveItem(request)
-
-            if (result === true) {
-                const { requestSets, environments } = await itemsContext.state.loadItems()
-                itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
-
-                setIsModified(false)
-                tabsContext.dispatch({ type: 'UPDATE_TAB', tabItem: request })
-            }
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
-        } catch (error) {
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_save_request') } })
+        if (request) {
+            saveRequestMutation.mutate({ request: request as HttpRequestTransfer })
         }
     }
 
@@ -78,7 +92,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
         overflow: 'auto',
     }}>
 
-        <Grid container spacing={0}>
+        {request && <Grid container spacing={0}>
             <Grid size={12}>
                 <ItemTitleBar item={request} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
             </Grid>
@@ -168,7 +182,7 @@ function RequestView({ request: inputRequest }: NewRequestViewProps) {
                 </Accordion>
 
             </Grid>
-        </Grid>
+        </Grid>}
     </Box>
 }
 

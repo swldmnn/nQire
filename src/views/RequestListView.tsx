@@ -13,12 +13,18 @@ import CategoryTitleBar from "../components/CategoryTitleBar"
 import { useTranslation } from "react-i18next"
 import CustomListItem from "../components/CustomListItem"
 import ContextMenu from "../components/ContextMenu"
-import { styles } from "../constants"
+import { queries, styles } from "../constants"
 import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer"
-import { invoke } from "@tauri-apps/api/core"
 import { useNotification } from "../contexts/notification/useNotification"
 import { useTabs } from "../contexts/tabs/useTabs"
-import { useItems } from "../contexts/items/useItems"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+    fetchRequestSets,
+    saveRequest as invokeSaveRequest,
+    saveRequestSet as invokeSaveRequestSet,
+    deleteRequest as invokeDeleteRequest,
+    deleteRequestSet as invokeDeleteRequestSet,
+} from "../api/requests";
 
 interface RequestListProps {
 }
@@ -27,19 +33,76 @@ function RequestListView({ }: RequestListProps) {
     const { t } = useTranslation()
     const notificationContext = useNotification()
     const tabsContext = useTabs()
-    const itemsContext = useItems()
+    const queryClient = useQueryClient()
+
     const { mode } = useColorScheme();
-    
     const themeClass = mode === 'dark' ? 'dark-theme' : 'light-theme';
 
+    const { data: requestSets } = useQuery({
+        queryKey: [queries.fetchRequestSets],
+        queryFn: fetchRequestSets
+    })
+
+    const saveRequestMutation = useMutation({
+        mutationFn: invokeSaveRequest,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [queries.fetchRequestSets] })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('item_saved') } })
+        },
+        onError: (error) => {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_request') } })
+        }
+    })
+
+    const saveRequestSetMutation = useMutation({
+        mutationFn: invokeSaveRequestSet,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [queries.fetchRequestSets] })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('item_saved') } })
+        },
+        onError: (error) => {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_request_set') } })
+        }
+    })
+
+    const deleteRequestSetMutation = useMutation({
+        mutationFn: invokeDeleteRequestSet,
+        onSuccess: (_result, requestSetId) => {
+            if (requestSets) {
+                requestSets.find(set => set.id === requestSetId)?.requests.forEach(request => {
+                    tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: { typename: 'HttpRequest', id: request.id, label: '' } })
+                })
+            }
+            queryClient.invalidateQueries({ queryKey: [queries.fetchRequestSets] })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('item_deleted') } })
+        },
+        onError: (error) => {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_request_set') } })
+        }
+    })
+
+    const deleteRequestMutation = useMutation({
+        mutationFn: invokeDeleteRequest,
+        onSuccess: (_result, requestId) => {
+            queryClient.invalidateQueries({ queryKey: [queries.fetchRequestSets] })
+            tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: { typename: 'HttpRequest', id: requestId, label: '' } })
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('item_deleted') } })
+        },
+        onError: (error) => {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_request') } })
+        }
+    })
+
     const openItem = (requestSetIndex: number, requestIndex: number) => {
-        const item = itemsContext.state.requestSets[requestSetIndex].requests[requestIndex]
-        tabsContext.dispatch({ type: 'OPEN_TAB', tabItem: { typename: item.typename, id: item.id, label: item.label } })
+        if (requestSets) {
+            const item = requestSets[requestSetIndex].requests[requestIndex]
+            tabsContext.dispatch({ type: 'OPEN_TAB', tabItem: { typename: item.typename, id: item.id, label: item.label } })
+        }
     }
 
-    const createNewRequest = async (requestSetIndex: number) => {
-        try {
-            const result = await invoke("save_request", {
+    const createRequest = async (requestSetIndex: number) => {
+        if (requestSets) {
+            saveRequestMutation.mutate({
                 request: {
                     typename: 'HttpRequest',
                     id: undefined,
@@ -49,64 +112,30 @@ function RequestListView({ }: RequestListProps) {
                     headers: [],
                     body: '',
                 } as HttpRequestTransfer,
-                requestSetId: itemsContext.state.requestSets[requestSetIndex].id
+                requestSetId: requestSets[requestSetIndex].id
             })
-
-            const { requestSets, environments } = await itemsContext.state.loadItems()
-            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
-        } catch (error) {
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_request') } })
         }
     }
 
-    const createNewRequestSet = async () => {
-        try {
-            const result = await invoke("save_request_set", {
-                requestSet: {
-                    typename: 'HttpRequestSet',
-                    label: t('new_request_set_label'),
-                    requests: [],
-                } as HttpRequestSetTransfer
-            })
-
-            const { requestSets, environments } = await itemsContext.state.loadItems()
-            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_saved') } })
-        } catch (error) {
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_create_request_set') } })
+    const createRequestSet = async () => {
+        if (requestSets) {
+            saveRequestSetMutation.mutate({
+                typename: 'HttpRequestSet',
+                label: t('new_request_set_label'),
+                requests: [],
+            } as HttpRequestSetTransfer)
         }
     }
 
     const deleteRequest = async (requestSetIndex: number, requestIndex: number) => {
-        try {
-            const request = itemsContext.state.requestSets[requestSetIndex].requests[requestIndex]
-            const result = await invoke("delete_request", {
-                requestId: request.id
-            })
-
-            tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: request })
-            const { requestSets, environments } = await itemsContext.state.loadItems()
-            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } })
-        } catch (error) {
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_request') } })
+        if (requestSets) {
+            deleteRequestMutation.mutate(requestSets[requestSetIndex].requests[requestIndex].id)
         }
     }
 
     const deleteRequestSet = async (index: number) => {
-        try {
-            const requestSet = itemsContext.state.requestSets[index]
-            const result = await invoke("delete_request_set", {
-                requestSetId: requestSet.id
-            })
-
-            requestSet.requests.forEach(request => tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: request }))
-            const { requestSets, environments } = await itemsContext.state.loadItems()
-            itemsContext.dispatch({ type: 'UPDATE_ITEMS', requestSets, environments })
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: result, defaultMessage: t('item_deleted') } })
-        } catch (error) {
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_delete_request_set') } })
+        if (requestSets) {
+            deleteRequestSetMutation.mutate(requestSets[index].id)
         }
     }
 
@@ -114,10 +143,10 @@ function RequestListView({ }: RequestListProps) {
         <Box>
             <CategoryTitleBar
                 title={t('cat_request_sets')}
-                actions={[{ label: t('create_item'), callback: () => createNewRequestSet() }]}
+                actions={[{ label: t('create_item'), callback: () => createRequestSet() }]}
             />
             {
-                itemsContext.state.requestSets.map((requestSet, requestSetIndex) =>
+                requestSets && requestSets.map((requestSet, requestSetIndex) =>
                     <Accordion
                         elevation={0}
                         defaultExpanded
@@ -139,7 +168,7 @@ function RequestListView({ }: RequestListProps) {
                             <ContextMenu
                                 actions={[
                                     { label: t('delete_item'), callback: () => deleteRequestSet(requestSetIndex) },
-                                    { label: t('add_item'), callback: () => createNewRequest(requestSetIndex) },
+                                    { label: t('add_item'), callback: () => createRequest(requestSetIndex) },
                                 ]}
                                 sx={{ marginLeft: 'auto' }}
                             />

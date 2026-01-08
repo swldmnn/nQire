@@ -51,6 +51,117 @@ pub async fn find_all_request_sets(
 }
 
 #[tauri::command]
+pub async fn save_request_set(
+    state: tauri::State<'_, AppState>,
+    request_set: HttpRequestSetTransfer,
+) -> Result<HttpRequestSetTransfer, ErrorTransfer> {
+    let req_set = HttpRequestSet::try_from(request_set).map_err(|e| ErrorTransfer {
+        typename: "Error".to_owned(),
+        error_message: e,
+    })?;
+
+    let result = crate::services::save_request_set(state, req_set)
+        .await
+        .map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?;
+
+    Ok(
+        HttpRequestSetTransfer::try_from(result).map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?,
+    )
+}
+
+#[tauri::command]
+pub async fn delete_request_set(
+    state: tauri::State<'_, AppState>,
+    request_set_id: u32,
+) -> Result<u64, ErrorTransfer> {
+    let result = crate::services::delete_request_set(state, request_set_id)
+        .await
+        .map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?;
+
+    Ok(result)
+}
+
+#[tauri::command]
+pub async fn find_request(
+    state: tauri::State<'_, AppState>,
+    request_id: u32,
+) -> Result<HttpRequestTransfer, ErrorTransfer> {
+    let request = crate::services::find_request(state, request_id)
+        .await
+        .map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?;
+
+    Ok(
+        HttpRequestTransfer::try_from(request).map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?,
+    )
+}
+
+#[tauri::command]
+pub async fn save_request(
+    state: tauri::State<'_, AppState>,
+    request: HttpRequestTransfer,
+    request_set_id: Option<u32>,
+) -> Result<HttpRequestTransfer, ErrorTransfer> {
+    let mut req = Request::<String>::try_from(request).map_err(|e| ErrorTransfer {
+        typename: "Error".to_owned(),
+        error_message: e,
+    })?;
+
+    let meta_data = req
+        .extensions_mut()
+        .get_mut::<RequestMetaData>()
+        .ok_or_else(|| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: "Cannot save request: Request has no metadata".to_owned(),
+        })?;
+
+    meta_data.request_set_id = request_set_id;
+
+    let updated_request = crate::services::save_request(state, req)
+        .await
+        .map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?;
+
+    Ok(
+        HttpRequestTransfer::try_from(updated_request).map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?,
+    )
+}
+
+#[tauri::command]
+pub async fn delete_request(
+    state: tauri::State<'_, AppState>,
+    request_id: u32,
+) -> Result<u64, ErrorTransfer> {
+    let result = crate::services::delete_request(state, request_id)
+        .await
+        .map_err(|e| ErrorTransfer {
+            typename: "Error".to_owned(),
+            error_message: e,
+        })?;
+
+    Ok(result)
+}
+
+#[tauri::command]
 pub async fn find_all_environments(
     state: tauri::State<'_, AppState>,
 ) -> Result<Vec<EnvironmentTransfer>, ErrorTransfer> {
@@ -85,37 +196,6 @@ pub async fn find_environment(
 }
 
 #[tauri::command]
-pub async fn save_request(
-    state: tauri::State<'_, AppState>,
-    request: HttpRequestTransfer,
-    request_set_id: Option<u32>,
-) -> Result<u64, ErrorTransfer> {
-    let mut req = Request::<String>::try_from(request).map_err(|e| ErrorTransfer {
-        typename: "Error".to_owned(),
-        error_message: e,
-    })?;
-
-    let meta_data = req
-        .extensions_mut()
-        .get_mut::<RequestMetaData>()
-        .ok_or_else(|| ErrorTransfer {
-            typename: "Error".to_owned(),
-            error_message: "Cannot save request: Request has no metadata".to_owned(),
-        })?;
-
-    meta_data.request_set_id = request_set_id;
-
-    let result = crate::services::save_request(state, req)
-        .await
-        .map_err(|e| ErrorTransfer {
-            typename: "Error".to_owned(),
-            error_message: e,
-        })?;
-
-    Ok(result)
-}
-
-#[tauri::command]
 pub async fn save_environment(
     state: tauri::State<'_, AppState>,
     environment: EnvironmentTransfer,
@@ -133,61 +213,11 @@ pub async fn save_environment(
 }
 
 #[tauri::command]
-pub async fn save_request_set(
-    state: tauri::State<'_, AppState>,
-    request_set: HttpRequestSetTransfer,
-) -> Result<u64, ErrorTransfer> {
-    let req_set = HttpRequestSet::try_from(request_set).map_err(|e| ErrorTransfer {
-        typename: "Error".to_owned(),
-        error_message: e,
-    })?;
-
-    let result = crate::services::save_request_set(state, req_set)
-        .await
-        .map_err(|e| ErrorTransfer {
-            typename: "Error".to_owned(),
-            error_message: e,
-        })?;
-
-    Ok(result)
-}
-
-#[tauri::command]
 pub async fn delete_environment(
     state: tauri::State<'_, AppState>,
     environment_id: u32,
 ) -> Result<u64, ErrorTransfer> {
     let result = crate::services::delete_environment(state, environment_id)
-        .await
-        .map_err(|e| ErrorTransfer {
-            typename: "Error".to_owned(),
-            error_message: e,
-        })?;
-
-    Ok(result)
-}
-
-#[tauri::command]
-pub async fn delete_request(
-    state: tauri::State<'_, AppState>,
-    request_id: u32,
-) -> Result<u64, ErrorTransfer> {
-    let result = crate::services::delete_request(state, request_id)
-        .await
-        .map_err(|e| ErrorTransfer {
-            typename: "Error".to_owned(),
-            error_message: e,
-        })?;
-
-    Ok(result)
-}
-
-#[tauri::command]
-pub async fn delete_request_set(
-    state: tauri::State<'_, AppState>,
-    request_set_id: u32,
-) -> Result<u64, ErrorTransfer> {
-    let result = crate::services::delete_request_set(state, request_set_id)
         .await
         .map_err(|e| ErrorTransfer {
             typename: "Error".to_owned(),
