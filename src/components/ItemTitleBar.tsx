@@ -22,8 +22,8 @@ function ItemTitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarP
                 size='small'
                 variant='standard'
                 onChange={(e) => onLabelChange(e.currentTarget.value)}
+                sx={{ flexGrow: 1 }}
             />
-            <Box id='filler' sx={{ flexGrow: 1 }} />
             <Button
                 sx={{ color: 'secondary.main' }}
                 disabled={!isModified}

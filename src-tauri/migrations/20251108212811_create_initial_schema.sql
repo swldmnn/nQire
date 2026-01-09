@@ -41,17 +41,16 @@ CREATE TABLE environment_values (
 );
 
 INSERT INTO request_sets (id, label)
-SELECT 1, 'Mock APIs'
-UNION ALL SELECT 2, 'Other APIs'
+SELECT 1, 'Samples'
 WHERE NOT EXISTS (SELECT 1 FROM request_sets);
 
 INSERT INTO requests (id, request_set_id, label, method, url, body)
 SELECT 1, 1, 'JsonPlaceholder', 'POST', 'https://jsonplaceholder.typicode.com/posts', '{"foo":"bar"}' 
 UNION ALL SELECT 2, 1, 'Rest API', 'POST', 'https://api.restful-api.dev/objects', '{"name": "Apple MacBook Pro 16","data": {"year": 2019,"price": 1849.99,"CPU model": "Intel Core i9","Hard disk size": "1 TB"}}'
-UNION ALL SELECT 3, 2, 'ChuckNorrisJoke', 'GET', 'https://api.chucknorris.io/jokes/random', ''
-UNION ALL SELECT 4, 2, 'IP API', 'GET', 'https://ipapi.co/json', ''
-UNION ALL SELECT 5, 2, 'PokeAPI', 'GET', 'https://pokeapi.co/api/v2/pokemon/ditto', ''
-UNION ALL SELECT 6, 2, 'Countries', 'GET', 'https://restcountries.com/v3.1/all?fields=name,flags', ''
+UNION ALL SELECT 3, 1, 'ChuckNorrisJoke', 'GET', 'https://api.chucknorris.io/jokes/random', ''
+UNION ALL SELECT 4, 1, 'IP API', 'GET', 'https://ipapi.co/json', ''
+UNION ALL SELECT 5, 1, 'PokeAPI', 'GET', 'https://pokeapi.co/api/v2/pokemon/ditto', ''
+UNION ALL SELECT 6, 1, 'Countries', 'GET', 'https://restcountries.com/v3.1/all?fields=name,flags', ''
 WHERE NOT EXISTS (SELECT 1 FROM requests);
 
 INSERT INTO request_headers (id, request_id, key, value)
