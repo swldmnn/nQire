@@ -43,10 +43,11 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
                     variant="standard"
                     className={`http-${request.method.toLowerCase()} ${themeClass}`}
                     disableUnderline
-                    sx={{fontWeight: 'bold'}}
+                    sx={{ fontWeight: 'bold' }}
                 >
-                    <MenuItem value="GET" className={`http-get ${themeClass}`} sx={{fontWeight: 'bold'}}>GET</MenuItem>
-                    <MenuItem value="POST" className={`http-post ${themeClass}`} sx={{fontWeight: 'bold'}}>POST</MenuItem>
+                    <MenuItem value="GET" className={`http-get ${themeClass}`} sx={{ fontWeight: 'bold' }}>GET</MenuItem>
+                    <MenuItem value="POST" className={`http-post ${themeClass}`} sx={{ fontWeight: 'bold' }}>POST</MenuItem>
+                    <MenuItem value="PATCH" className={`http-patch ${themeClass}`} sx={{ fontWeight: 'bold' }}>PATCH</MenuItem>
                 </Select>
 
                 <Divider orientation="vertical" flexItem sx={{
@@ -61,13 +62,13 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
                     variant="standard"
                     sx={{
                         '& .MuiInput-underline:before': {
-                            display: 'none',  // Hide the default (inactive) underline
+                            display: 'none',
                         },
                         '& .MuiInput-underline:after': {
-                            display: 'none',  // Hide the focused (active) underline when the field is blurred
+                            display: 'none',
                         },
                         '& .MuiInput-underline.Mui-focused:after': {
-                            display: 'block',  // Keep the underline visible when focused
+                            display: 'block'
                         },
                     }}
                 />

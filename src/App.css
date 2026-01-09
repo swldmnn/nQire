@@ -20,6 +20,23 @@ button {
   cursor: pointer;
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader {
+  animation: spin 2s linear infinite;
+  display: inline-block;
+  transform-origin: center;
+}
+
+/*------ theme aware colors -------*/
+
 /* Http colors light */
 .http-get.light-theme {
   color: rgb(53, 145, 195);
@@ -29,13 +46,21 @@ button {
   color: rgb(188, 57, 118);
 }
 
+.http-patch.light-theme {
+  color: rgb(57, 188, 160);
+}
+
 /* Http colors dark */
 .http-get.dark-theme {
-  color: rgb(69, 184, 255);
+  color: rgb(52, 211, 247);
 }
 
 .http-post.dark-theme {
-  color: rgb(250, 60, 127);
+  color: rgb(241, 50, 146);
+}
+
+.http-patch.dark-theme {
+  color: rgb(60, 250, 199);
 }
 
 /* Json pretty light */

@@ -13,3 +13,6 @@ export const queries = {
     fetchRequestSets: 'fetchRequestSets',
     fetchRequest: 'fetchRequest',
 }
+
+export const REPAINT_TIMEOUT = 30
+export const EMTPY_RESPONSE_STATUS = 0

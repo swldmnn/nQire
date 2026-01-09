@@ -9,11 +9,12 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import RequestHeaders from "../components/RequestHeaders"
 import ItemTitleBar from "../components/ItemTitleBar"
 import { useTranslation } from "react-i18next"
-import { queries, styles } from "../constants"
+import { EMTPY_RESPONSE_STATUS, queries, REPAINT_TIMEOUT, styles } from "../constants"
 import { useNotification } from "../contexts/notification/useNotification"
 import { useTabs } from "../contexts/tabs/useTabs"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { fetchRequest, saveRequest as invokeSaveRequest, sendHttpRequest } from "../api/requests"
+import LoadingIndicator from "../components/LoadingIndicator"
 
 interface RequestViewProps {
     requestId: number
@@ -33,6 +34,7 @@ function RequestView({ requestId }: RequestViewProps) {
     const [request, setRequest] = useState(fetchedRequest)
     const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
     const [isModified, setIsModified] = useState(false)
+    const [isSending, setIsSending] = useState(false)
 
     useEffect(() => {
         if (fetchedRequest) {
@@ -71,19 +73,23 @@ function RequestView({ requestId }: RequestViewProps) {
         }
     }
 
-    async function sendRequest(request?: HttpRequest) {
+    const sendRequest = async (request?: HttpRequest) => {
         if (!request || !setResponse) {
             return
         }
 
-        try {
-            const req = { ...request, body: request.body ?? '' }
-            const response = await sendHttpRequest(req)
-            setResponse(response)
-        } catch (error) {
-            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_send_request') } })
-        }
+        setIsSending(true)
 
+        setTimeout(() => {
+            const req = { ...request, body: request.body ?? '' }
+            sendHttpRequest(req)
+                .then(setResponse)
+                .catch(error => {
+                    setResponse({ status: EMTPY_RESPONSE_STATUS })
+                    notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_send_request') } })
+                })
+                .finally(() => setIsSending(false))
+        }, REPAINT_TIMEOUT)
     }
 
     return <Box sx={{
@@ -192,16 +198,27 @@ function RequestView({ requestId }: RequestViewProps) {
                             }}
                         >
                             <Typography component="span">{t('request_response')}</Typography>
-                            {response.status > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: styles.spaces.medium }}>{`[${response.status}]`}</Typography>}
+                            {response.status > EMTPY_RESPONSE_STATUS && <Typography sx={{ color: 'secondary.main', paddingLeft: styles.spaces.medium }}>
+                                {`[${response.status}]`}
+                            </Typography>}
                         </AccordionSummary>
                         <AccordionDetails sx={{
                             minHeight: 0,
                             minWidth: 0,
                         }}>
-                            <ResponseBody
-                                response={response}
-                                setResponse={setResponse}
-                            />
+                            {isSending
+                                ? <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignContent: 'center',
+                                    flexGrow: 1,
+                                }}>
+                                    <LoadingIndicator sx={{ width: 80, height: 80, color: 'divider' }} />
+                                </Box>
+                                : <ResponseBody
+                                    response={response}
+                                    setResponse={setResponse}
+                                />}
                         </AccordionDetails>
                     </Accordion>
                 </Box>
