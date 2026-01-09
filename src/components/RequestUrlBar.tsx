@@ -22,11 +22,7 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
         setRequest({ ...request, url: newValue })
     }
 
-    return <Box sx={{
-        paddingLeft: styles.spaces.medium,
-        paddingRight: styles.spaces.medium,
-        paddingBottom: styles.spaces.medium,
-    }}>
+    return <Box>
         <Paper elevation={0} variant='outlined' sx={{
             display: 'flex',
             flexDirection: 'row',

@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Typography } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Grid, Typography } from "@mui/material"
 import RequestUrlBar from "../components/RequestUrlBar"
 import { HttpRequest, HttpResponse } from "../types/types"
 import { useEffect, useState } from "react"
@@ -82,28 +82,44 @@ function RequestView({ requestId }: RequestViewProps) {
     }
 
     return <Box sx={{
-        height: '100%',
         width: '100%',
-        minHeight: 0,
-        minWidth: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'auto',
-    }}>
-
-        {request && <Grid container spacing={0}>
-            <Grid size={12}>
+        height: '100%',
+    }}> {request &&
+        <Box id='requestView_root'
+            sx={{
+                width: '100%',
+                height: '100%',
+                boxSizing: 'border-box',
+                display: 'flex',
+                flexDirection: 'column',
+                padding: styles.spaces.medium
+            }}>
+            <Box id='requestView_header' sx={{
+                width: '100%',
+                boxSizing: 'border-box',
+                marginBottom: styles.spaces.medium,
+            }}>
                 <ItemTitleBar item={request} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
-            </Grid>
-            <Grid size={12}>
                 <RequestUrlBar
                     request={request}
                     setRequest={modifyRequest}
                     sendRequest={sendRequest}
                 />
-            </Grid>
-            <Grid size={6}>
-                <Box sx={{ borderRight: '1px solid', borderColor: 'divider' }}>
+            </Box>
+            <Box id='requestView_content' sx={{
+                width: '100%',
+                minHeight: 0,
+                boxSizing: 'border-box',
+                display: 'flex',
+                flexDirection: 'row',
+                flex: 1,
+            }}>
+                <Box id='requestView_contentLeft' sx={{
+                    width: '100%',
+                    height: '100%',
+                    boxSizing: 'border-box',
+                    overflow: 'auto',
+                }}>
                     <Accordion
                         defaultExpanded
                         disableGutters
@@ -147,42 +163,46 @@ function RequestView({ requestId }: RequestViewProps) {
                         </AccordionDetails>
                     </Accordion>
                 </Box>
-            </Grid>
-            <Grid size={6}>
-
-                <Accordion
-                    defaultExpanded
-                    disableGutters
-                    elevation={0}
-                    sx={{
-                        minHeight: 0,
-                        minWidth: 0,
-                        backgroundColor: 'transparent',
-                    }}>
-                    <AccordionSummary
-                        expandIcon={<KeyboardArrowDownIcon />}
+                <Divider orientation='vertical' flexItem sx={{ margin: styles.spaces.medium }} />
+                <Box id='requestView_contentRight' sx={{
+                    width: '100%',
+                    height: '100%',
+                    boxSizing: 'border-box',
+                    overflow: 'auto',
+                }}>
+                    <Accordion
+                        defaultExpanded
+                        disableGutters
+                        elevation={0}
                         sx={{
-                            flexDirection: 'row-reverse',
-                            color: 'primary.dark',
-                        }}
-                    >
-                        <Typography component="span">{t('request_response')}</Typography>
-                        {response.status > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: styles.spaces.medium }}>{`[${response.status}]`}</Typography>}
-                    </AccordionSummary>
-                    <AccordionDetails sx={{
-                        minHeight: 0,
-                        minWidth: 0,
-                    }}>
-                        <ResponseBody
-                            response={response}
-                            setResponse={setResponse}
-                        />
-                    </AccordionDetails>
-                </Accordion>
-
-            </Grid>
-        </Grid>}
-    </Box>
+                            minHeight: 0,
+                            minWidth: 0,
+                            backgroundColor: 'transparent',
+                        }}>
+                        <AccordionSummary
+                            expandIcon={<KeyboardArrowDownIcon />}
+                            sx={{
+                                flexDirection: 'row-reverse',
+                                color: 'primary.dark',
+                            }}
+                        >
+                            <Typography component="span">{t('request_response')}</Typography>
+                            {response.status > 0 && <Typography sx={{ color: 'secondary.main', paddingLeft: styles.spaces.medium }}>{`[${response.status}]`}</Typography>}
+                        </AccordionSummary>
+                        <AccordionDetails sx={{
+                            minHeight: 0,
+                            minWidth: 0,
+                        }}>
+                            <ResponseBody
+                                response={response}
+                                setResponse={setResponse}
+                            />
+                        </AccordionDetails>
+                    </Accordion>
+                </Box>
+            </Box>
+        </Box>
+    }</Box>
 }
 
 export default RequestView

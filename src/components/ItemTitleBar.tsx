@@ -1,7 +1,6 @@
 import { Box, Button, TextField } from "@mui/material"
 import { TabItem } from "../types/types"
 import SaveIcon from '@mui/icons-material/Save'
-import { styles } from "../constants"
 
 interface TitleBarProps {
     item: TabItem
@@ -16,7 +15,6 @@ function ItemTitleBar({ item, isModified, onLabelChange, onItemSave }: TitleBarP
             display: 'flex',
             flexDirection: 'row',
             width: '100%',
-            padding: styles.spaces.medium,
             boxSizing: 'border-box'
         }}>
             <TextField

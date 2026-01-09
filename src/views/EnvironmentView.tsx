@@ -10,7 +10,7 @@ import { useTabs } from "../contexts/tabs/useTabs"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { fetchEnvironment, saveEnvironment } from "../api/environments"
 import { EnvironmentTransfer } from "../types/types_transfer"
-import { queries } from "../constants"
+import { queries, styles } from "../constants"
 
 interface EnvironmentViewProps {
     environmentId: number
@@ -109,6 +109,8 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'auto',
+        padding: styles.spaces.medium,
+        boxSizing: 'border-box',
     }}>
         {environment && <Box>
             <ItemTitleBar item={environment} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />

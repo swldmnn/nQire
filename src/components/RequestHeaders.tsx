@@ -62,6 +62,7 @@ function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
                                     key={`header_key_${index}`}
                                     value={header.key}
                                     onChange={(e) => onHeaderKeyChange(index, e.currentTarget.value)}
+                                    sx={{width: '100%'}}
                                 />
                             </TableCell>
                             <TableCell key={`header_value_${index}`}>
@@ -72,6 +73,7 @@ function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
                                     key={`header_value_${index}`}
                                     value={header.value}
                                     onChange={(e) => onHeaderValueChange(index, e.currentTarget.value)}
+                                    sx={{width: '100%'}}
                                 />
                             </TableCell>
                             <TableCell key={`header_delete_${index}`}>
