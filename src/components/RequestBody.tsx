@@ -22,6 +22,14 @@ function RequestBody({ request, setRequest }: RequestBodyProps) {
             value={request?.body ?? ''}
             variant="filled"
             onChange={(e) => onBodyChange(e.currentTarget.value)}
+            slotProps={{
+                htmlInput: {
+                    autoCorrect: 'off',
+                    autoCapitalize: 'off',
+                    spellCheck: false,
+                    inputMode: 'text',
+                },
+            }}
         />
     </div>
 }

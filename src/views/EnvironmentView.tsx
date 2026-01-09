@@ -138,6 +138,14 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
                                         value={value.key}
                                         onChange={(e) => onKeyChange(index, e.currentTarget.value)}
                                         sx={{ width: '100%' }}
+                                        slotProps={{
+                                            htmlInput: {
+                                                autoCorrect: 'off',
+                                                autoCapitalize: 'off',
+                                                spellCheck: false,
+                                                inputMode: 'text',
+                                            },
+                                        }}
                                     />
                                 </TableCell>
                                 <TableCell key={`environment_value_${index}`}>
@@ -149,6 +157,14 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
                                         value={value.value}
                                         onChange={(e) => onValueChange(index, e.currentTarget.value)}
                                         sx={{ width: '100%' }}
+                                        slotProps={{
+                                            htmlInput: {
+                                                autoCorrect: 'off',
+                                                autoCapitalize: 'off',
+                                                spellCheck: false,
+                                                inputMode: 'text',
+                                            },
+                                        }}
                                     />
                                 </TableCell>
                                 <TableCell key={`environment_value_delete_${index}`}>
