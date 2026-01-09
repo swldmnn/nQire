@@ -9,6 +9,7 @@ import CropFreeOutlinedIcon from '@mui/icons-material/CropFreeOutlined';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { deleteEnvironment as invokeDeleteEnvironment, fetchEnvironments, saveEnvironment as invokeSaveEnvironment } from "../api/environments"
 import { queries } from "../constants"
+import { useEnvironment } from "../contexts/environment/useEnvironment"
 
 
 function EnvironmentListView() {
@@ -16,6 +17,7 @@ function EnvironmentListView() {
     const notificationContext = useNotification()
     const tabsContext = useTabs()
     const queryClient = useQueryClient()
+    const environmentContext = useEnvironment()
 
     const saveEnvironmentMutation = useMutation({
         mutationFn: invokeSaveEnvironment,
@@ -31,6 +33,9 @@ function EnvironmentListView() {
     const deleteEnvironmentMutation = useMutation({
         mutationFn: invokeDeleteEnvironment,
         onSuccess: (_result, environment_id) => {
+            if (environmentContext.state.activeEnvironmentId === environment_id) {
+                environmentContext.dispatch({ type: 'SET_ACTIVE_ENVIRONMENT', environmentId: -1 })
+            }
             queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironments] })
             tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: { typename: 'Environment', id: environment_id, label: '' } })
             notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('item_deleted') } })
