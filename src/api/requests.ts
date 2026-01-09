@@ -7,8 +7,17 @@ export type SaveRequestInput = {
   requestSetId?: number,
 }
 
+const sanitizeRequest = (request: HttpRequestTransfer) => {
+  const headers = request.headers.filter(header => !!header.key)
+
+  return {
+    ... request,
+    headers
+  } as HttpRequestTransfer
+}
+
 export async function sendHttpRequest(request: HttpRequestTransfer): Promise<HttpResponse> {
-  const response = await invoke("send_http_request", { request })
+  const response = await invoke("send_http_request", { request: sanitizeRequest(request) })
   return response as HttpResponse
 }
 

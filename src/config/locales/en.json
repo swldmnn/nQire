@@ -29,5 +29,6 @@
     "new_request_set_label": "New API",
     "import_item_label": "Import",
     "export_item_label": "Export",
-    "coming_soon": "Coming soon..."
+    "coming_soon": "Coming soon...",
+    "error_send_request": "Send request failed"
 }

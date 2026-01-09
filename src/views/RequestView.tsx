@@ -76,9 +76,14 @@ function RequestView({ requestId }: RequestViewProps) {
             return
         }
 
-        const req = { ...request, body: request.body ?? '' }
-        const response = await sendHttpRequest(req)
-        setResponse(response)
+        try {
+            const req = { ...request, body: request.body ?? '' }
+            const response = await sendHttpRequest(req)
+            setResponse(response)
+        } catch (error) {
+            notificationContext.dispatch({ type: 'NOTIFY', payload: { value: error, defaultMessage: t('error_send_request') } })
+        }
+
     }
 
     return <Box sx={{
@@ -202,7 +207,7 @@ function RequestView({ requestId }: RequestViewProps) {
                 </Box>
             </Box>
         </Box>
-    }</Box>
+        }</Box>
 }
 
 export default RequestView
