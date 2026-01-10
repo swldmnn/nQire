@@ -2,7 +2,7 @@ import { Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead
 import { Environment } from "../types/types"
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import AddSharpIcon from '@mui/icons-material/AddSharp'
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import ItemTitleBar from "../components/ItemTitleBar"
 import { useTranslation } from "react-i18next"
 import { useNotification } from "../contexts/notification/useNotification"
@@ -22,19 +22,12 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
     const tabsContext = useTabs()
     const queryClient = useQueryClient()
 
-    const { data: fetchedEnvironment } = useQuery({
+    const { data: environment } = useQuery({
         queryKey: ['fetchEnvironment', environmentId],
         queryFn: () => fetchEnvironment(environmentId),
     })
 
-    const [environment, setEnvironment] = useState(fetchedEnvironment)
     const [isModified, setIsModified] = useState(false)
-
-    useEffect(() => {
-        if (fetchedEnvironment) {
-            setEnvironment(fetchedEnvironment);
-        }
-    }, [fetchedEnvironment]);
 
     const saveEnvironmentMutation = useMutation({
         mutationFn: saveEnvironment,
@@ -42,7 +35,7 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
             if (environment) {
                 setIsModified(false)
                 queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironments] })
-                queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironment] })
+                queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironment, environmentId] })
                 tabsContext.dispatch({ type: 'UPDATE_TAB', tabItem: environment })
                 notificationContext.dispatch({ type: 'NOTIFY', payload: { value: {}, defaultMessage: t('item_saved') } })
             }
@@ -52,8 +45,12 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
         }
     })
 
-    const modifyEnvironment = (environment: Environment) => {
-        setEnvironment(environment)
+    const modifyEnvironment = (newData: Environment) => {
+        queryClient.setQueryData([queries.fetchEnvironment, environmentId], (oldData: Environment) => ({
+            ...oldData,
+            ...newData,
+        }))
+
         setIsModified(true)
     }
 
@@ -65,7 +62,7 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
 
     const onKeyChange = (index: number, newValue: string) => {
         if (environment) {
-            const values = environment.values.map(h => { return { ...h } })
+            const values = environment.values.map(value => { return { ...value } })
             values[index].key = newValue
             modifyEnvironment({ ...environment, values })
         }
@@ -73,7 +70,7 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
 
     const onValueChange = (index: number, newValue: string) => {
         if (environment) {
-            const values = environment.values.map(h => { return { ...h } })
+            const values = environment.values.map(value => { return { ...value } })
             values[index].value = newValue
             modifyEnvironment({ ...environment, values })
         }
@@ -81,7 +78,7 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
 
     const onValueDelete = (index: number) => {
         if (environment) {
-            const values = environment.values.map(h => { return { ...h } })
+            const values = environment.values.map(value => { return { ...value } })
             values.splice(index, 1)
             modifyEnvironment({ ...environment, values })
         }
@@ -89,7 +86,7 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
 
     const onValueAdd = () => {
         if (environment) {
-            const values = environment.values.map(h => { return { ...h } })
+            const values = environment.values.map(value => { return { ...value } })
             values.push({ key: '', value: '' })
             modifyEnvironment({ ...environment, values })
         }

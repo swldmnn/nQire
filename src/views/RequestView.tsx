@@ -1,7 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Grid, Typography } from "@mui/material"
 import RequestUrlBar from "../components/RequestUrlBar"
 import { HttpRequest, HttpResponse } from "../types/types"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { HttpRequestTransfer } from "../types/types_transfer"
 import RequestBody from "../components/RequestBody"
 import ResponseBody from "../components/ResponseBody"
@@ -26,21 +26,10 @@ function RequestView({ requestId }: RequestViewProps) {
     const tabsContext = useTabs()
     const queryClient = useQueryClient()
 
-    const { data: fetchedRequest } = useQuery({
+    const { data: request } = useQuery({
         queryKey: [queries.fetchRequest, requestId],
         queryFn: () => fetchRequest(requestId),
     })
-
-    const [request, setRequest] = useState(fetchedRequest)
-    const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
-    const [isModified, setIsModified] = useState(false)
-    const [isSending, setIsSending] = useState(false)
-
-    useEffect(() => {
-        if (fetchedRequest) {
-            setRequest(fetchedRequest);
-        }
-    }, [fetchedRequest]);
 
     const saveRequestMutation = useMutation({
         mutationFn: invokeSaveRequest,
@@ -56,8 +45,16 @@ function RequestView({ requestId }: RequestViewProps) {
         }
     })
 
-    const modifyRequest = (request: HttpRequest) => {
-        setRequest(request)
+    const [isModified, setIsModified] = useState(false)
+    const [isSending, setIsSending] = useState(false)
+    const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
+
+    const modifyRequest = (newData: HttpRequest) => {
+        queryClient.setQueryData([queries.fetchRequest, requestId], (oldData: HttpRequest) => ({
+            ...oldData,
+            ...newData,
+        }))
+
         setIsModified(true)
     }
 
@@ -223,8 +220,8 @@ function RequestView({ requestId }: RequestViewProps) {
                     </Accordion>
                 </Box>
             </Box>
-        </Box>
-        }</Box>
+        </Box>}
+    </Box>
 }
 
 export default RequestView
