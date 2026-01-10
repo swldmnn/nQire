@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Grid, Typography } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Typography } from "@mui/material"
 import RequestUrlBar from "../components/RequestUrlBar"
 import { HttpRequest, HttpResponse } from "../types/types"
 import { useState } from "react"
