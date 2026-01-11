@@ -1,11 +1,9 @@
-use http::Request;
-
 use crate::{
     api::{
         EnvironmentTransfer, ErrorTransfer, HttpRequestSetTransfer, HttpRequestTransfer,
         HttpResponseTransfer,
     },
-    domain::{Environment, HttpRequestSet, RequestMetaData},
+    domain::{Environment, HttpRequest, HttpRequestSet},
     AppState,
 };
 
@@ -13,18 +11,16 @@ use crate::{
 pub fn send_http_request(
     request: HttpRequestTransfer,
 ) -> Result<HttpResponseTransfer, ErrorTransfer> {
-    let req = Request::<String>::try_from(request).expect("could not map request");
+    let req = HttpRequest::from(request);
+    let response = crate::services::send_http_request(req).map_err(|e| ErrorTransfer {
+        typename: "Error".to_owned(),
+        error_message: e,
+    })?;
 
-    match crate::services::send_http_request(req) {
-        Ok(r) => Ok(HttpResponseTransfer {
-            status: r.status().as_u16(),
-            body: r.body().to_owned(),
-        }),
-        Err(e) => Err(ErrorTransfer {
-            typename: "Error".to_owned(),
-            error_message: e,
-        }),
-    }
+    Ok(HttpResponseTransfer {
+        status: response.status().as_u16(),
+        body: response.body().to_owned(),
+    })
 }
 
 #[tauri::command]
@@ -38,16 +34,10 @@ pub async fn find_all_request_sets(
             error_message: e,
         })?;
 
-    let request_set_transfers = request_sets
+    Ok(request_sets
         .into_iter()
-        .map(HttpRequestSetTransfer::try_from)
-        .collect::<Result<Vec<_>, _>>()
-        .map_err(|e| ErrorTransfer {
-            typename: "Error".to_owned(),
-            error_message: e,
-        })?;
-
-    Ok(request_set_transfers)
+        .map(HttpRequestSetTransfer::from)
+        .collect())
 }
 
 #[tauri::command]
@@ -55,10 +45,7 @@ pub async fn save_request_set(
     state: tauri::State<'_, AppState>,
     request_set: HttpRequestSetTransfer,
 ) -> Result<HttpRequestSetTransfer, ErrorTransfer> {
-    let req_set = HttpRequestSet::try_from(request_set).map_err(|e| ErrorTransfer {
-        typename: "Error".to_owned(),
-        error_message: e,
-    })?;
+    let req_set = HttpRequestSet::from(request_set);
 
     let result = crate::services::save_request_set(state, req_set)
         .await
@@ -67,12 +54,7 @@ pub async fn save_request_set(
             error_message: e,
         })?;
 
-    Ok(
-        HttpRequestSetTransfer::try_from(result).map_err(|e| ErrorTransfer {
-            typename: "Error".to_owned(),
-            error_message: e,
-        })?,
-    )
+    Ok(HttpRequestSetTransfer::from(result))
 }
 
 #[tauri::command]
@@ -102,12 +84,7 @@ pub async fn find_request(
             error_message: e,
         })?;
 
-    Ok(
-        HttpRequestTransfer::try_from(request).map_err(|e| ErrorTransfer {
-            typename: "Error".to_owned(),
-            error_message: e,
-        })?,
-    )
+    Ok(HttpRequestTransfer::from(request))
 }
 
 #[tauri::command]
@@ -116,34 +93,16 @@ pub async fn save_request(
     request: HttpRequestTransfer,
     request_set_id: Option<u32>,
 ) -> Result<HttpRequestTransfer, ErrorTransfer> {
-    let mut req = Request::<String>::try_from(request).map_err(|e| ErrorTransfer {
-        typename: "Error".to_owned(),
-        error_message: e,
-    })?;
+    let req = HttpRequest::from(request);
 
-    let meta_data = req
-        .extensions_mut()
-        .get_mut::<RequestMetaData>()
-        .ok_or_else(|| ErrorTransfer {
-            typename: "Error".to_owned(),
-            error_message: "Cannot save request: Request has no metadata".to_owned(),
-        })?;
-
-    meta_data.request_set_id = request_set_id;
-
-    let updated_request = crate::services::save_request(state, req)
+    let updated_request = crate::services::save_request(state, req, request_set_id)
         .await
         .map_err(|e| ErrorTransfer {
             typename: "Error".to_owned(),
             error_message: e,
         })?;
 
-    Ok(
-        HttpRequestTransfer::try_from(updated_request).map_err(|e| ErrorTransfer {
-            typename: "Error".to_owned(),
-            error_message: e,
-        })?,
-    )
+    Ok(HttpRequestTransfer::from(updated_request))
 }
 
 #[tauri::command]

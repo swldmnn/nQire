@@ -1,6 +1,7 @@
-use http::Request;
-
-use crate::{domain::HttpRequestSet, AppState};
+use crate::{
+    domain::{HttpRequest, HttpRequestSet},
+    AppState,
+};
 
 pub async fn find_all_request_sets(
     state: tauri::State<'_, AppState>,
@@ -25,19 +26,20 @@ pub async fn delete_request_set(
 pub async fn find_request(
     state: tauri::State<'_, AppState>,
     request_id: u32,
-) -> Result<Request<String>, String> {
+) -> Result<HttpRequest, String> {
     Ok(crate::persistence::fetch_requests(&state, vec![request_id])
         .await?
         .into_iter()
         .next()
-        .ok_or_else(|| "Failed to load request: No first element".to_string())?)
+        .ok_or_else(|| "Failed to load request by id".to_string())?)
 }
 
 pub async fn save_request(
     state: tauri::State<'_, AppState>,
-    request: Request<String>,
-) -> Result<Request<String>, String> {
-    Ok(crate::persistence::save_request(&state, request).await?)
+    request: HttpRequest,
+    request_set_id: Option<u32>,
+) -> Result<HttpRequest, String> {
+    Ok(crate::persistence::save_request(&state, request, request_set_id).await?)
 }
 
 pub async fn delete_request(

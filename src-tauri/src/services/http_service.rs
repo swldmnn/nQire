@@ -1,26 +1,30 @@
-use http::{Request, Response};
+use http::{Method, Response};
 use reqwest::blocking::Client;
 
-pub fn send_http_request(request: Request<String>) -> Result<Response<String>, String> {
-    match request.method().as_str() {
+use crate::domain::HttpRequest;
+
+pub fn send_http_request(request: HttpRequest) -> Result<Response<String>, String> {
+    match request.method.as_str() {
         "GET" => return send(request),
         "POST" => return send(request),
         _ => return Err("Unsupported http method".to_owned()),
     }
 }
 
-fn send(request: Request<String>) -> Result<Response<String>, String> {
-    let (parts, body) = request.into_parts();
+fn send(request: HttpRequest) -> Result<Response<String>, String> {
     let client = Client::new();
 
-    let mut reqwest_builder = client.request(parts.method.clone(), parts.uri.to_string());
+    let method = Method::from_bytes(request.method.as_bytes())
+        .map_err(|e| format!("Invalid HTTP method '{}': {}", request.method, e))?;
 
-    for (name, value) in parts.headers.iter() {
-        reqwest_builder = reqwest_builder.header(name, value);
+    let mut reqwest_builder = client.request(method, &request.url);
+
+    for header in &request.headers {
+        reqwest_builder = reqwest_builder.header(&header.key, &header.value);
     }
 
-    if !body.is_empty() {
-        reqwest_builder = reqwest_builder.body(body);
+    if !request.body.is_empty() {
+        reqwest_builder = reqwest_builder.body(request.body);
     }
 
     let response = match reqwest_builder.send() {

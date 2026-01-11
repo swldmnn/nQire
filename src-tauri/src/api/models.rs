@@ -1,7 +1,6 @@
-use http::{HeaderName, HeaderValue, Request};
 use serde::{Deserialize, Serialize};
 
-use crate::domain::{Environment, EnvironmentValue, HttpRequestSet, RequestMetaData};
+use crate::domain::{Environment, EnvironmentValue, HttpHeader, HttpRequest, HttpRequestSet};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -61,99 +60,85 @@ pub struct ErrorTransfer {
     pub error_message: String,
 }
 
-impl TryFrom<HttpRequestTransfer> for Request<String> {
-    type Error = String;
-
-    fn try_from(request_transfer: HttpRequestTransfer) -> Result<Self, Self::Error> {
-        let mut req_builder = Request::builder()
-            .method(request_transfer.method.as_str())
-            .extension(RequestMetaData {
-                id: request_transfer.id,
-                request_set_id: None,
-                label: request_transfer.label.to_owned(),
-            })
-            .uri(request_transfer.url);
-
-        {
-            let headers_mut = req_builder.headers_mut().unwrap();
-            for header in request_transfer.headers {
-                let name =
-                    HeaderName::from_bytes(header.key.as_bytes()).expect("Invalid header name");
-                let value = HeaderValue::from_str(&header.value).expect("Invalid header value");
-
-                headers_mut.insert(name, value);
-            }
-        }
-
-        let request = req_builder.body(request_transfer.body).unwrap();
-        Ok(request)
-    }
-}
-
-impl TryFrom<Request<String>> for HttpRequestTransfer {
-    type Error = String;
-
-    fn try_from(request: Request<String>) -> Result<Self, Self::Error> {
-        if let Some(meta_data) = request.extensions().get::<RequestMetaData>() {
-            let id = meta_data.id;
-            let label = &meta_data.label;
-
-            let mut headers = vec![];
-            let header_map = request.headers();
-            for (key, value) in header_map {
-                headers.push(HttpHeaderTransfer {
-                    key: key.as_str().to_owned(),
-                    value: value.to_str().expect("testing header value").to_owned(),
-                });
-            }
-
-            let request_transfer = HttpRequestTransfer {
-                typename: "HttpRequest".to_owned(),
-                id: id,
-                label: label.to_owned(),
-                method: request.method().to_string(),
-                url: request.uri().to_string(),
-                body: request.body().to_owned(),
-                headers: headers,
-            };
-
-            Ok(request_transfer)
-        } else {
-            Err("Cannot convert to HttpRequestTransfer: Request has no metadata".to_owned())
+impl From<HttpRequestTransfer> for HttpRequest {
+    fn from(request_transfer: HttpRequestTransfer) -> HttpRequest {
+        HttpRequest {
+            id: request_transfer.id,
+            label: request_transfer.label,
+            method: request_transfer.method,
+            url: request_transfer.url,
+            body: request_transfer.body,
+            headers: request_transfer
+                .headers
+                .into_iter()
+                .map(HttpHeader::from)
+                .collect(),
         }
     }
 }
 
-impl TryFrom<HttpRequestSet> for HttpRequestSetTransfer {
-    type Error = String;
+impl From<HttpHeaderTransfer> for HttpHeader {
+    fn from(header_transfer: HttpHeaderTransfer) -> HttpHeader {
+        HttpHeader {
+            key: header_transfer.key,
+            value: header_transfer.value,
+        }
+    }
+}
 
-    fn try_from(request_set: HttpRequestSet) -> Result<Self, Self::Error> {
-        Ok(HttpRequestSetTransfer {
+impl From<HttpHeader> for HttpHeaderTransfer {
+    fn from(header: HttpHeader) -> HttpHeaderTransfer {
+        HttpHeaderTransfer {
+            key: header.key.to_owned(),
+            value: header.value.to_owned(),
+        }
+    }
+}
+
+impl From<HttpRequest> for HttpRequestTransfer {
+    fn from(request: HttpRequest) -> HttpRequestTransfer {
+        HttpRequestTransfer {
+            typename: "HttpRequest".to_owned(),
+            id: request.id,
+            label: request.label.to_owned(),
+            method: request.method.to_owned(),
+            url: request.url.to_owned(),
+            body: request.body.to_owned(),
+            headers: request
+                .headers
+                .into_iter()
+                .map(HttpHeaderTransfer::from)
+                .collect(),
+        }
+    }
+}
+
+impl From<HttpRequestSet> for HttpRequestSetTransfer {
+    fn from(request_set: HttpRequestSet) -> HttpRequestSetTransfer {
+        HttpRequestSetTransfer {
             typename: "HttpRequestSet".to_owned(),
             id: request_set.id,
             label: request_set.label.to_owned(),
             requests: request_set
                 .requests
                 .into_iter()
-                .map(HttpRequestTransfer::try_from)
-                .collect::<Result<Vec<_>, _>>()?,
-        })
+                .map(HttpRequestTransfer::from)
+                .collect(),
+        }
     }
 }
 
-impl TryFrom<HttpRequestSetTransfer> for HttpRequestSet {
-    type Error = String;
-
-    fn try_from(request_set_transfer: HttpRequestSetTransfer) -> Result<Self, Self::Error> {
-        Ok(HttpRequestSet {
+impl From<HttpRequestSetTransfer> for HttpRequestSet {
+    fn from(request_set_transfer: HttpRequestSetTransfer) -> HttpRequestSet {
+        HttpRequestSet {
             id: request_set_transfer.id,
             label: request_set_transfer.label.to_owned(),
             requests: request_set_transfer
                 .requests
                 .into_iter()
-                .map(Request::<String>::try_from)
-                .collect::<Result<Vec<_>, _>>()?,
-        })
+                .map(HttpRequest::from)
+                .collect(),
+        }
     }
 }
 

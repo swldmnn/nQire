@@ -16,3 +16,5 @@ export const queries = {
 
 export const REPAINT_TIMEOUT = 30
 export const EMTPY_RESPONSE_STATUS = 0
+export const NO_ENVIRONMENT_ID = -1
+export const NO_TAB_INDEX = -1

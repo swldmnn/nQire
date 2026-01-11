@@ -8,7 +8,7 @@ import { useTabs } from "../contexts/tabs/useTabs"
 import CropFreeOutlinedIcon from '@mui/icons-material/CropFreeOutlined';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { deleteEnvironment as invokeDeleteEnvironment, fetchEnvironments, saveEnvironment as invokeSaveEnvironment } from "../api/environments"
-import { queries } from "../constants"
+import { NO_ENVIRONMENT_ID, queries } from "../constants"
 import { useEnvironment } from "../contexts/environment/useEnvironment"
 
 
@@ -34,7 +34,7 @@ function EnvironmentListView() {
         mutationFn: invokeDeleteEnvironment,
         onSuccess: (_result, environment_id) => {
             if (environmentContext.state.activeEnvironmentId === environment_id) {
-                environmentContext.dispatch({ type: 'SET_ACTIVE_ENVIRONMENT', environmentId: -1 })
+                environmentContext.dispatch({ type: 'SET_ACTIVE_ENVIRONMENT', environmentId: NO_ENVIRONMENT_ID })
             }
             queryClient.invalidateQueries({ queryKey: [queries.fetchEnvironments] })
             tabsContext.dispatch({ type: 'CLOSE_TAB', tabItem: { typename: 'Environment', id: environment_id, label: '' } })

@@ -1,6 +1,6 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Typography } from "@mui/material"
 import RequestUrlBar from "../components/RequestUrlBar"
-import { HttpRequest, HttpResponse } from "../types/types"
+import { Environment, HttpRequest, HttpResponse } from "../types/types"
 import { useState } from "react"
 import { HttpRequestTransfer } from "../types/types_transfer"
 import RequestBody from "../components/RequestBody"
@@ -9,12 +9,14 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import RequestHeaders from "../components/RequestHeaders"
 import ItemTitleBar from "../components/ItemTitleBar"
 import { useTranslation } from "react-i18next"
-import { EMTPY_RESPONSE_STATUS, queries, REPAINT_TIMEOUT, styles } from "../constants"
+import { EMTPY_RESPONSE_STATUS, NO_ENVIRONMENT_ID, queries, REPAINT_TIMEOUT, styles } from "../constants"
 import { useNotification } from "../contexts/notification/useNotification"
 import { useTabs } from "../contexts/tabs/useTabs"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { fetchRequest, saveRequest as invokeSaveRequest, sendHttpRequest } from "../api/requests"
 import LoadingIndicator from "../components/LoadingIndicator"
+import { useEnvironment } from "../contexts/environment/useEnvironment"
+import { fetchEnvironment } from "../api/environments"
 
 interface RequestViewProps {
     requestId: number
@@ -25,6 +27,7 @@ function RequestView({ requestId }: RequestViewProps) {
     const notificationContext = useNotification()
     const tabsContext = useTabs()
     const queryClient = useQueryClient()
+    const environmentContext = useEnvironment()
 
     const { data: request } = useQuery({
         queryKey: [queries.fetchRequest, requestId],
@@ -77,9 +80,17 @@ function RequestView({ requestId }: RequestViewProps) {
 
         setIsSending(true)
 
+        const environmentId = environmentContext.state.activeEnvironmentId
+        const environment: Environment | undefined = environmentId !== NO_ENVIRONMENT_ID
+            ? await queryClient.fetchQuery({
+                queryKey: [queries.fetchEnvironment, environmentId],
+                queryFn: () => fetchEnvironment(environmentId)
+            })
+            : undefined
+
         setTimeout(() => {
             const req = { ...request, body: request.body ?? '' }
-            sendHttpRequest(req)
+            sendHttpRequest(req, environment)
                 .then(setResponse)
                 .catch(error => {
                     setResponse({ status: EMTPY_RESPONSE_STATUS })

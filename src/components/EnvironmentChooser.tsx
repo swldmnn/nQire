@@ -2,7 +2,7 @@ import { Box, MenuItem, Select, SxProps, Theme } from "@mui/material"
 import { useTranslation } from "react-i18next"
 import { useEnvironment } from "../contexts/environment/useEnvironment"
 import { useQuery } from "@tanstack/react-query";
-import { queries } from "../constants";
+import { NO_ENVIRONMENT_ID, queries } from "../constants";
 import { fetchEnvironments } from "../api/environments";
 
 interface EnvironmentChooserProps {
@@ -32,7 +32,7 @@ function EnvironmentChooser({ sx }: EnvironmentChooserProps) {
                 sx={{ width: '100%' }}
                 variant='standard'
             >
-                <MenuItem value={-1} key='envItem_none'>{t('no_environment')}</MenuItem>
+                <MenuItem value={NO_ENVIRONMENT_ID} key='envItem_none'>{t('no_environment')}</MenuItem>
                 {
                     environments.map(environment =>
                         <MenuItem value={environment.id} key={`envItem_${environment.label}`}>{environment.label}</MenuItem>

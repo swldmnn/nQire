@@ -1,9 +1,6 @@
-use http::Request;
 use sqlx::FromRow;
 
-use crate::domain::{
-    Environment, EnvironmentValue, HttpRequestSet, RequestMetaData,
-};
+use crate::domain::{Environment, EnvironmentValue, HttpHeader, HttpRequest, HttpRequestSet};
 
 #[derive(Debug, FromRow)]
 pub struct RequestSetRecord {
@@ -51,20 +48,25 @@ impl From<RequestSetRecord> for HttpRequestSet {
     }
 }
 
-impl From<RequestRecord> for Request<String> {
+impl From<RequestRecord> for HttpRequest {
     fn from(request_record: RequestRecord) -> Self {
-        let request = Request::builder()
-            .method(request_record.method.as_str())
-            .uri(request_record.url.to_owned())
-            .extension(RequestMetaData {
-                id: Some(request_record.id),
-                request_set_id: Some(request_record.request_set_id),
-                label: request_record.label.to_owned(),
-            })
-            .body(request_record.body.to_owned())
-            .unwrap();
+        HttpRequest {
+            id: Some(request_record.id),
+            label: request_record.label.to_owned(),
+            method: request_record.method.to_owned(),
+            url: request_record.url.to_owned(),
+            headers: vec![],
+            body: request_record.body.to_owned(),
+        }
+    }
+}
 
-        request
+impl From<RequestHeaderRecord> for HttpHeader {
+    fn from(header_record: RequestHeaderRecord) -> Self {
+        HttpHeader {
+            key: header_record.key.to_owned(),
+            value: header_record.value.to_owned(),
+        }
     }
 }
 

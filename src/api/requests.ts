@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
-import { HttpRequest, HttpRequestSet, HttpResponse } from "../types/types";
-import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer";
+import { Environment, HttpRequest, HttpRequestSet, HttpResponse } from "../types/types";
+import { HttpHeaderTransfer, HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer";
 
 export type SaveRequestInput = {
   request: HttpRequestTransfer,
@@ -11,13 +11,55 @@ const sanitizeRequest = (request: HttpRequestTransfer) => {
   const headers = request.headers.filter(header => !!header.key)
 
   return {
-    ... request,
+    ...request,
     headers
   } as HttpRequestTransfer
 }
 
-export async function sendHttpRequest(request: HttpRequestTransfer): Promise<HttpResponse> {
-  const response = await invoke("send_http_request", { request: sanitizeRequest(request) })
+const replacePlaceholders = (
+  input: string | undefined,
+  environment: Environment
+) => {
+  if (!input) {
+    return input
+  }
+
+  const envValueMap = environment.values.reduce((acc, value) => {
+    acc[value.key] = value.value;
+    return acc;
+  }, {} as Record<string, string>);
+
+  return input.replace(/{{(.*?)}}/g, (match, placeholderName) => {
+    const value = envValueMap[placeholderName]
+    return value !== undefined ? value : match
+  })
+}
+
+const replaceRequestPlaceholders = async (
+  request: HttpRequestTransfer,
+  environment: Environment
+): Promise<HttpRequestTransfer> => {
+  return {
+    ...request,
+    url: replacePlaceholders(request.url, environment) ?? request.url,
+    body: replacePlaceholders(request.body, environment),
+    headers: request.headers.map(header => {
+      return {
+        key: replacePlaceholders(header.key, environment) ?? header.key,
+        value: replacePlaceholders(header.value, environment) ?? header.value,
+      } as HttpHeaderTransfer
+    }),
+  }
+}
+
+export async function sendHttpRequest(request: HttpRequestTransfer, environment?: Environment): Promise<HttpResponse> {
+  let sanitizedRequest = sanitizeRequest(request)
+
+  if (environment) {
+    sanitizedRequest = await replaceRequestPlaceholders(sanitizedRequest, environment)
+  }
+
+  const response = await invoke("send_http_request", { request: sanitizedRequest })
   return response as HttpResponse
 }
 
@@ -39,7 +81,6 @@ export async function fetchRequestSets(): Promise<HttpRequestSet[]> {
 
 export async function fetchRequest(requestId: number): Promise<HttpRequest> {
   const requestTransfer: HttpRequestTransfer = await invoke('find_request', { requestId });
-  console.log
   return requestTransfer as HttpRequest
 }
 
