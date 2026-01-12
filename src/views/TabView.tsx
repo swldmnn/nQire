@@ -1,11 +1,11 @@
-import { Box, Tab, Tabs } from "@mui/material"
+import { Box, Divider, Tab, Tabs, Typography } from "@mui/material"
 import { useTabs } from "../contexts/tabs/useTabs"
 import { TabItem } from "../types/types"
 import RequestView from "./RequestView"
 import EnvironmentView from "./EnvironmentView"
-import CloseIcon from '@mui/icons-material/Close'
 import ImportView from "./ImportView"
 import ExportView from "./ExportView"
+import TabHeader from "../components/TabHeader"
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -95,15 +95,14 @@ function TabView() {
                 >
                     {tabsContext.state.openTabs.map((tabItem, index) =>
                         <Tab
-                            label={<div>
-                                {tabItem.label}
-                                <CloseIcon
-                                    onClick={(e) => { e.stopPropagation(); onClose(tabItem) }}
-                                    sx={{ height: '1rem', verticalAlign: 'bottom', color: 'secondary.main' }}
-                                />
-                            </div>}
                             key={`tab_${index}_${tabItem.label}`}
-                        ></Tab>
+                            label={<TabHeader label={tabItem.label} onClose={() => onClose(tabItem)} />}
+                            sx={{
+                                minWidth: 0,
+                                textTransform: 'none',
+                                padding: 0,
+                            }}
+                        />
                     )}
                 </Tabs>
             </Box>

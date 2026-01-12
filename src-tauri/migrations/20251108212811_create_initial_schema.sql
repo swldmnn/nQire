@@ -52,13 +52,14 @@ UNION ALL SELECT 3, 1, 'ChuckNorrisJoke', 'GET', 'https://api.chucknorris.io/jok
 UNION ALL SELECT 4, 1, 'IP API', 'GET', 'https://ipapi.co/json', ''
 UNION ALL SELECT 5, 1, 'PokeAPI', 'GET', 'https://pokeapi.co/api/v2/pokemon/ditto', ''
 UNION ALL SELECT 6, 1, 'Countries', 'GET', 'https://restcountries.com/v3.1/all?fields=name,flags', ''
-UNION ALL SELECT 7, 2, 'UsingPlaceholders', 'POST', '{{baseUrl}}/posts', '{"foo":"{{fooValue}}"}' 
+UNION ALL SELECT 7, 1, 'Countries but with a long label', 'GET', 'https://restcountries.com/v3.1/all?fields=name,flags', ''
+UNION ALL SELECT 8, 2, 'Use Placeholders', 'POST', '{{baseUrl}}/posts', '{"foo":"{{fooValue}}"}' 
 WHERE NOT EXISTS (SELECT 1 FROM requests);
 
 INSERT INTO request_headers (id, request_id, key, value)
 SELECT 1, 1, 'Content-Type', 'application/json' 
 UNION ALL SELECT 2, 2, 'Content-Type', 'application/json'
-UNION ALL SELECT 3, 7, 'Content-Type', 'application/json'
+UNION ALL SELECT 3, 8, 'Content-Type', 'application/json'
 WHERE NOT EXISTS (SELECT 1 FROM request_headers);
 
 INSERT INTO environments (id, label)

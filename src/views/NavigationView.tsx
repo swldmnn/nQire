@@ -47,7 +47,7 @@ function NavigationView() {
                 sx={{
                     boxSizing: 'border-box',
                     height: '100%',
-                    width: '6rem',
+                    width: styles.dimensions.navigation_sidebar_width,
                     display: 'flex',
                     flexDirection: 'column',
                     zIndex: 100,
@@ -106,9 +106,10 @@ function NavigationView() {
                         flexGrow: 1,
                         display: 'flex',
                         flexDirection: 'row',
-                        overflow: 'auto',
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
                     }}>
-                    <Box sx={{ width: '14rem' }}>
+                    <Box sx={{ width: styles.dimensions.navigation_panel_width }}>
                         <Box
                             id='navigation_panel_requests'
                             role='tabpanel'

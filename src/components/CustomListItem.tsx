@@ -1,5 +1,5 @@
 import { SvgIconComponent } from "@mui/icons-material";
-import { ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 import { Action, TabItem } from "../types/types";
 import { styles } from "../constants";
 import ContextMenu from "./ContextMenu";
@@ -17,10 +17,16 @@ function CustomListItem({ index, item, icon: Icon, onDoubleClick, actions, class
     return (
         <ListItem key={`${item.typename}_${index}`} sx={{ padding: 0 }}>
             <ListItemButton onDoubleClick={onDoubleClick} sx={{ padding: styles.spaces.medium }}>
-                <ListItemIcon sx={{minWidth: 0, marginRight: styles.spaces.medium}}>
+                <ListItemIcon sx={{ minWidth: 0, marginRight: styles.spaces.medium }}>
                     <Icon className={className} />
                 </ListItemIcon>
-                <ListItemText primary={item.label} />
+                <ListItemText
+                    primary={
+                        <Typography noWrap>
+                            {item.label}
+                        </Typography>
+                    }
+                />
 
             </ListItemButton>
             {!!actions.length && <ContextMenu
