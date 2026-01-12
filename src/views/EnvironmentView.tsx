@@ -2,7 +2,7 @@ import { Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead
 import { Environment } from "../types/types"
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import AddSharpIcon from '@mui/icons-material/AddSharp'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ItemTitleBar from "../components/ItemTitleBar"
 import { useTranslation } from "react-i18next"
 import { useNotification } from "../contexts/notification/useNotification"
@@ -22,12 +22,21 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
     const tabsContext = useTabs()
     const queryClient = useQueryClient()
 
-    const { data: environment } = useQuery({
+    const { data: fetchedEnvironment } = useQuery({
         queryKey: ['fetchEnvironment', environmentId],
         queryFn: () => fetchEnvironment(environmentId),
+        staleTime: Infinity,
+        refetchOnMount: 'always',
     })
 
     const [isModified, setIsModified] = useState(false)
+    const [environment, setEnvironment] = useState(fetchedEnvironment)
+
+    useEffect(() => {
+        if (fetchedEnvironment) {
+            setEnvironment(fetchedEnvironment)
+        }
+    }, [fetchedEnvironment])
 
     const saveEnvironmentMutation = useMutation({
         mutationFn: saveEnvironment,
@@ -45,13 +54,22 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
         }
     })
 
-    const modifyEnvironment = (newData: Environment) => {
-        queryClient.setQueryData([queries.fetchEnvironment, environmentId], (oldData: Environment) => ({
-            ...oldData,
-            ...newData,
-        }))
+    const modifyEnvironment = (updatedEnvironment: Environment) => {
+        setEnvironment(prev => {
+            if (!prev) {
+                return prev
+            }
+
+            return { ...prev, ...updatedEnvironment }
+        })
 
         setIsModified(true)
+    }
+
+    const syncEnvironmentToQueryCache = () => {
+        if (environment) {
+            queryClient.setQueryData([queries.fetchEnvironment, environmentId], environment)
+        }
     }
 
     const onLabelChange = (newValue: string) => {
@@ -89,6 +107,7 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
             const values = environment.values.map(value => { return { ...value } })
             values.push({ key: '', value: '' })
             modifyEnvironment({ ...environment, values })
+            syncEnvironmentToQueryCache()
         }
     }
 
@@ -134,6 +153,7 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
                                         key={`value_key_${index}`}
                                         value={value.key}
                                         onChange={(e) => onKeyChange(index, e.currentTarget.value)}
+                                        onBlur={syncEnvironmentToQueryCache}
                                         sx={{ width: '100%' }}
                                         slotProps={{
                                             htmlInput: {
@@ -153,6 +173,7 @@ function EnvironmentView({ environmentId }: EnvironmentViewProps) {
                                         key={`value_value_${index}`}
                                         value={value.value}
                                         onChange={(e) => onValueChange(index, e.currentTarget.value)}
+                                        onBlur={syncEnvironmentToQueryCache}
                                         sx={{ width: '100%' }}
                                         slotProps={{
                                             htmlInput: {
