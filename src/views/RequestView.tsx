@@ -101,7 +101,7 @@ function RequestView({ requestId }: RequestViewProps) {
 
         const environmentId = environmentContext.state.activeEnvironmentId
         const environment: Environment | undefined = environmentId !== NO_ENVIRONMENT_ID
-            ? await queryClient.fetchQuery({
+            ? await queryClient.ensureQueryData({
                 queryKey: [queries.fetchEnvironment, environmentId],
                 queryFn: () => fetchEnvironment(environmentId)
             })
