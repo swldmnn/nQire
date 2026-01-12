@@ -1,4 +1,4 @@
-import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
+import { Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
 import { HttpRequestResponseProps } from "../types/types"
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
@@ -7,35 +7,49 @@ import { useTranslation } from "react-i18next";
 interface RequestHeadersProps extends HttpRequestResponseProps {
 }
 
-function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
-    if (!request || !setRequest) {
+function RequestHeaders({ request, updateRequest, syncRequest }: RequestHeadersProps) {
+    if (!request) {
         return null
     }
 
     const { t } = useTranslation()
 
     const onHeaderKeyChange = (index: number, newValue: string) => {
-        const headers = request.headers.map(h => { return { ...h } })
-        headers[index].key = newValue
-        setRequest({ ...request, headers })
+        if (updateRequest) {
+            const headers = request.headers.map(h => { return { ...h } })
+            headers[index].key = newValue
+            updateRequest({ ...request, headers })
+        }
     }
 
     const onHeaderValueChange = (index: number, newValue: string) => {
-        const headers = request.headers.map(h => { return { ...h } })
-        headers[index].value = newValue
-        setRequest({ ...request, headers })
+        if (updateRequest) {
+            const headers = request.headers.map(h => { return { ...h } })
+            headers[index].value = newValue
+            updateRequest({ ...request, headers })
+        }
     }
 
     const onHeaderDelete = (index: number) => {
-        const headers = request.headers.map(h => { return { ...h } })
-        headers.splice(index, 1)
-        setRequest({ ...request, headers })
+        if (updateRequest) {
+            const headers = request.headers.map(h => { return { ...h } })
+            headers.splice(index, 1)
+            updateRequest({ ...request, headers })
+        }
     }
 
     const onHeaderAdd = () => {
-        const headers = request.headers.map(h => { return { ...h } })
-        headers.push({ key: '', value: '' })
-        setRequest({ ...request, headers })
+        if (updateRequest) {
+            const headers = request.headers.map(h => { return { ...h } })
+            headers.push({ key: '', value: '' })
+            updateRequest({ ...request, headers })
+        }
+    }
+
+    const onBlur = () => {
+        if (syncRequest) {
+            syncRequest(request)
+        }
     }
 
     return <Box>
@@ -62,6 +76,7 @@ function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
                                     key={`header_key_${index}`}
                                     value={header.key}
                                     onChange={(e) => onHeaderKeyChange(index, e.currentTarget.value)}
+                                    onBlur={onBlur}
                                     sx={{ width: '100%' }}
                                     slotProps={{
                                         htmlInput: {
@@ -81,6 +96,7 @@ function RequestHeaders({ request, setRequest }: RequestHeadersProps) {
                                     key={`header_value_${index}`}
                                     value={header.value}
                                     onChange={(e) => onHeaderValueChange(index, e.currentTarget.value)}
+                                    onBlur={onBlur}
                                     sx={{ width: '100%' }}
                                     slotProps={{
                                         htmlInput: {

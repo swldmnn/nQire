@@ -8,8 +8,9 @@ export interface TabItem {
 export interface HttpRequestResponseProps {
     request?: HttpRequest
     response?: HttpResponse
-    setRequest?: (request: HttpRequest) => void
-    setResponse?: (response: HttpResponse) => void
+    updateRequest?: (request: HttpRequest) => void
+    syncRequest?: (request: HttpRequest) => void
+    updateResponse?: (response: HttpResponse) => void
 }
 
 export interface HttpRequestSet extends TabItem {

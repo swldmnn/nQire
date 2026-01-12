@@ -4,13 +4,21 @@ import { HttpRequestResponseProps } from "../types/types"
 interface RequestBodyProps extends HttpRequestResponseProps {
 }
 
-function RequestBody({ request, setRequest }: RequestBodyProps) {
-    if (!request || !setRequest) {
+function RequestBody({ request, updateRequest, syncRequest }: RequestBodyProps) {
+    if (!request) {
         return null
     }
 
-    const onBodyChange = (newValue: string) => {
-        setRequest({ ...request, body: newValue })
+    const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (updateRequest) {
+            updateRequest({ ...request, body: e.currentTarget.value })
+        }
+    }
+
+    const onBlur = () => {
+        if (syncRequest) {
+            syncRequest(request)
+        }
     }
 
     return <div className="row">
@@ -19,9 +27,10 @@ function RequestBody({ request, setRequest }: RequestBodyProps) {
             id="req-body"
             multiline
             rows={4}
-            value={request?.body ?? ''}
+            value={request.body ?? ''}
             variant="filled"
-            onChange={(e) => onBodyChange(e.currentTarget.value)}
+            onChange={onChange}
+            onBlur={onBlur}
             slotProps={{
                 htmlInput: {
                     autoCorrect: 'off',

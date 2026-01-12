@@ -6,8 +6,8 @@ interface RequestUrlBarProps extends HttpRequestResponseProps {
     sendRequest: (request?: HttpRequest) => void
 }
 
-function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps) {
-    if (!request || !setRequest) {
+function RequestUrlBar({ request, updateRequest, sendRequest, syncRequest }: RequestUrlBarProps) {
+    if (!request) {
         return null
     }
 
@@ -15,11 +15,21 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
     const themeClass = mode === 'dark' ? 'dark-theme' : 'light-theme';
 
     const onMethodChange = (newValue: string) => {
-        setRequest({ ...request, method: newValue })
+        if (updateRequest) {
+            updateRequest({ ...request, method: newValue })
+        }
     }
 
-    const onUrlChange = (newValue: string) => {
-        setRequest({ ...request, url: newValue })
+    const onUrlChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (updateRequest) {
+            updateRequest({ ...request, url: e.currentTarget.value })
+        }
+    }
+
+    const onBlur = () => {
+        if (syncRequest) {
+            syncRequest(request)
+        }
     }
 
     return <Box>
@@ -40,6 +50,7 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
                     name="httpMethod"
                     value={request?.method}
                     onChange={(e) => onMethodChange(e.target.value)}
+                    onBlur={onBlur}
                     variant="standard"
                     className={`http-${request.method.toLowerCase()} ${themeClass}`}
                     disableUnderline
@@ -58,7 +69,8 @@ function RequestUrlBar({ request, setRequest, sendRequest }: RequestUrlBarProps)
                 <TextField
                     fullWidth
                     value={request?.url}
-                    onChange={(e) => onUrlChange(e.currentTarget.value)}
+                    onChange={onUrlChange}
+                    onBlur={onBlur}
                     variant="standard"
                     sx={{
                         '& .MuiInput-underline:before': {

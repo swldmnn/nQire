@@ -1,7 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Typography } from "@mui/material"
 import RequestUrlBar from "../components/RequestUrlBar"
 import { Environment, HttpRequest, HttpResponse } from "../types/types"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { HttpRequestTransfer } from "../types/types_transfer"
 import RequestBody from "../components/RequestBody"
 import ResponseBody from "../components/ResponseBody"
@@ -29,9 +29,11 @@ function RequestView({ requestId }: RequestViewProps) {
     const queryClient = useQueryClient()
     const environmentContext = useEnvironment()
 
-    const { data: request } = useQuery({
+    const { data: fetchedRequest } = useQuery({
         queryKey: [queries.fetchRequest, requestId],
         queryFn: () => fetchRequest(requestId),
+        staleTime: Infinity,
+        refetchOnMount: 'always',
     })
 
     const saveRequestMutation = useMutation({
@@ -51,14 +53,30 @@ function RequestView({ requestId }: RequestViewProps) {
     const [isModified, setIsModified] = useState(false)
     const [isSending, setIsSending] = useState(false)
     const [response, setResponse] = useState({ status: 0, body: undefined } as HttpResponse)
+    const [request, setRequest] = useState(fetchedRequest)
 
-    const modifyRequest = (newData: HttpRequest) => {
-        queryClient.setQueryData([queries.fetchRequest, requestId], (oldData: HttpRequest) => ({
-            ...oldData,
-            ...newData,
-        }))
+    useEffect(() => {
+        if (fetchedRequest) {
+            setRequest(fetchedRequest)
+        }
+    }, [fetchedRequest])
+
+    const modifyRequest = (updatedRequest: HttpRequest) => {
+        setRequest(prev => {
+            if (!prev) {
+                return prev
+            }
+
+            return { ...prev, ...updatedRequest }
+        })
 
         setIsModified(true)
+    }
+
+    const syncRequestToQueryCache = () => {
+        if (request) {
+            queryClient.setQueryData([queries.fetchRequest, requestId], request)
+        }
     }
 
     const onLabelChange = (newValue: string) => {
@@ -69,6 +87,7 @@ function RequestView({ requestId }: RequestViewProps) {
 
     const onSave = async () => {
         if (request) {
+            syncRequestToQueryCache()
             saveRequestMutation.mutate({ request: request as HttpRequestTransfer })
         }
     }
@@ -121,8 +140,9 @@ function RequestView({ requestId }: RequestViewProps) {
                 <ItemTitleBar item={request} isModified={isModified} onItemSave={onSave} onLabelChange={onLabelChange} />
                 <RequestUrlBar
                     request={request}
-                    setRequest={modifyRequest}
+                    updateRequest={modifyRequest}
                     sendRequest={sendRequest}
+                    syncRequest={syncRequestToQueryCache}
                 />
             </Box>
             <Box id='requestView_content' sx={{
@@ -157,7 +177,8 @@ function RequestView({ requestId }: RequestViewProps) {
                         <AccordionDetails>
                             <RequestBody
                                 request={request}
-                                setRequest={modifyRequest}
+                                updateRequest={modifyRequest}
+                                syncRequest={syncRequestToQueryCache}
                             />
                         </AccordionDetails>
                     </Accordion>
@@ -178,7 +199,11 @@ function RequestView({ requestId }: RequestViewProps) {
                             <Typography component="span">{t('request_headers')}</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <RequestHeaders request={request} setRequest={modifyRequest} />
+                            <RequestHeaders
+                                request={request}
+                                updateRequest={modifyRequest}
+                                syncRequest={syncRequestToQueryCache}
+                            />
                         </AccordionDetails>
                     </Accordion>
                 </Box>
@@ -225,7 +250,7 @@ function RequestView({ requestId }: RequestViewProps) {
                                 </Box>
                                 : <ResponseBody
                                     response={response}
-                                    setResponse={setResponse}
+                                    updateResponse={setResponse}
                                 />}
                         </AccordionDetails>
                     </Accordion>
