@@ -101,8 +101,13 @@ function NavigationView() {
             {selectedIndex !== false && (
                 <Box
                     id='navigation_panels'
-                    sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}
-                >
+                    sx={{
+                        minHeight: 0,
+                        flexGrow: 1,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        overflow: 'auto',
+                    }}>
                     <Box sx={{ width: '14rem' }}>
                         <Box
                             id='navigation_panel_requests'
