@@ -162,9 +162,15 @@ function RequestListView({ }: RequestListProps) {
                                 padding: styles.spaces.medium,
                                 paddingTop: styles.spaces.small,
                                 paddingBottom: styles.spaces.small,
+                                minWidth: 0,
+                                '& .MuiAccordionSummary-content': {
+                                    minWidth: 0,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                },
                             }}
                         >
-                            <Typography component="span">{requestSet.label}</Typography>
+                            <Typography noWrap component="span" sx={{ minWidth: 0, flex: 1 }}>{requestSet.label}</Typography>
                             <ContextMenu
                                 actions={[
                                     { label: t('delete_item'), callback: () => deleteRequestSet(requestSetIndex) },

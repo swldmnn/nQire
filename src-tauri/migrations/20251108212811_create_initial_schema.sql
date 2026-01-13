@@ -43,6 +43,7 @@ CREATE TABLE environment_values (
 INSERT INTO request_sets (id, label)
 SELECT 1, 'Samples'
 UNION ALL SELECT 2, 'Placeholder Samples'
+UNION ALL SELECT 3, 'API with a long long long long name'
 WHERE NOT EXISTS (SELECT 1 FROM request_sets);
 
 INSERT INTO requests (id, request_set_id, label, method, url, body)
