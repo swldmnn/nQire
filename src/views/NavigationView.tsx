@@ -106,10 +106,13 @@ function NavigationView() {
                         flexGrow: 1,
                         display: 'flex',
                         flexDirection: 'row',
-                        overflowY: 'auto',
-                        overflowX: 'hidden',
+                        overflow: 'auto',
                     }}>
-                    <Box sx={{ width: styles.dimensions.navigation_panel_width }}>
+                    <Box sx={{
+                        minHeight: 0,
+                        minWidth: 0,
+                        width: styles.dimensions.navigation_panel_width,
+                    }}>
                         <Box
                             id='navigation_panel_requests'
                             role='tabpanel'
