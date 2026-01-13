@@ -59,6 +59,8 @@ function RequestUrlBar({ request, updateRequest, sendRequest, syncRequest }: Req
                     <MenuItem value="GET" className={`http-get ${themeClass}`} sx={{ fontWeight: 'bold' }}>GET</MenuItem>
                     <MenuItem value="POST" className={`http-post ${themeClass}`} sx={{ fontWeight: 'bold' }}>POST</MenuItem>
                     <MenuItem value="PATCH" className={`http-patch ${themeClass}`} sx={{ fontWeight: 'bold' }}>PATCH</MenuItem>
+                    <MenuItem value="PUT" className={`http-put ${themeClass}`} sx={{ fontWeight: 'bold' }}>PUT</MenuItem>
+                    <MenuItem value="DELETE" className={`http-delete ${themeClass}`} sx={{ fontWeight: 'bold' }}>DELETE</MenuItem>
                 </Select>
 
                 <Divider orientation="vertical" flexItem sx={{

@@ -7,6 +7,9 @@ pub fn send_http_request(request: HttpRequest) -> Result<Response<String>, Strin
     match request.method.as_str() {
         "GET" => return send(request),
         "POST" => return send(request),
+        "PATCH" => return send(request),
+        "PUT" => return send(request),
+        "DELETE" => return send(request),
         _ => return Err("Unsupported http method".to_owned()),
     }
 }

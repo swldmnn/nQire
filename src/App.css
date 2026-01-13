@@ -39,30 +39,45 @@ button {
 
 /* Http colors light */
 .http-get.light-theme {
-  color: rgb(53, 145, 195);
+  color: rgb(133, 57, 188);
 }
 
 .http-post.light-theme {
-  color: rgb(188, 57, 118);
+  color: rgb(57, 170, 188);
 }
 
 .http-patch.light-theme {
-  color: rgb(57, 188, 160);
+  color: rgb(119, 199, 38);
+}
+
+.http-put.light-theme {
+  color: rgb(218, 125, 32);
+}
+
+.http-delete.light-theme {
+  color: rgb(188, 57, 57);
 }
 
 /* Http colors dark */
 .http-get.dark-theme {
-  color: rgb(52, 211, 247);
+  color: rgb(196, 50, 241);
 }
 
 .http-post.dark-theme {
-  color: rgb(241, 50, 146);
+  color: rgb(49, 185, 244);
 }
 
 .http-patch.dark-theme {
-  color: rgb(60, 250, 199);
+  color: rgb(48, 248, 125);
 }
 
+.http-put.dark-theme {
+  color: rgb(247, 107, 52);
+}
+
+.http-delete.dark-theme {
+  color: rgb(250, 60, 130);
+}
 /* Json pretty light */
 .json-pretty-wrapper.light-theme .__json-pretty__ {
   line-height: 1.3;
