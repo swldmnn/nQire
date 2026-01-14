@@ -6,6 +6,10 @@ import {
     Typography,
     AccordionDetails,
     useColorScheme,
+    Modal,
+    TextField,
+    Paper,
+    Button,
 } from "@mui/material"
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
@@ -25,6 +29,8 @@ import {
     deleteRequest as invokeDeleteRequest,
     deleteRequestSet as invokeDeleteRequestSet,
 } from "../api/requests";
+import { useState } from "react";
+import { HttpRequestSet } from "../types/types";
 
 interface RequestListProps {
 }
@@ -93,6 +99,9 @@ function RequestListView({ }: RequestListProps) {
         }
     })
 
+    const [renameRequestSetIndex, setRenameRequestSetIndex] = useState(-1)
+    const [renameText, setRenameText] = useState('')
+
     const openItem = (requestSetIndex: number, requestIndex: number) => {
         if (requestSets) {
             const item = requestSets[requestSetIndex].requests[requestIndex]
@@ -139,6 +148,25 @@ function RequestListView({ }: RequestListProps) {
         }
     }
 
+    const openRenameModal = (itemname: string, itemIndex: number) => {
+        setRenameText(itemname)
+        setRenameRequestSetIndex(itemIndex)
+    }
+
+    const renameRequestSet = () => {
+        const requestSet = requestSets?.[renameRequestSetIndex]
+        setRenameRequestSetIndex(-1)
+
+        if (requestSet) {
+            saveRequestSetMutation.mutate({
+                ...requestSet,
+                label: renameText,
+                typename: 'HttpRequestSet',
+                requests: [],
+            })
+        }
+    }
+
     return (
         <Box>
             <CategoryTitleBar
@@ -175,6 +203,7 @@ function RequestListView({ }: RequestListProps) {
                                 actions={[
                                     { label: t('delete_item'), callback: () => deleteRequestSet(requestSetIndex) },
                                     { label: t('add_item'), callback: () => createRequest(requestSetIndex) },
+                                    { label: t('rename_item'), callback: () => { openRenameModal(requestSet.label, requestSetIndex) } },
                                 ]}
                                 sx={{ marginLeft: 'auto' }}
                             />
@@ -196,6 +225,39 @@ function RequestListView({ }: RequestListProps) {
                         </AccordionDetails>
                     </Accordion>
                 )}
+            <Modal
+                open={renameRequestSetIndex >= 0}
+                onClose={() => { setRenameRequestSetIndex(-1) }}
+            >
+                <Paper elevation={3} sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: styles.dimensions.rename_item_modal_width,
+                    padding: styles.spaces.modal_padding,
+                }}>
+                    <Typography id='modal-modal-title' variant='h6'>
+                        {t('rename_item_modal_title')}
+                    </Typography>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        width: '100%'
+                    }}>
+                        <TextField
+                            value={renameText}
+                            size='small'
+                            onChange={(e) => setRenameText(e.currentTarget.value)}
+                            sx={{
+                                flexGrow: 1,
+                                marginRight: styles.spaces.medium
+                            }}
+                        />
+                        <Button variant='contained' onClick={renameRequestSet}>{t('ok')}</Button>
+                    </Box>
+                </Paper>
+            </Modal>
         </Box>)
 }
 

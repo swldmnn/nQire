@@ -4,11 +4,13 @@ export const styles = {
         large: '.8rem',
         medium: '.5rem',
         small: '.1rem',
+        modal_padding: 4,
     },
     dimensions: {
         max_tab_width: '8rem',
         navigation_panel_width: '14rem',
         navigation_sidebar_width: '6rem',
+        rename_item_modal_width: '25rem',
     }
 }
 

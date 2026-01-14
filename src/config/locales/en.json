@@ -6,6 +6,8 @@
     "create_item": "New",
     "delete_item": "Delete",
     "add_item": "Add",
+    "rename_item": "Rename...",
+    "rename_item_modal_title": "Rename item:",
     "item_saved": "Saved",
     "item_deleted": "Deleted",
     "request_body": "Body",
