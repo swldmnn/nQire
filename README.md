@@ -8,7 +8,7 @@ This project is based on Tauri https://v2.tauri.app/start/
 https://v2.tauri.app/start/prerequisites/
 
 
-## Start developmend server
+## Start development server
 ```
 pnpm install
 pnpm run tauri dev
