@@ -28,6 +28,7 @@ function ImportView() {
         }}>
             <Box sx={{
                 width: '100%',
+                maxWidth: styles.dimensions.import_box_max_width,
                 maxHeight: '100%',
                 boxSizing: 'border-box',
                 display: 'flex',

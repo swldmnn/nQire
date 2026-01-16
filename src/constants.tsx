@@ -12,6 +12,7 @@ export const styles = {
         navigation_panel_width: '14rem',
         navigation_sidebar_width: '6rem',
         rename_item_modal_width: '25rem',
+        import_box_max_width: '50rem',
     }
 }
 
