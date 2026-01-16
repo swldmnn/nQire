@@ -26,9 +26,7 @@ function RequestBody({ request, updateRequest, syncRequest }: RequestBodyProps) 
             fullWidth
             id="req-body"
             multiline
-            rows={4}
             value={request.body ?? ''}
-            variant="filled"
             onChange={onChange}
             onBlur={onBlur}
             slotProps={{

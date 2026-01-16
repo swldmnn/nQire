@@ -32,5 +32,11 @@
     "import_item_label": "Import",
     "export_item_label": "Export",
     "coming_soon": "Coming soon...",
-    "error_send_request": "Send request failed"
+    "error_send_request": "Send request failed",
+    "import_files_heading": "Import files",
+    "choose_files_button_label": "Choose...",
+    "import_text_heading": "Import text",
+    "import_text_placeholder": "paste e.g. curl, http, ...",
+    "import_text_button_label": "Import..."
+    
 }

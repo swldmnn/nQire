@@ -1,6 +1,7 @@
 
 export const styles = {
     spaces: {
+        xLarge: '1.5rem',
         large: '.8rem',
         medium: '.5rem',
         small: '.1rem',

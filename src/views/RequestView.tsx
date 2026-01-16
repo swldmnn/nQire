@@ -172,17 +172,16 @@ function RequestView({ requestId }: RequestViewProps) {
                                 color: 'primary.dark',
                             }}
                         >
-                            <Typography component="span">{t('request_body')}</Typography>
+                            <Typography component="span">{t('request_headers')}</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <RequestBody
+                            <RequestHeaders
                                 request={request}
                                 updateRequest={modifyRequest}
                                 syncRequest={syncRequestToQueryCache}
                             />
                         </AccordionDetails>
                     </Accordion>
-
                     <Accordion
                         defaultExpanded
                         disableGutters
@@ -196,10 +195,10 @@ function RequestView({ requestId }: RequestViewProps) {
                                 color: 'primary.dark',
                             }}
                         >
-                            <Typography component="span">{t('request_headers')}</Typography>
+                            <Typography component="span">{t('request_body')}</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <RequestHeaders
+                            <RequestBody
                                 request={request}
                                 updateRequest={modifyRequest}
                                 syncRequest={syncRequestToQueryCache}
