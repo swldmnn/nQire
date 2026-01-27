@@ -34,9 +34,17 @@
     "coming_soon": "Coming soon...",
     "error_send_request": "Send request failed",
     "import_files_heading": "Import files",
+    "import_files_dropzone_hint": "Drop files here...",
     "choose_files_button_label": "Choose...",
     "import_text_heading": "Import text",
     "import_text_placeholder": "paste e.g. curl, http, ...",
-    "import_text_button_label": "Import..."
-    
+    "import_text_button_label": "Import...",
+    "import_text_format_label": "format:",
+    "import_text_format_auto": "auto",
+    "import_text_parse_error": "Failed to parse import text.",
+    "import_modal_title": "Import items",
+    "import_modal_button_label": "Import",
+    "cancel": "Cancel",
+    "import_cloumn_header_type": "Type",
+    "import_cloumn_header_name": "Name"
 }

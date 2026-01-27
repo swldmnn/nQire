@@ -1,3 +1,4 @@
+import { EnvironmentTransfer, HttpRequestSetTransfer, HttpRequestTransfer } from "./types_transfer"
 
 export interface TabItem {
     typename: string
@@ -49,4 +50,9 @@ export interface EnvironmentValue {
 export interface Action {
     label: string,
     callback: () => void
+}
+
+export interface ImportItem {
+    selected: boolean,
+    item: HttpRequestTransfer | HttpRequestSetTransfer | EnvironmentTransfer,
 }

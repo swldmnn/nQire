@@ -30,7 +30,6 @@ import {
     deleteRequestSet as invokeDeleteRequestSet,
 } from "../api/requests";
 import { useState } from "react";
-import { HttpRequestSet } from "../types/types";
 
 interface RequestListProps {
 }
@@ -157,7 +156,7 @@ function RequestListView({ }: RequestListProps) {
         const requestSet = requestSets?.[renameRequestSetIndex]
         setRenameRequestSetIndex(-1)
 
-        if (requestSet) {
+        if (requestSet && requestSet.label !== renameText) {
             saveRequestSetMutation.mutate({
                 ...requestSet,
                 label: renameText,
@@ -226,18 +225,20 @@ function RequestListView({ }: RequestListProps) {
                     </Accordion>
                 )}
             <Modal
+                id='rename_request_set_modal'
                 open={renameRequestSetIndex >= 0}
                 onClose={() => { setRenameRequestSetIndex(-1) }}
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
             >
                 <Paper elevation={3} sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
                     width: styles.dimensions.rename_item_modal_width,
                     padding: styles.spaces.modal_padding,
                 }}>
-                    <Typography id='modal-modal-title' variant='h6'>
+                    <Typography variant='h6'>
                         {t('rename_item_modal_title')}
                     </Typography>
                     <Box sx={{
