@@ -2,6 +2,14 @@ import { EnvironmentTransfer, HttpRequestSetTransfer, HttpRequestTransfer } from
 
 export type importExportFormat = 'auto' | 'curl' | 'http'
 
+export type HttpMethod = string & { __brand: 'HttpMethod' }
+
+export function assertHttpMethod(value: string): asserts value is HttpMethod {
+    if (!['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'].includes(value)) {
+        throw new Error(`${value} is not a valid http method.`)
+    }
+}
+
 export interface TabItem {
     typename: string
     id: number
@@ -23,7 +31,7 @@ export interface HttpRequestSet extends TabItem {
 
 export interface HttpRequest extends TabItem {
     typename: 'HttpRequest'
-    method: string
+    method: HttpMethod
     url: string
     headers: HttpHeader[]
     body?: string

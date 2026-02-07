@@ -1,3 +1,4 @@
+import { assertHttpMethod } from '../../types/types';
 import { HttpRequestTransfer } from '../../types/types_transfer';
 
 export function parseCurlCommands(input: string): HttpRequestTransfer[] {
@@ -44,11 +45,14 @@ function parseSingleCurlCommand(command: string): HttpRequestTransfer {
       value: match[2].trim(),
     }));
 
+    const method = methodMatch ? methodMatch[1].toUpperCase() : 'GET';
+    assertHttpMethod(method);
+
     return {
       typename: 'HttpRequest',
       label: 'Imported Request',
       id: undefined,
-      method: methodMatch ? methodMatch[1].toUpperCase() : 'GET',
+      method,
       url: urlMatch[0],
       headers,
       body: bodyMatch ? bodyMatch[1] : '',

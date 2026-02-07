@@ -1,5 +1,5 @@
 import { TextField, Button, Select, MenuItem, Box, Divider, Paper, useColorScheme } from "@mui/material";
-import { HttpRequest, HttpRequestResponseProps } from "../types/types";
+import { assertHttpMethod, HttpMethod, HttpRequest, HttpRequestResponseProps } from "../types/types";
 import { styles } from "../constants";
 
 interface RequestUrlBarProps extends HttpRequestResponseProps {
@@ -16,6 +16,7 @@ function RequestUrlBar({ request, updateRequest, sendRequest, syncRequest }: Req
 
     const onMethodChange = (newValue: string) => {
         if (updateRequest) {
+            assertHttpMethod(newValue);
             updateRequest({ ...request, method: newValue })
         }
     }
@@ -56,11 +57,11 @@ function RequestUrlBar({ request, updateRequest, sendRequest, syncRequest }: Req
                     disableUnderline
                     sx={{ fontWeight: 'bold' }}
                 >
-                    <MenuItem value="GET" className={`http-get ${themeClass}`} sx={{ fontWeight: 'bold' }}>GET</MenuItem>
-                    <MenuItem value="POST" className={`http-post ${themeClass}`} sx={{ fontWeight: 'bold' }}>POST</MenuItem>
-                    <MenuItem value="PATCH" className={`http-patch ${themeClass}`} sx={{ fontWeight: 'bold' }}>PATCH</MenuItem>
-                    <MenuItem value="PUT" className={`http-put ${themeClass}`} sx={{ fontWeight: 'bold' }}>PUT</MenuItem>
-                    <MenuItem value="DELETE" className={`http-delete ${themeClass}`} sx={{ fontWeight: 'bold' }}>DELETE</MenuItem>
+                    <MenuItem value={'GET' as HttpMethod} className={`http-get ${themeClass}`} sx={{ fontWeight: 'bold' }}>GET</MenuItem>
+                    <MenuItem value={'POST' as HttpMethod} className={`http-post ${themeClass}`} sx={{ fontWeight: 'bold' }}>POST</MenuItem>
+                    <MenuItem value={'PATCH' as HttpMethod} className={`http-patch ${themeClass}`} sx={{ fontWeight: 'bold' }}>PATCH</MenuItem>
+                    <MenuItem value={'PUT' as HttpMethod} className={`http-put ${themeClass}`} sx={{ fontWeight: 'bold' }}>PUT</MenuItem>
+                    <MenuItem value={'DELETE' as HttpMethod} className={`http-delete ${themeClass}`} sx={{ fontWeight: 'bold' }}>DELETE</MenuItem>
                 </Select>
 
                 <Divider orientation="vertical" flexItem sx={{

@@ -30,6 +30,7 @@ import {
     deleteRequestSet as invokeDeleteRequestSet,
 } from "../api/requests";
 import { useState } from "react";
+import { HttpMethod } from "../types/types";
 
 interface RequestListProps {
 }
@@ -116,7 +117,7 @@ function RequestListView({ }: RequestListProps) {
                     id: undefined,
                     label: t('new_request_label'),
                     url: t('new_request_url'),
-                    method: 'GET',
+                    method: 'GET' as HttpMethod,
                     headers: [],
                     body: '',
                 } as HttpRequestTransfer,

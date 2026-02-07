@@ -1,3 +1,4 @@
+import { assertHttpMethod } from '../../types/types';
 import { HttpRequestTransfer } from '../../types/types_transfer';
 
 export function parseHttpFile(input: string): HttpRequestTransfer[] {
@@ -8,7 +9,10 @@ export function parseHttpFile(input: string): HttpRequestTransfer[] {
     const lines = block.split('\n').map(line => line.trim());
     if (lines.length === 0) continue;
 
-    const [method, url] = lines[0].split(/\s+/); // First line contains method and URL
+    let [method, url] = lines[0].split(/\s+/); // First line contains method and URL
+    method = method.toUpperCase();
+    assertHttpMethod(method);
+
     if (!method || !url) {
       throw new Error('Invalid HTTP request: Missing method or URL.');
     }
@@ -40,7 +44,7 @@ export function parseHttpFile(input: string): HttpRequestTransfer[] {
       typename: 'HttpRequest',
       label: 'Imported HTTP Request',
       id: undefined,
-      method: method.toUpperCase(),
+      method,
       url,
       headers,
       body,

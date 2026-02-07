@@ -3,6 +3,8 @@
  * Keep in sync with the corresponding backend types to avoid Serialization Errors.
  */
 
+import { HttpMethod } from "./types"
+
 export interface HttpRequestSetTransfer {
     typename: 'HttpRequestSet'
     id?: number
@@ -23,7 +25,7 @@ export interface HttpRequestTransfer {
     typename: 'HttpRequest'
     id?: number
     label: string
-    method: string
+    method: HttpMethod
     url: string
     headers: HttpHeaderTransfer[]
     body?: string
