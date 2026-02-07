@@ -5,11 +5,13 @@ import { useState } from "react";
 import { useNotification } from "../contexts/notification/useNotification";
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { parseCurlCommands } from "../util/parsers/curlParser";
+import { parseHttpFile } from '../util/parsers/httpParser';
 import ImportModalContentView from "./ImportModalContentView";
-import { ImportItem } from "../types/types";
-import { HttpRequestSetTransfer } from "../types/types_transfer";
+import { importExportFormat, ImportItem } from "../types/types";
+import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer";
 import { saveRequest, saveRequestSet } from "../api/requests";
 import { useQueryClient } from "@tanstack/react-query";
+import { detectImportFormat } from "../util/parsers/detectParser";
 
 function ImportView() {
     const { t } = useTranslation()
@@ -18,6 +20,7 @@ function ImportView() {
 
     const [importText, setImportText] = useState('')
     const [importItems, setImportItems] = useState([] as ImportItem[])
+    const [selectedTextImportFormat, setSelectedTextImportFormat] = useState('auto' as importExportFormat);
 
     const showNotification = () => {
         notificationContext.dispatch({
@@ -28,12 +31,24 @@ function ImportView() {
 
     const onImportText = () => {
         try {
-            const parsedRequests = parseCurlCommands(importText);
+            let parsedRequests: HttpRequestTransfer[] = [];
+            const selectedFormat = selectedTextImportFormat === 'auto'
+                ? detectImportFormat(importText)
+                : selectedTextImportFormat
+
+            if (selectedFormat === 'curl') {
+                parsedRequests = parseCurlCommands(importText);
+            } else if (selectedFormat === 'http') {
+                parsedRequests = parseHttpFile(importText);
+            } else {
+                throw new Error(t('unknown_format_error'))
+            }
+
             setImportItems(parsedRequests.map(req => ({ selected: true, item: req })));
         } catch (error) {
             notificationContext.dispatch({
                 type: 'NOTIFY',
-                payload: { value: { typename: 'Error', errorMessage: `${error}` }, defaultMessage: t('import_text_parse_error') }
+                payload: { value: { typename: 'Error', errorMessage: `${error}` }, defaultMessage: t('import_text_parse_error') },
             });
         }
     };
@@ -44,10 +59,10 @@ function ImportView() {
 
     const onConfirmImport = async () => {
         const requestsToImport = importItems
-        .filter(item => item.selected)
-        .map(item => item.item)
-        .filter(item => item.typename === 'HttpRequest')
-        
+            .filter(item => item.selected)
+            .map(item => item.item)
+            .filter(item => item.typename === 'HttpRequest')
+
         if (!!requestsToImport.length) {
             try {
                 const savedRequestSet = await saveRequestSet({
@@ -61,7 +76,7 @@ function ImportView() {
                     queryClient.invalidateQueries({ queryKey: [queries.fetchRequestSets] })
                 })
 
-                
+
 
                 notificationContext.dispatch({
                     type: 'NOTIFY',
@@ -108,8 +123,13 @@ function ImportView() {
                     }}>
                         <Typography variant='h5'>{t('import_files_heading')}</Typography>
                         <Typography sx={{ marginLeft: 'auto', alignSelf: 'end' }}>{t('import_text_format_label')}</Typography>
-                        <Select value={0} size='small' sx={{ marginLeft: styles.spaces.medium, alignSelf: 'end', height: '2rem' }}>
-                            <MenuItem value={0} >{t('import_text_format_auto')}</MenuItem>
+                        <Select
+                            id="import_text_format_select"
+                            value={'auto'}
+                            size='small'
+                            sx={{ marginLeft: styles.spaces.medium, alignSelf: 'end', height: '2rem' }}
+                        >
+                            <MenuItem value='auto'>{t('import_text_format_auto')}</MenuItem>
                         </Select>
                         <Button
                             variant='contained'
@@ -154,8 +174,16 @@ function ImportView() {
                     }}>
                         <Typography variant='h5'>{t('import_text_heading')}</Typography>
                         <Typography sx={{ marginLeft: 'auto', alignSelf: 'end' }}>{t('import_text_format_label')}</Typography>
-                        <Select value={0} size='small' sx={{ marginLeft: styles.spaces.medium, alignSelf: 'end', height: '2rem' }}>
-                            <MenuItem value={0} >{t('import_text_format_auto')}</MenuItem>
+                        <Select
+                            id="import_text_format_select"
+                            value={selectedTextImportFormat}
+                            onChange={(e) => setSelectedTextImportFormat(e.target.value as importExportFormat)}
+                            size='small'
+                            sx={{ marginLeft: styles.spaces.medium, alignSelf: 'end', height: '2rem' }}
+                        >
+                            <MenuItem value='auto'>{t('import_export_format_auto')}</MenuItem>
+                            <MenuItem value='curl'>{t('import_export_format_curl')}</MenuItem>
+                            <MenuItem value='http'>{t('import_export_format_http')}</MenuItem>
                         </Select>
                         <Button
                             disabled={!importText.length}

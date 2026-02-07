@@ -49,5 +49,9 @@
     "import_cloumn_header_name": "Name",
     "import_requests_error": "Error importing requests",
     "imported_request_set_label": "Imported Requests",
-    "import_successful": "Import successful"
+    "import_successful": "Import successful",
+    "unknown_format_error": "Unknown format",
+    "import_export_format_auto": "auto",
+    "import_export_format_curl": "curl",
+    "import_export_format_http": "http"
 }

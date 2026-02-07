@@ -1,5 +1,7 @@
 import { EnvironmentTransfer, HttpRequestSetTransfer, HttpRequestTransfer } from "./types_transfer"
 
+export type importExportFormat = 'auto' | 'curl' | 'http'
+
 export interface TabItem {
     typename: string
     id: number
