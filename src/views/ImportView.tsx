@@ -1,5 +1,5 @@
 import { Box, Button, Card, MenuItem, Modal, Paper, Select, TextField, Typography } from "@mui/material"
-import { styles } from "../constants"
+import { queries, styles } from "../constants"
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useNotification } from "../contexts/notification/useNotification";
@@ -7,10 +7,14 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { parseCurlCommands } from "../util/importParsers";
 import ImportModalContentView from "./ImportModalContentView";
 import { ImportItem } from "../types/types";
+import { HttpRequestSetTransfer } from "../types/types_transfer";
+import { saveRequest, saveRequestSet } from "../api/requests";
+import { useQueryClient } from "@tanstack/react-query";
 
 function ImportView() {
     const { t } = useTranslation()
     const notificationContext = useNotification()
+    const queryClient = useQueryClient()
 
     const [importText, setImportText] = useState('')
     const [importItems, setImportItems] = useState([] as ImportItem[])
@@ -38,10 +42,40 @@ function ImportView() {
         setImportItems([]);
     }
 
-    const onConfirmImport = () => {
-        console.log(importItems)
-        setImportItems([]);
-        notificationContext.dispatch({ type: 'NOTIFY', payload: { value: { typename: 'Error', errorMessage: t('coming_soon') } } })
+    const onConfirmImport = async () => {
+        const requestsToImport = importItems
+        .filter(item => item.selected)
+        .map(item => item.item)
+        .filter(item => item.typename === 'HttpRequest')
+        
+        if (!!requestsToImport.length) {
+            try {
+                const savedRequestSet = await saveRequestSet({
+                    typename: 'HttpRequestSet',
+                    label: t('imported_request_set_label'),
+                    requests: [],
+                } as HttpRequestSetTransfer)
+
+                requestsToImport.forEach(async request => {
+                    await saveRequest({ request: request, requestSetId: savedRequestSet.id })
+                    queryClient.invalidateQueries({ queryKey: [queries.fetchRequestSets] })
+                })
+
+                
+
+                notificationContext.dispatch({
+                    type: 'NOTIFY',
+                    payload: { value: {}, defaultMessage: t('import_successful') }
+                })
+            } catch (error) {
+                notificationContext.dispatch({
+                    type: 'NOTIFY',
+                    payload: { value: { typename: 'Error', errorMessage: `${error}` }, defaultMessage: t('import_requests_error') }
+                })
+            } finally {
+                setImportItems([]);
+            }
+        }
     }
 
     return (

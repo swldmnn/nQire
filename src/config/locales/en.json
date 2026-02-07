@@ -46,5 +46,8 @@
     "import_modal_button_label": "Import",
     "cancel": "Cancel",
     "import_cloumn_header_type": "Type",
-    "import_cloumn_header_name": "Name"
+    "import_cloumn_header_name": "Name",
+    "import_requests_error": "Error importing requests",
+    "imported_request_set_label": "Imported Requests",
+    "import_successful": "Import successful"
 }
