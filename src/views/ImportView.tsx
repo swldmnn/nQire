@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useNotification } from "../contexts/notification/useNotification";
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import { parseCurlCommands } from "../util/importParsers";
+import { parseCurlCommands } from "../util/parsers/curlParser";
 import ImportModalContentView from "./ImportModalContentView";
 import { ImportItem } from "../types/types";
 import { HttpRequestSetTransfer } from "../types/types_transfer";

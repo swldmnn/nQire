@@ -1,4 +1,4 @@
-import { HttpRequestTransfer } from '../types/types_transfer';
+import { HttpRequestTransfer } from '../../types/types_transfer';
 
 export function parseCurlCommands(input: string): HttpRequestTransfer[] {
   try {
