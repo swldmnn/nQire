@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Button, Checkbox, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { ImportItem } from "../types/types";
 import { Dispatch, SetStateAction } from "react";
@@ -19,6 +19,12 @@ function ImportModalContentView({ importItems, setImportItems, onConfirm, onCanc
     const toggleSelected = (index: number) => {
         const item = importItems[index];
         item.selected = !item.selected;
+        setImportItems([...importItems]);
+    }
+
+    const onChangeName = (index: number, newName: string) => {
+        const item = importItems[index];
+        item.item.label = newName;
         setImportItems([...importItems]);
     }
 
@@ -61,15 +67,21 @@ function ImportModalContentView({ importItems, setImportItems, onConfirm, onCanc
                                     </TableCell>
                                     <TableCell key={`import_item_${index}_type`}>
                                         <Typography>{importItem.item.typename}</Typography>
-                                    </TableCell>
-                                    <TableCell key={`import_item_${index}_label`}>
-                                        <Typography>{importItem.item.label}</Typography>
                                         {importItem.item.typename === 'HttpRequest' &&
                                             <Typography
                                                 variant="body2"
                                                 sx={{ color: 'text.secondary' }}>
                                                 {(importItem.item as any).method} {(importItem.item as any).url}
                                             </Typography>}
+                                    </TableCell>
+                                    <TableCell key={`import_item_${index}_label`}>
+                                        <TextField
+                                            value={importItem.item.label}
+                                            onChange={(e) => { onChangeName(index, e.currentTarget.value) }}
+                                            variant='outlined'
+                                            size='small'
+                                            sx={{ width: '100%' }}
+                                        />
                                     </TableCell>
                                 </TableRow>
                             ))}
