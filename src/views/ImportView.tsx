@@ -4,14 +4,12 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useNotification } from "../contexts/notification/useNotification";
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import { parseCurlCommands } from "../util/parsers/curlParser";
-import { parseHttpFile } from '../util/parsers/httpParser';
 import ImportModalContentView from "./ImportModalContentView";
 import { importExportFormat, ImportItem } from "../types/types";
-import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer";
+import { HttpRequestSetTransfer } from "../types/types_transfer";
 import { saveRequest, saveRequestSet } from "../api/requests";
 import { useQueryClient } from "@tanstack/react-query";
-import { detectImportFormat } from "../util/parsers/detectParser";
+import { importParsers, ImportParserType } from "../util/parsers/types";
 
 function ImportView() {
     const { t } = useTranslation()
@@ -20,7 +18,7 @@ function ImportView() {
 
     const [importText, setImportText] = useState('')
     const [importItems, setImportItems] = useState([] as ImportItem[])
-    const [selectedTextImportFormat, setSelectedTextImportFormat] = useState('auto' as importExportFormat);
+    const [selectedTextImportFormat, setSelectedTextImportFormat] = useState('auto' as ImportParserType);
 
     const showNotification = () => {
         notificationContext.dispatch({
@@ -31,19 +29,7 @@ function ImportView() {
 
     const onImportText = () => {
         try {
-            let parsedRequests: HttpRequestTransfer[] = [];
-            const selectedFormat = selectedTextImportFormat === 'auto'
-                ? detectImportFormat(importText)
-                : selectedTextImportFormat
-
-            if (selectedFormat === 'curl') {
-                parsedRequests = parseCurlCommands(importText);
-            } else if (selectedFormat === 'http') {
-                parsedRequests = parseHttpFile(importText);
-            } else {
-                throw new Error(t('unknown_format_error'))
-            }
-
+            const parsedRequests = importParsers[selectedTextImportFormat].parse(importText)
             setImportItems(parsedRequests.map(req => ({ selected: true, item: req })));
         } catch (error) {
             notificationContext.dispatch({
@@ -129,7 +115,7 @@ function ImportView() {
                             size='small'
                             sx={{ marginLeft: styles.spaces.medium, alignSelf: 'end', height: '2rem' }}
                         >
-                            <MenuItem value='auto'>{t('import_text_format_auto')}</MenuItem>
+                            <MenuItem value='auto'>{t('parser_type_auto')}</MenuItem>
                         </Select>
                         <Button
                             variant='contained'
@@ -181,9 +167,10 @@ function ImportView() {
                             size='small'
                             sx={{ marginLeft: styles.spaces.medium, alignSelf: 'end', height: '2rem' }}
                         >
-                            <MenuItem value='auto'>{t('import_export_format_auto')}</MenuItem>
-                            <MenuItem value='curl'>{t('import_export_format_curl')}</MenuItem>
-                            <MenuItem value='http'>{t('import_export_format_http')}</MenuItem>
+                            {Object.keys(importParsers).map(parserType =>
+                                <MenuItem key={`import_parser_option_${parserType}`} value={parserType}>
+                                    {t(`parser_type_${parserType}`)}
+                                </MenuItem>)}
                         </Select>
                         <Button
                             disabled={!importText.length}

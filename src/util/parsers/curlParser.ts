@@ -1,7 +1,11 @@
 import { assertHttpMethod } from '../../types/types';
 import { HttpRequestTransfer } from '../../types/types_transfer';
 
-export function parseCurlCommands(input: string): HttpRequestTransfer[] {
+export function suitsCurl(input: string): boolean {
+  return input.includes('curl ')
+}
+
+export function parseCurl(input: string): HttpRequestTransfer[] {
   try {
     const lines = input.split('\n');
     const requests: HttpRequestTransfer[] = [];

@@ -40,7 +40,6 @@
     "import_text_placeholder": "paste e.g. curl, http, ...",
     "import_text_button_label": "Import...",
     "import_text_format_label": "format:",
-    "import_text_format_auto": "auto",
     "import_text_parse_error": "Failed to parse import text.",
     "import_modal_title": "Import items",
     "import_modal_button_label": "Import",
@@ -51,7 +50,7 @@
     "imported_request_set_label": "Imported Requests",
     "import_successful": "Import successful",
     "unknown_format_error": "Unknown format",
-    "import_export_format_auto": "auto",
-    "import_export_format_curl": "curl",
-    "import_export_format_http": "http"
+    "parser_type_auto": "auto",
+    "parser_type_curl": "curl",
+    "parser_type_http": "http"
 }

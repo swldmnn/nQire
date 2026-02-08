@@ -1,7 +1,11 @@
 import { assertHttpMethod } from '../../types/types';
 import { HttpRequestTransfer } from '../../types/types_transfer';
 
-export function parseHttpFile(input: string): HttpRequestTransfer[] {
+export function suitsHttp(input: string): boolean {
+    return /^(GET|POST|PUT|DELETE|PATCH|OPTIONS|HEAD)\s+https?:\/\//i.test(input)
+}
+
+export function parseHttp(input: string): HttpRequestTransfer[] {
   const requests: HttpRequestTransfer[] = [];
   const blocks = input.split(/\n{2,}/); // Split by double newlines (separates requests)
 
