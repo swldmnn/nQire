@@ -64,5 +64,6 @@ export interface Action {
 
 export interface ImportItem {
     selected: boolean,
+    targetId?: number,
     item: HttpRequestTransfer | HttpRequestSetTransfer | EnvironmentTransfer,
 }

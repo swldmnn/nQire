@@ -6,7 +6,7 @@ import { useNotification } from "../contexts/notification/useNotification";
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import ImportModalContentView from "./ImportModalContentView";
 import { importExportFormat, ImportItem } from "../types/types";
-import { HttpRequestSetTransfer } from "../types/types_transfer";
+import { HttpRequestSetTransfer, HttpRequestTransfer } from "../types/types_transfer";
 import { saveRequest, saveRequestSet } from "../api/requests";
 import { useQueryClient } from "@tanstack/react-query";
 import { importParsers, ImportParserType } from "../util/parsers/types";
@@ -30,7 +30,7 @@ function ImportView() {
     const onImportText = () => {
         try {
             const parsedRequests = importParsers[selectedTextImportFormat].parse(importText)
-            setImportItems(parsedRequests.map(req => ({ selected: true, item: req })));
+            setImportItems(parsedRequests.map(req => ({ selected: true, targetId: undefined, item: req })));
         } catch (error) {
             notificationContext.dispatch({
                 type: 'NOTIFY',
@@ -46,23 +46,32 @@ function ImportView() {
     const onConfirmImport = async () => {
         const requestsToImport = importItems
             .filter(item => item.selected)
-            .map(item => item.item)
-            .filter(item => item.typename === 'HttpRequest')
+            .filter(item => item.item.typename === 'HttpRequest')
 
         if (!!requestsToImport.length) {
             try {
-                const savedRequestSet = await saveRequestSet({
-                    typename: 'HttpRequestSet',
-                    label: t('imported_request_set_label'),
-                    requests: [],
-                } as HttpRequestSetTransfer)
+                let newRequestSetId = undefined
+                if (requestsToImport.some(item => !item.targetId)) {
+                    const savedRequestSet = await saveRequestSet({
+                        typename: 'HttpRequestSet',
+                        label: t('imported_request_set_label'),
+                        requests: [],
+                    } as HttpRequestSetTransfer)
+
+                    newRequestSetId = savedRequestSet.id
+                }
 
                 requestsToImport.forEach(async request => {
-                    await saveRequest({ request: request, requestSetId: savedRequestSet.id })
-                    queryClient.invalidateQueries({ queryKey: [queries.fetchRequestSets] })
+                    try {
+                        await saveRequest({ request: request.item as HttpRequestTransfer, requestSetId: request.targetId ?? newRequestSetId })
+                        queryClient.invalidateQueries({ queryKey: [queries.fetchRequestSets] })
+                    } catch (error) {
+                        notificationContext.dispatch({
+                            type: 'NOTIFY',
+                            payload: { value: error, defaultMessage: t('import_requests_error') }
+                        })
+                    }
                 })
-
-
 
                 notificationContext.dispatch({
                     type: 'NOTIFY',

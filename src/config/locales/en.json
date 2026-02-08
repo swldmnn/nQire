@@ -46,11 +46,13 @@
     "cancel": "Cancel",
     "import_cloumn_header_type": "Type",
     "import_cloumn_header_name": "Name",
+    "import_cloumn_header_target": "Import to",
     "import_requests_error": "Error importing requests",
     "imported_request_set_label": "Imported Requests",
     "import_successful": "Import successful",
     "unknown_format_error": "Unknown format",
     "parser_type_auto": "auto",
     "parser_type_curl": "curl",
-    "parser_type_http": "http"
+    "parser_type_http": "http",
+    "import_target_new_request_set": "New API"
 }

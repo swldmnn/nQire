@@ -15,6 +15,8 @@ export const styles = {
         import_box_max_width: '100%',
         import_modal_width: '80vw',
         import_modal_height: '80vh',
+        import_modal_column_width_type: '15rem',
+        import_modal_column_width_target: '15rem',
     }
 }
 
@@ -29,3 +31,4 @@ export const REPAINT_TIMEOUT = 30
 export const EMTPY_RESPONSE_STATUS = 0
 export const NO_ENVIRONMENT_ID = -1
 export const NO_TAB_INDEX = -1
+export const NO_IMPORT_TARGET_ID = -1
