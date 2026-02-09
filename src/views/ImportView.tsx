@@ -1,7 +1,7 @@
 import { Box, Button, Card, MenuItem, Modal, Paper, Select, TextField, Typography } from "@mui/material"
 import { queries, styles } from "../constants"
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNotification } from "../contexts/notification/useNotification";
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import ImportModalContentView from "./ImportModalContentView";
@@ -19,28 +19,59 @@ function ImportView() {
     const [importText, setImportText] = useState('')
     const [importItems, setImportItems] = useState([] as ImportItem[])
     const [selectedTextImportFormat, setSelectedTextImportFormat] = useState('auto' as ImportParserType);
+    const [selectedFileImportFormat, setSelectedFileImportFormat] = useState('auto' as ImportParserType);
 
-    const showNotification = () => {
-        notificationContext.dispatch({
-            type: 'NOTIFY',
-            payload: { value: { typename: 'Error', errorMessage: t('coming_soon') } }
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const readFileAsText = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onload = (e) => resolve(e.target?.result as string)
+            reader.onerror = () => reject(new Error(t('read_file_error')))
+            reader.readAsText(file);
         })
+    }
+
+     const parseAndSetImportItems = (input: string) => {
+        const parsedRequests = importParsers[selectedFileImportFormat].parse(input)
+        setImportItems(parsedRequests.map(req => ({
+            selected: true,
+            targetId: undefined,
+            item: req
+        })))
+    }
+
+    const onCancelImport = () => {
+        setImportItems([]);
     }
 
     const onImportText = () => {
         try {
-            const parsedRequests = importParsers[selectedTextImportFormat].parse(importText)
-            setImportItems(parsedRequests.map(req => ({ selected: true, targetId: undefined, item: req })));
+            parseAndSetImportItems(importText)
         } catch (error) {
             notificationContext.dispatch({
                 type: 'NOTIFY',
-                payload: { value: { typename: 'Error', errorMessage: `${error}` }, defaultMessage: t('import_text_parse_error') },
-            });
+                payload: {
+                    value: { typename: 'Error', errorMessage: `${error}` },
+                    defaultMessage: t('import_requests_error')
+                },
+            })
         }
-    };
+    }
 
-    const onCancelImport = () => {
-        setImportItems([]);
+    const onImportFile = async (file: File) => {
+        try {
+            const content = await readFileAsText(file);
+            parseAndSetImportItems(content);
+        } catch (error) {
+            notificationContext.dispatch({
+                type: 'NOTIFY',
+                payload: {
+                    value: { typename: 'Error', errorMessage: `${error}` },
+                    defaultMessage: t('import_requests_error')
+                },
+            })
+        }
     }
 
     const onConfirmImport = async () => {
@@ -119,33 +150,64 @@ function ImportView() {
                         <Typography variant='h5'>{t('import_files_heading')}</Typography>
                         <Typography sx={{ marginLeft: 'auto', alignSelf: 'end' }}>{t('import_text_format_label')}</Typography>
                         <Select
-                            id="import_text_format_select"
-                            value={'auto'}
+                            id="import_file_format_select"
+                            value={selectedFileImportFormat}
+                            onChange={(e) => setSelectedFileImportFormat(e.target.value as ImportParserType)}
                             size='small'
                             sx={{ marginLeft: styles.spaces.medium, alignSelf: 'end', height: '2rem' }}
                         >
-                            <MenuItem value='auto'>{t('parser_type_auto')}</MenuItem>
+                            {Object.keys(importParsers).map(parserType =>
+                                <MenuItem key={`import_file_parser_option_${parserType}`} value={parserType}>
+                                    {t(`parser_type_${parserType}`)}
+                                </MenuItem>)}
                         </Select>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            style={{ display: 'none' }}
+                            accept="text/*,.curl,.http"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    onImportFile(file);
+                                    e.target.value = ''; // Reset input
+                                }
+                            }}
+                        />
                         <Button
                             variant='contained'
-                            onClick={showNotification}
+                            onClick={() => fileInputRef.current?.click()}
                             sx={{ marginLeft: styles.spaces.medium, width: '10rem', alignSelf: 'end', height: '2rem' }}
                         >
                             {t('choose_files_button_label')}
                         </Button>
                     </Box>
-                    <Box sx={{
-                        border: '2px dashed',
-                        borderColor: 'text.secondary',
-                        borderRadius: 1,
-                        marginTop: styles.spaces.large,
-                        padding: styles.spaces.xLarge,
-                        boxSizing: 'border-box',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignContent: 'center',
-                        justifyContent: 'center',
-                    }}>
+                    <Box
+                        sx={{
+                            border: '2px dashed',
+                            borderColor: 'text.secondary',
+                            borderRadius: 1,
+                            marginTop: styles.spaces.large,
+                            padding: styles.spaces.xLarge,
+                            boxSizing: 'border-box',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignContent: 'center',
+                            justifyContent: 'center',
+                        }}
+                        onDragOver={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }}
+                        onDrop={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const file = e.dataTransfer.files?.[0];
+                            if (file) {
+                                onImportFile(file);
+                            }
+                        }}
+                    >
                         <FileDownloadOutlinedIcon sx={{ color: 'text.secondary', fontSize: '1.5rem' }} />
                         <Typography variant='h6' sx={{ color: 'text.secondary', marginLeft: styles.spaces.medium }}>{t('import_files_dropzone_hint')}</Typography>
                     </Box>

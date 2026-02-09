@@ -54,5 +54,6 @@
     "parser_type_auto": "auto",
     "parser_type_curl": "curl",
     "parser_type_http": "http",
-    "import_target_new_request_set": "New API"
+    "import_target_new_request_set": "New API",
+    "read_file_error": "Error reading file"
 }
