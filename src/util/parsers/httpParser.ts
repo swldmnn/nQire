@@ -2,18 +2,38 @@ import { assertHttpMethod } from '../../types/types';
 import { HttpRequestTransfer } from '../../types/types_transfer';
 
 export function suitsHttp(input: string): boolean {
-    return /^(GET|POST|PUT|DELETE|PATCH|OPTIONS|HEAD)\s+https?:\/\//i.test(input)
+    if (input.includes('curl ')) {
+        return false;
+    }
+
+    const httpRequestPattern = /^\s*(###.*\n)?\s*(GET|POST|PUT|DELETE|PATCH|OPTIONS|HEAD)\s+https?:\/\//im;
+    const hasHttpSeparator = /^###/m.test(input);
+
+    return httpRequestPattern.test(input) || hasHttpSeparator;
 }
 
 export function parseHttp(input: string): HttpRequestTransfer[] {
   const requests: HttpRequestTransfer[] = [];
-  const blocks = input.split(/\n{2,}/); // Split by double newlines (separates requests)
+  // Split by ### separator (standard .http file format)
+  const blocks = input.split(/^###.*$/m).filter(block => block.trim());
 
   for (const block of blocks) {
-    const lines = block.split('\n').map(line => line.trim());
-    if (lines.length === 0) continue;
+    const lines = block.split('\n');
 
-    let [method, url] = lines[0].split(/\s+/); // First line contains method and URL
+    // Find the first non-empty, non-comment line (the request line)
+    let requestLineIndex = -1;
+    for (let i = 0; i < lines.length; i++) {
+      const trimmed = lines[i].trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        requestLineIndex = i;
+        break;
+      }
+    }
+
+    if (requestLineIndex === -1) continue;
+
+    const requestLine = lines[requestLineIndex].trim();
+    let [method, url] = requestLine.split(/\s+/); // First line contains method and URL
     method = method.toUpperCase();
     assertHttpMethod(method);
 
@@ -22,22 +42,32 @@ export function parseHttp(input: string): HttpRequestTransfer[] {
     }
 
     const headers: { key: string; value: string }[] = [];
-    let body = '';
+    const bodyLines: string[] = [];
     let isBody = false;
 
-    for (let i = 1; i < lines.length; i++) {
+    for (let i = requestLineIndex + 1; i < lines.length; i++) {
       const line = lines[i];
-      if (line === '') {
-        isBody = true; // Empty line indicates start of body
+      const trimmedLine = line.trim();
+
+      // Skip comment lines
+      if (trimmedLine.startsWith('#')) continue;
+
+      if (trimmedLine === '') {
+        if (!isBody && headers.length > 0) {
+          // First empty line after headers marks start of body
+          isBody = true;
+        }
         continue;
       }
 
       if (isBody) {
-        body += line;
+        bodyLines.push(line);
       } else {
-        const [key, ...valueParts] = line.split(':');
-        if (key && valueParts.length > 0) {
-          headers.push({ key: key.trim(), value: valueParts.join(':').trim() });
+        const colonIndex = line.indexOf(':');
+        if (colonIndex > 0) {
+          const key = line.substring(0, colonIndex).trim();
+          const value = line.substring(colonIndex + 1).trim();
+          headers.push({ key, value });
         } else {
           throw new Error(`Invalid header format: ${line}`);
         }
@@ -51,7 +81,7 @@ export function parseHttp(input: string): HttpRequestTransfer[] {
       method,
       url,
       headers,
-      body,
+      body: bodyLines.join('\n'),
     });
   }
 

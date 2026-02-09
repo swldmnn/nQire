@@ -40,13 +40,19 @@ export function parseCurl(input: string): HttpRequestTransfer[] {
 function parseSingleCurlCommand(command: string): HttpRequestTransfer {
   const urlMatch = command.match(/https?:\/\/[^\s'"]+/);
   const methodMatch = command.match(/-X\s+(\w+)/) || command.match(/--request\s+(\w+)/);
-  const headerMatches = [...command.matchAll(/-H\s+['"]?([^:]+):\s*([^'"\n]+)['"]?/g)];
-  const bodyMatch = command.match(/--data(?:-raw)?\s+['"]?([^'"\n]+)['"]?/);
+  const headerMatches = [...command.matchAll(/-H\s+['"]([^'"]+)['"]/g)];
+
+  // Match --data, --data-raw, or -d with quoted or unquoted body
+  // Try single-quoted, double-quoted, then unquoted patterns
+  const bodyMatch =
+    command.match(/(?:--data(?:-raw)?|-d)\s+'([^']*)'/) ||
+    command.match(/(?:--data(?:-raw)?|-d)\s+"([^"]*)"/) ||
+    command.match(/(?:--data(?:-raw)?|-d)\s+([^\s-]+)/);
 
   if (urlMatch) {
     const headers = headerMatches.map(match => ({
-      key: match[1].trim(),
-      value: match[2].trim(),
+      key: match[1].split(':')[0].trim(),
+      value: match[1].split(':').slice(1).join(':').trim(),
     }));
 
     const method = methodMatch ? methodMatch[1].toUpperCase() : 'GET';
@@ -59,7 +65,7 @@ function parseSingleCurlCommand(command: string): HttpRequestTransfer {
       method,
       url: urlMatch[0],
       headers,
-      body: bodyMatch ? bodyMatch[1] : '',
+      body: bodyMatch ? bodyMatch[1].trim() : '',
     };
   } else {
     throw new Error('Invalid curl command: URL not found.');

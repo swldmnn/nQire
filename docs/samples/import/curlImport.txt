@@ -1,0 +1,22 @@
+curl --location 'https://foo.get' \
+--header 'Content-Type: application/json' \
+
+curl -X POST --location 'https://foo.post' \
+--header 'Content-Type: application/json' \
+--data '{
+    "foo": "bar",
+}'
+
+curl -X GET "https://api.example.com/users?role=admin&limit=10&page=2" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+
+curl -X POST "https://api.example.com/users" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -d '{
+    "name": "Jane Doe",
+    "email": "jane.doe@example.com",
+    "role": "admin"
+  }'
